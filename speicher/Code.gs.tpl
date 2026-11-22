@@ -37,7 +37,7 @@ function loadCat() {
 function katalogTesten() { CacheService.getScriptCache().remove("cat"); loadCat(); Logger.log(Object.keys(ITEMS).length + " Shop-Teile geladen."); }
 
 // Spalten im Blatt "Spieler"
-const C = {NR:0, PIN:1, MUENZEN:2, GEKAUFT:3, AVATAR:4, FEHL:5, GESPERRT:6, LOGIN:7};
+const C = {NR:0, PIN:1, MUENZEN:2, GEKAUFT:3, AVATAR:4, FEHL:5, GESPERRT:6, LOGIN:7, EIGEN:8};
 const TZ = "Europe/Berlin";
 
 /** Einmal ausführen: legt die Blätter an. */
@@ -46,13 +46,13 @@ function einrichten() {
   let sp = ss.getSheetByName("Spieler");
   if (!sp) sp = ss.insertSheet("Spieler", 0);
   if (sp.getLastRow() === 0) {
-    sp.appendRow(["Nr", "PIN", "Münzen", "Gekauft", "Avatar", "Fehlversuche", "Gesperrt bis", "Letzter Login"]);
+    sp.appendRow(["Nr", "PIN", "Münzen", "Gekauft", "Avatar", "Fehlversuche", "Gesperrt bis", "Letzter Login", "Eigene PIN"]);
     sp.getRange("B:B").setNumberFormat("@");
     const rows = [];
     for (let i = 1; i <= ANZAHL_SPIELER; i++) {
-      rows.push([i, String(Math.floor(Math.random() * 10000)).padStart(4, "0"), 0, "", "", 0, "", ""]);
+      rows.push([i, String(Math.floor(Math.random() * 10000)).padStart(4, "0"), 0, "", "", 0, "", "", ""]);
     }
-    sp.getRange(2, 1, rows.length, 8).setValues(rows);
+    sp.getRange(2, 1, rows.length, 9).setValues(rows);
     sp.setFrozenRows(1);
     sp.getRange("1:1").setFontWeight("bold");
   }
@@ -108,6 +108,7 @@ function handle(d) {
     case "result": return result(p, d);
     case "buy": return buy(p, d);
     case "equip": return equip(p, d);
+    case "setpin": return setPin(p, d);
   }
   return { ok: false, error: "bad" };
 }
@@ -145,6 +146,21 @@ function auth(d) {
   return { p: p };
 }
 
+/** Eigene PIN setzen. Spalte "Eigene PIN" = "ja" heißt: selbst gewählt.
+ *  Zurücksetzen: neue Start-PIN in Spalte B eintragen und "ja" in Spalte I löschen. */
+function setPin(p, d) {
+  const np = String(d.newpin || "").trim(), nr = String(p.v[C.NR]).trim();
+  if (!/^\d{4}$/.test(np)) return { ok: false, error: "login" };
+  const weak = /^(\d)\1{3}$/.test(np) || ["1234", "2345", "3456", "4567", "5678", "6789", "0123", "4321", "9876", "1212", "6969"].indexOf(np) >= 0 || np === nr.padStart(4, "0");
+  if (weak) return { ok: false, error: "weakpin" };
+  if (np === String(p.v[C.PIN]).trim().padStart(4, "0")) return { ok: false, error: "samepin" };
+  if (p.sh.getRange(1, C.EIGEN + 1).getValue() === "") p.sh.getRange(1, C.EIGEN + 1).setValue("Eigene PIN").setFontWeight("bold");
+  p.sh.getRange(p.row, C.PIN + 1).setNumberFormat("@").setValue(np);
+  p.sh.getRange(p.row, C.EIGEN + 1).setValue("ja");
+  p.v[C.PIN] = np; p.v[C.EIGEN] = "ja";
+  return { ok: true, state: state(p) };
+}
+
 function owned(v) { return String(v[C.GEKAUFT] || "").split(",").map(s => s.trim()).filter(s => ITEMS[s]); }
 function equippedOf(v) {
   let e = {};
@@ -178,7 +194,7 @@ function state(p) {
   const today = Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd");
   const dailyToday = res.some(r => r[2] === "daily" && r[0] instanceof Date && Utilities.formatDate(r[0], TZ, "yyyy-MM-dd") === today);
   return {
-    fresh: !p.v[C.AVATAR], nr: String(p.v[C.NR]), coins: Number(p.v[C.MUENZEN]) || 0,
+    fresh: !p.v[C.AVATAR], mustSetPin: String(p.v[C.EIGEN] || "").trim() !== "ja", nr: String(p.v[C.NR]), coins: Number(p.v[C.MUENZEN]) || 0,
     owned: owned(p.v), equipped: equippedOf(p.v), stars: stars,
     xp: xp, level: levelOf(xp), stats: { plays: res.length, home: home, improved: improved, daily: daily, dailyToday: dailyToday }
   };

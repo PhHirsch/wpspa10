@@ -3,93 +3,179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Español WP 10 – ¡A practicar!</title>
+<title>Español WP 10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{margin:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#0f2328;color:#faf2ee;padding:24px 16px 40px;font-size:17px}
-  .wrap{max-width:960px;margin:0 auto}
-  h1{font-size:32px;margin:0 0 4px}
-  h2{font-size:24px;margin:30px 0 4px}
-  h4{font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:#a9cfd0;margin:18px 0 10px}
-  .sub{color:#a9cfd0;margin:0 0 20px}
-  .box{background:#173a40;border-radius:16px;padding:18px;margin-bottom:22px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  html,body{margin:0;background:#07080d;color:#fff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+  .D{font-family:Anton,Impact,"Arial Narrow Bold",sans-serif;letter-spacing:.04em;font-weight:400}
+  /* Hintergrund (passt sich dem Spiel an) */
+  .bg{position:fixed;inset:0;z-index:0;transition:opacity .7s}
+  .bgart{position:fixed;right:-40px;top:40px;width:640px;opacity:.28;z-index:0;transition:opacity .5s;pointer-events:none;filter:saturate(1.2)}
+  .bgart svg{width:100%;height:auto}
+  .rays{position:fixed;left:-300px;top:-300px;width:1100px;height:1300px;z-index:0;pointer-events:none;background:repeating-conic-gradient(from 0deg at 50% 55%,rgba(255,255,255,.04) 0 6deg,transparent 6deg 18deg);animation:spin 80s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:16px 24px 100px}
+  /* Kopfzeile */
+  .top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .hex{width:52px;height:58px;background:linear-gradient(180deg,#ffd23a,#f08a1a);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:grid;place-items:center;font-size:26px;color:#2a1600;flex:none}
+  .tier{min-width:220px}.tier .D{font-size:19px}
+  .bar{height:11px;background:rgba(255,255,255,.15);border-radius:6px;overflow:hidden;margin-top:4px;transform:skewX(-20deg);width:280px;max-width:60vw}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,#4fe3ff,#b46bff)}
+  .xpt{font-size:12px;color:#b9c3d6;margin-top:3px}
+  .pills{margin-left:auto;display:flex;gap:10px;align-items:center}
+  .pill{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);padding:7px 15px;border-radius:30px;font-size:21px;backdrop-filter:blur(8px)}
+  .logo{font-size:26px}
+  .out{background:none;border:1px solid rgba(255,255,255,.25);color:#cfd6e4;border-radius:20px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer}
+  /* Lobby */
+  .lobby{display:grid;grid-template-columns:380px 1fr;gap:30px;margin-top:18px;align-items:start}
+  @media(max-width:900px){.lobby{grid-template-columns:1fr}.hero{max-width:340px;margin:0 auto}}
+  .hero{text-align:center}
+  .ava{width:320px;height:320px;max-width:80vw;max-height:80vw;border-radius:50%;overflow:hidden;margin:0 auto;box-shadow:0 0 0 6px rgba(255,255,255,.14),0 0 80px var(--glow,rgba(120,90,255,.75));transition:box-shadow .7s}
+  .podium{width:360px;max-width:90vw;height:46px;margin:-18px auto 0;background:radial-gradient(ellipse at 50% 30%,rgba(140,120,255,.8) 0%,rgba(60,40,140,.6) 45%,transparent 70%)}
+  .pname{font-size:42px;font-style:italic;margin-top:-4px;text-shadow:0 4px 0 rgba(0,0,0,.4)}
+  .psub{color:#c9c2ff;font-weight:800;letter-spacing:.2em;font-size:12px}
+  .badges{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+  .badges span{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.12);display:grid;place-items:center;font-size:19px}
+  .badges span.off{opacity:.25;filter:grayscale(1)}
+  .login{background:rgba(10,12,24,.65);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:16px;margin-top:14px;backdrop-filter:blur(10px);text-align:left}
+  .login input{font-size:22px;padding:9px 10px;border-radius:10px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.35);color:#fff;width:110px;text-align:center}
+  .login label{font-size:12px;color:#b9c3d6;display:block;margin-bottom:3px;font-weight:700;letter-spacing:.1em}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  input{font-size:22px;padding:10px 12px;border-radius:10px;border:2px solid #3f7178;background:#0a191d;color:#fff;width:120px;text-align:center}
-  label{font-size:14px;color:#a9cfd0;display:block;margin-bottom:4px}
-  .btn{font-size:18px;padding:11px 20px;border-radius:12px;border:2px solid #4a8088;background:#22525a;color:#fff;cursor:pointer;font-weight:600}
-  .btn.primary{background:#f2c230;border-color:#f2c230;color:#2a2200}
-  .btn.small{font-size:15px;padding:7px 12px}
-  .btn:disabled{opacity:.45}
-  .msg{min-height:22px;margin-top:8px;font-weight:600;color:#ff8a8a}
-  .msg.ok{color:#7dffb0}
-  .me{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-  .av{width:120px;border-radius:14px;overflow:hidden;flex:none;box-shadow:0 4px 14px rgba(0,0,0,.4)}
-  .coins{font-size:26px;font-weight:800;color:#f2c230}
-  .lvl{display:inline-block;background:#e0673a;border-radius:20px;padding:3px 12px;font-weight:800;font-size:15px}
-  .xp{height:10px;border-radius:6px;background:#0a191d;overflow:hidden;margin-top:6px;width:240px;max-width:100%}
-  .xp i{display:block;height:100%;background:linear-gradient(90deg,#2fb5a4,#f2c230)}
-  .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-  .badge{display:flex;align-items:center;gap:6px;background:#0a191d;border-radius:20px;padding:4px 10px 4px 6px;font-size:13px;border:1px solid #2f5e64}
-  .badge b{font-size:18px}
-  .badge.off{opacity:.35;filter:grayscale(1)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
-  a.tile{display:block;text-decoration:none;color:inherit;border-radius:16px;padding:18px;min-height:170px;position:relative;box-shadow:0 10px 30px rgba(0,0,0,.35)}
-  a.tile:active{transform:scale(.98)}
-  .icon{font-size:44px;line-height:1}
-  .bossimg{width:76px;height:76px;float:right;margin:-4px -4px 0 6px}
-  .topic{display:inline-block;margin-top:10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:20px}
-  .name{font-size:21px;font-weight:700;margin-top:8px}
-  .info{font-size:14px;opacity:.85;margin-top:4px}
-  .stars{font-size:18px;letter-spacing:2px;margin-top:8px}
-  .top3{display:flex;gap:6px;margin-top:10px;align-items:center;font-size:12px}
-  .top3 .p{display:flex;flex-direction:column;align-items:center;gap:2px}
-  .top3 .p div{width:34px;height:34px;border-radius:50%;overflow:hidden;border:2px solid #fff3}
-  .top3 .p.g div{border-color:#f2c230}.top3 .p.s div{border-color:#c9d2e3}.top3 .p.b div{border-color:#d08a4a}
-  .de{font-size:14px;color:#a9cfd0;font-style:italic}
-  /* wardrobe */
-  .ov{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;z-index:10;overflow:auto;padding:16px}
+  .msg{min-height:20px;margin-top:6px;font-weight:700;color:#ff8a8a;font-size:14px}.msg.ok{color:#7dffb0}
+  .de{font-size:13px;color:#b9c3d6;font-style:italic}
+  /* Featured */
+  .feat{position:relative;min-height:300px;padding-top:30px}
+  .feat .kicker{letter-spacing:.25em;font-weight:800;font-size:12px;color:#ffd23a}
+  .feat h1{font-size:64px;line-height:1;margin:8px 0 10px;font-style:italic;text-shadow:0 6px 30px rgba(0,0,0,.5)}
+  .feat p{color:#dfe6f2;font-size:17px;line-height:1.5;max-width:520px}
+  .meta{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:6px;color:#dfe6f2;font-weight:700}
+  .meta .st{color:#ffd23a;font-size:20px;letter-spacing:2px}
+  .play{display:inline-flex;align-items:center;gap:10px;background:#ffd23a;color:#2a1600;font-size:30px;padding:10px 38px;border-radius:6px;transform:skewX(-8deg);box-shadow:0 7px 0 #b8860b,0 14px 40px rgba(255,200,40,.3);text-decoration:none;margin-top:18px}
+  .play span{transform:skewX(8deg);display:inline-block}
+  .play:active{transform:skewX(-8deg) translateY(4px);box-shadow:0 3px 0 #b8860b}
+  .top3{display:flex;gap:10px;align-items:center;margin-top:18px;font-size:13px;font-weight:700}
+  .top3 .p{display:flex;flex-direction:column;align-items:center;gap:3px}
+  .top3 .p div{width:44px;height:44px;border-radius:50%;overflow:hidden;border:3px solid #fff3}
+  .top3 .p.g div{border-color:#ffd23a}.top3 .p.s div{border-color:#c9d2e3}.top3 .p.b div{border-color:#d08a4a}
+  /* Reihen */
+  .shelf{margin-top:30px}
+  .shelf h3{margin:0 0 10px;font-size:22px;font-style:italic}
+  .shelf h3 small{font-family:Inter,sans-serif;font-style:normal;font-size:13px;color:#b9c3d6;letter-spacing:.05em;margin-left:8px}
+  .strip{display:flex;gap:14px;overflow-x:auto;padding:4px 4px 14px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .strip::-webkit-scrollbar{height:6px}.strip::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:3px}
+  .card{width:240px;height:150px;flex:none;border-radius:12px;position:relative;overflow:hidden;cursor:pointer;scroll-snap-align:start;box-shadow:0 10px 30px rgba(0,0,0,.45);border:2px solid transparent;transition:transform .15s,border-color .15s}
+  .card.sel{border-color:#ffd23a;transform:translateY(-4px)}
+  .card .art{position:absolute;inset:0 0 34px 0;display:grid;place-items:center}
+  .card .art svg{height:100%;max-width:100%}
+  .card .lab{position:absolute;left:0;right:0;bottom:0;padding:8px 12px;background:linear-gradient(0deg,rgba(0,0,0,.85),rgba(0,0,0,.2));font-weight:800;font-size:15px}
+  .card .lab small{display:block;font-size:11px;color:#ffd23a;letter-spacing:.08em}
+  .card .prog{position:absolute;left:0;bottom:0;height:4px;background:#ffd23a}
+  .card .new{position:absolute;top:8px;left:8px;background:#ff2a8a;font-size:11px;font-weight:800;letter-spacing:.1em;padding:2px 8px;border-radius:4px}
+  /* Navigation */
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:5;height:64px;background:rgba(5,6,12,.75);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:center;gap:clamp(18px,6vw,60px);align-items:center}
+  .nav button{background:none;border:none;color:#cfd6e4;font-size:20px;cursor:pointer;padding:6px 4px;border-bottom:3px solid transparent}
+  .nav button.on{color:#ffd23a;border-bottom-color:#ffd23a}
+  /* Overlays */
+  .ov{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;z-index:10;overflow:auto;padding:16px 16px 90px}
   .ov.show{display:block}
-  .shop{max-width:960px;margin:0 auto;background:#173a40;border-radius:16px;padding:18px}
+  .sheet{max-width:980px;margin:0 auto;background:#151a2a;border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:18px}
+  .btn{font-size:17px;padding:10px 18px;border-radius:12px;border:2px solid #4a5a80;background:#2a3350;color:#fff;cursor:pointer;font-weight:700}
+  .btn.primary{background:#ffd23a;border-color:#ffd23a;color:#2a1600}
+  .btn.small{font-size:14px;padding:6px 12px}
+  .btn:disabled{opacity:.45}
   .shoptop{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
   .preview{width:180px;border-radius:16px;overflow:hidden;flex:none}
+  .coins{font-size:26px;color:#ffd23a}
+  .lvl{display:inline-block;background:#5a3cb0;border-radius:20px;padding:3px 12px;font-weight:800;font-size:14px}
   .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
-  .tab{font-size:15px;padding:7px 12px;border-radius:20px;border:2px solid #3f7178;background:transparent;color:#fff;cursor:pointer}
-  .tab.on{background:#f2c230;border-color:#f2c230;color:#2a2200;font-weight:700}
+  .tab{font-size:15px;padding:7px 12px;border-radius:20px;border:2px solid #4a5a80;background:transparent;color:#fff;cursor:pointer;font-weight:700}
+  .tab.on{background:#ffd23a;border-color:#ffd23a;color:#2a2200}
   .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
-  .item{background:#0a191d;border:3px solid transparent;border-radius:12px;padding:6px;cursor:pointer;text-align:center;font-size:14px;color:#fff;position:relative}
+  .item{background:#0f1322;border:3px solid transparent;border-radius:12px;padding:6px;cursor:pointer;text-align:center;font-size:14px;color:#fff;position:relative}
   .item .mini{border-radius:8px;overflow:hidden}
-  .item.sel{border-color:#f2c230}
-  .item.wear{box-shadow:0 0 0 2px #7dffb0 inset}
+  .item.sel{border-color:#ffd23a}.item.wear{box-shadow:0 0 0 2px #7dffb0 inset}
   .item .lock{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.75);border-radius:10px;padding:2px 8px;font-size:12px;font-weight:700}
-  .price{font-weight:700;color:#f2c230}
-  .price.own{color:#7dffb0}
-  .iname{font-weight:600;margin-top:4px;line-height:1.2}
-  .rar{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:2px 0}
-  h3{font-size:17px;color:#c9d2e3}
+  .price{font-weight:800;color:#ffd23a}.price.own{color:#7dffb0}
+  .iname{font-weight:700;margin-top:4px;line-height:1.2}
+  .rar{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin:2px 0}
+  h3.sec{font-size:16px;color:#c9d2e3;margin:14px 0 8px;font-family:Inter,sans-serif}
+  .trow{display:flex;align-items:center;gap:12px;background:#0f1322;border-radius:12px;padding:10px 12px;margin:8px 0}
+  .trow .nm{flex:1;font-weight:700}
+  .ach{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+  .ach div{background:#0f1322;border-radius:12px;padding:10px;display:flex;gap:10px;align-items:center}
+  .ach div.off{opacity:.35;filter:grayscale(1)}
+  .ach b{font-size:26px}
+  .howto{background:#ffd23a;color:#2a1600;border:0;border-radius:999px;padding:8px 16px;font-weight:800;font-size:14px;letter-spacing:.05em;cursor:pointer}
+  .pinlink{background:none;border:0;color:#b9c3d6;font-size:13px;text-decoration:underline;cursor:pointer;margin-top:6px}
+  .pinbox{max-width:440px;margin:12vh auto 0;text-align:center}
+  .pinbox input{font-size:30px;letter-spacing:.3em;padding:10px;border-radius:12px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.35);color:#fff;width:150px;text-align:center;margin:6px}
+  .pinbox label{display:block;font-size:13px;color:#b9c3d6;font-weight:700;letter-spacing:.08em;margin-top:10px}
+  /* Tutorial */
+  .tour{position:fixed;inset:0;z-index:50;display:none}
+  .tour.show{display:block}
+  .tour .hole{position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(0,0,0,.78),0 0 0 4px #ffd23a,0 0 30px #ffd23a;transition:all .35s;pointer-events:none}
+  .tour .tip{position:fixed;width:min(380px,92vw);background:#151a2a;border:2px solid #ffd23a;border-radius:16px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.6);transition:top .35s,left .35s}
+  .tour .tip h4{margin:0 0 6px;font-size:24px}
+  .tour .tip p{margin:0 0 6px;font-size:16px;line-height:1.45}
+  .tour .tip .de{display:block;margin-bottom:10px}
+  .tour .steps{font-size:12px;color:#b9c3d6;font-weight:700;letter-spacing:.1em}
+  .help{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:50%;width:38px;height:38px;font-size:18px;font-weight:800;cursor:pointer}
 </style>
 </head>
 <body>
+<div class="bg" id="bgA"></div><div class="bg" id="bgB" style="opacity:0"></div>
+<div class="rays"></div>
+<div class="bgart" id="bgart"></div>
 <div class="wrap">
-  <h1>🇪🇸 Español WP 10</h1>
-  <p class="sub">Apúntate 2 · ¡Elige un juego! – Wähle eine Übung.</p>
-  <div class="box" id="acct"></div>
-  <div id="games"></div>
+  <div class="top" id="top"></div>
+  <div class="lobby">
+    <div class="hero" id="hero"></div>
+    <div class="feat" id="feat"></div>
+  </div>
+  <div id="shelves"></div>
 </div>
-<div class="ov" id="ov"><div class="shop" id="shop"></div></div>
+<nav class="nav"><button class="D on" data-n="play">JUGAR</button><button class="D" data-n="locker">TAQUILLA</button><button class="D" data-n="shop">TIENDA</button><button class="D" data-n="trophies">TROFEOS</button></nav>
+<div class="ov" id="ov"><div class="sheet" id="shop"></div></div>
+<div class="ov" id="pinov" style="z-index:40"><div class="sheet pinbox" id="pinbox"></div></div>
+<div class="tour" id="tour"><div class="hole" id="hole"></div><div class="tip" id="tip"></div></div>
 
-<script src="game.js?v=2"></script>
-<script src="bosses.js?v=1"></script>
-<script>window.VOCAB = window.VOCAB || {};</script>
+<script src="game.js?v=9"></script>
+<script src="bosses.js?v=9"></script>
+<script src="covers.js?v=9"></script>
 <script>
-/* Grammatik- und Story-Spiele (id = Spiel-ID). Vokabel-Bosse kommen automatisch aus vocab-*.js */
-const GRAMMAR = [];
-/* Überschriften der Unidades (Schlüssel wie in vocab-*.js bzw. GRAMMAR.unit) */
-const UNITS = {u1:"Unidad 1",u2:"Unidad 2",u3:"Unidad 3",u4:"Unidad 4",u5:"Unidad 5",u6:"Unidad 6"};
-const BOSSCOL = {tornado:"linear-gradient(135deg,#3a4256,#6a7a96)",robot:"linear-gradient(135deg,#2a3a4a,#4a6a8a)",ghost:"linear-gradient(135deg,#2a2a5a,#5a5aa0)",bossy:"linear-gradient(135deg,#5a1e1a,#a0402a)",slime:"linear-gradient(135deg,#1e4a24,#3f8a2a)",manager:"linear-gradient(135deg,#2e1d5a,#6a3cb0)",locker:"linear-gradient(135deg,#12305a,#2a68b8)"};
-const $ = id => document.getElementById(id);
-let SCORES = {};
+/* ===== Seiten-Einstellungen (für jede Klasse anpassen) ===== */
+const SITE = { title: "ESPAÑOL WP 10", sub: "ESPAÑOL · WP 10 · APÚNTATE 2" };
+window.VOCAB = window.VOCAB || {}; window.COVERS = window.COVERS || {};
 
-/* ---------- Erfolge ---------- */
+/* ===== Spiele (neueste oben). icon = Emoji fürs Cover, falls es in covers.js kein eigenes Cover gibt. Vokabel-Bosse kommen automatisch aus vocab-*.js ===== */
+const GRAMMAR = [];
+/* Überschriften der Units ohne Vokabeldatei (Schlüssel wie GRAMMAR.unit) */
+const UNITS = {u1:"Unidad 1",u2:"Unidad 2",u3:"Unidad 3",u4:"Unidad 4",u5:"Unidad 5",u6:"Unidad 6"};
+const BOSSCOL = {"tornado":["#3a4256","#6a7a96"],"robot":["#2a3a4a","#4a6a8a"],"ghost":["#2a2a5a","#5a5aa0"],"bossy":["#5a1e1a","#a0402a"],"slime":["#1e4a24","#3f8a2a"],"manager":["#2e1d5a","#6a3cb0"],"locker":["#12305a","#2a68b8"]};
+const $ = id => document.getElementById(id);
+let SCORES = {}, SEL = null;
+
+/* Alle Spiele als Liste */
+const ACC = g => g.accent || ((String(g.color).match(/#[0-9a-fA-F]{6}/g)||["#5a3cb0"]).pop());
+const COVER = g => COVERS[g.id] || `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="cg_${g.id}"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><circle cx="110" cy="66" r="62" fill="url(#cg_${g.id})"/><text x="110" y="96" font-size="80" text-anchor="middle">${g.icon||"🎮"}</text></svg>`;
+const ALL = [], SHELVES = [];
+if (Object.values(VOCAB).some(u => u.sections && u.sections.length)) {
+  ALL.push({id:"daily", href:"boss.html?id=daily", topic:"Reto del día", name:"Jefe del día", info:"10 palabras al azar de todas las unidades – cada día un jefe nuevo. ¡Hasta 15 monedas, una vez al día!", art:COVERS.daily, accent:"#e0533a", color:"linear-gradient(135deg,#7a1e3a,#e0533a)", shelf:"daily"});
+  SHELVES.push({key:"daily", title:"Hoy"});
+}
+[...new Set(Object.keys(VOCAB).concat(GRAMMAR.map(g => g.unit)))].sort().reverse().forEach(key => {
+  const u = VOCAB[key], title = (u && u.unit) || UNITS[key] || key, gr = GRAMMAR.filter(g => g.unit === key);
+  if (gr.length) { SHELVES.push({key:key+"-g", title:title, sub:"Misiones"}); gr.forEach(g => ALL.push({id:g.id, href:g.file, topic:g.topic, name:g.name, info:g.info, art:COVER(g), accent:ACC(g), color:g.color, shelf:key+"-g", isNew:g.isNew})); }
+  if (u && u.sections.length) {
+    SHELVES.push({key:key+"-v", title:title, sub:"Jefes de vocabulario"});
+    u.sections.forEach(s => { const c = BOSSCOL[s.boss]||["#333333","#555555"]; ALL.push({id:s.id, href:"boss.html?id="+s.id, topic:"Jefe de vocabulario · "+s.part, name:s.title, info:`¡Lucha contra ${s.bossName}! ${s.words.length} palabras · Vocabulario ${s.pages}`, art:BOSSART[s.boss]||"", accent:c[1], color:`linear-gradient(135deg,${c[0]},${c[1]})`, shelf:key+"-v"}); });
+  }
+});
+if (!ALL.length) ALL.push({id:"soon", href:"", topic:"¡Pronto!", name:"Próximamente", info:"Aquí pronto habrá juegos nuevos. Mientras tanto ya puedes crear tu avatar.", art:"", accent:"#5a3cb0", color:"linear-gradient(135deg,#1e1650,#5a3cb0)"});
+
+/* ===== Erfolge ===== */
 const BOSS_IDS = Object.values(VOCAB).flatMap(u => u.sections.map(s => s.id));
 const BOSS_UNITS = Object.keys(VOCAB).map(k => VOCAB[k].sections.map(x => x.id));
 const ACH = [
@@ -106,99 +192,123 @@ const ACH = [
   ["🏆","Salón de la fama","Entra en un top 3 – In einer Top 3", s => Object.values(SCORES).some(l => l.some(x => x.nr === s.nr))],
   ["💎","Pro","Llega al nivel 5 – Level 5 erreicht", s => s.level >= 5]
 ];
+const state = () => { const se = E8.getSession(); return se ? se.state : null; };
+const starsOf = id => { const s = state(); return s && s.stars ? (s.stars[id]||0) : 0; };
+const stStr = n => "★".repeat(n) + "☆".repeat(3-n);
 
-/* ---------- Spiele ---------- */
-function starsOf(id){ const se=E8.getSession(); if(!se || id==="daily") return ""; const n=se.state.stars[id]||0; return `<div class="stars">${"⭐".repeat(n)}${"☆".repeat(3-n)}</div>`; }
-function top3(id){
-  const l = SCORES[id]; if(!l || !l.length) return "";
-  return `<div class="top3">🏆 ${l.map((x,i)=>`<span class="p ${["g","s","b"][i]}"><div>${E8.avatarSVG(x.eq)}</div>#${x.nr}</span>`).join("")}</div>`;
-}
-function tile(o){
-  return `<a class="tile" href="${o.href}" style="background:${o.color}">${o.img||""}<div class="icon">${o.icon||""}</div>
-    <div class="topic">${o.topic}</div><div class="name">${o.name}</div><div class="info">${o.info}</div>${starsOf(o.id)}${top3(o.id)}</a>`;
-}
-function games(){
-  let h = "";
-  const se = E8.getSession();
-  const done = se && se.state.stats && se.state.stats.dailyToday;
-  if (BOSS_IDS.length) h += `<div class="grid" style="margin-bottom:8px">${tile({id:"daily",href:"boss.html?id=daily",color:"linear-gradient(135deg,#7a2a8a,#e0533a)",icon:"🔥",topic:"Reto del día",name:"El jefe del día",info:(done?"✔ ¡Hecho hoy! Puedes seguir practicando. – Heute schon erledigt.":"10 palabras al azar · cada día nuevo · hasta 15 🪙")})}</div>`;
-  const keys = [...new Set(Object.keys(UNITS).concat(Object.keys(VOCAB), GRAMMAR.map(g => g.unit)))];
-  keys.forEach(key => {
-    const u = VOCAB[key], gr = GRAMMAR.filter(g => g.unit === key);
-    if (!u && !gr.length) return;
-    h += `<h2>${u ? u.unit : (UNITS[key] || key)}</h2>`;
-    if (u) [...new Set(u.sections.map(s => s.part))].forEach(p => {
-      h += `<h4>${p}</h4><div class="grid">` + u.sections.filter(s => s.part === p).map(s => tile({id:s.id, href:"boss.html?id="+s.id, color:BOSSCOL[s.boss]||"#333", img:`<div class="bossimg">${BOSSART[s.boss]}</div>`, topic:"Jefe de vocabulario", name:s.title, info:`${s.bossName} · ${s.words.length} palabras<br>${s.pages}`})).join("") + `</div>`;
-    });
-    if (gr.length) h += `<h4>Gramática y más</h4><div class="grid">` + gr.map(g => tile({id:g.id, href:g.file, color:g.color, icon:g.icon, topic:g.topic, name:g.name, info:g.info})).join("") + `</div>`;
-  });
-  if (!h) h = `<div class="box"><b>¡Pronto hay juegos aquí! 🎲</b><div class="de">Hier erscheinen bald die ersten Spiele.</div></div>`;
-  $("games").innerHTML = h;
+/* ===== Hintergrund ===== */
+let bgFlip = false;
+function setBg(g){
+  const a = $(bgFlip?"bgA":"bgB"), b = $(bgFlip?"bgB":"bgA"); bgFlip = !bgFlip;
+  a.style.background = `radial-gradient(ellipse at 72% 30%, ${g.accent} 0%, ${g.accent}55 25%, #0b0c16 62%, #05060a 100%)`;
+  a.style.opacity = 1; b.style.opacity = 0;
+  $("bgart").innerHTML = g.art || "";
+  document.querySelector(".ava") && document.querySelector(".ava").style.setProperty("--glow", g.accent+"cc");
 }
 
-/* ---------- Konto ---------- */
-function acct(){
-  const se = E8.getSession();
-  if(!E8.online()){ $("acct").style.display="none"; games(); return; }
-  if(!se){
-    $("acct").innerHTML = `
-      <b>¡Inicia sesión para ganar monedas 🪙 y vestir a tu avatar!</b>
-      <div class="de">Melde dich an, um Münzen zu sammeln und deinen Avatar einzukleiden.</div>
-      <div class="row" style="margin-top:12px;align-items:flex-end">
-        <div><label>Número</label><input id="nr" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></div>
-        <div><label>PIN</label><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></div>
-        <button class="btn primary" id="go">Entrar</button>
-      </div>
-      <div class="msg" id="msg"></div>
-      <div class="de">También puedes jugar sin iniciar sesión, pero sin monedas. – Ohne Anmeldung spielen geht auch, aber ohne Münzen.</div>`;
-    $("go").onclick = async ()=>{
+/* ===== Kopfzeile ===== */
+function topBar(){
+  const s = state();
+  if (!s) { $("top").innerHTML = `<div class="D logo">${SITE.title}</div><div class="pills"><button class="howto" onclick="tour()">❓ ¿CÓMO FUNCIONA?</button></div>`; return; }
+  const L = E8.levelInfo(s.xp||0), stars = Object.values(s.stars||{}).reduce((a,b)=>a+b,0);
+  $("top").innerHTML = `<div class="hex D">${L.level}</div><div class="tier"><div class="D">NIVEL ${L.level} · ${L.name.toUpperCase()}</div><div class="bar"><i style="width:${L.pct}%"></i></div><div class="xpt">${L.next?`${s.xp||0} / ${L.next} XP`:"nivel máximo"}</div></div>
+    <div class="pills"><span class="pill D">🪙 ${s.coins}</span><span class="pill D">⭐ ${stars}</span><button class="help" onclick="tour()" title="¿Cómo funciona?">?</button><button class="out" id="out">Salir</button></div>`;
+  $("out").onclick = () => { E8.logout(); render(); };
+}
+/* ===== Avatar / Login ===== */
+function hero(){
+  const s = state();
+  let h = `<div class="ava" id="ava">${E8.avatarSVG(s?s.equipped:null)}</div><div class="podium"></div>`;
+  if (s) {
+    h += `<div class="pname D">JUGADOR/A #${s.nr}</div><div class="psub">${SITE.sub}</div><div class="badges">${ACH.map(a=>`<span class="${s.stats&&a[3](s)?"":"off"}" title="${a[1]}: ${a[2]}">${a[0]}</span>`).join("")}</div>${"mustSetPin" in s ? `<button class="pinlink" onclick="pinDialog(false)">🔑 Cambiar PIN</button>` : ""}`;
+  } else if (E8.online()) {
+    h += `<div class="login"><div class="D" style="font-size:22px">INICIAR SESIÓN</div><div class="de" style="margin-bottom:8px">¡Gana monedas y viste a tu avatar! – Melde dich an.</div>
+      <div class="row" style="align-items:flex-end"><div><label>NÚMERO</label><input id="nr" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></div>
+      <div><label>PIN</label><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></div>
+      <button class="btn primary" id="go">¡VAMOS!</button></div><div class="msg" id="msg"></div>
+      <div class="de">También puedes jugar sin iniciar sesión, pero no ganas monedas. – Ohne Login keine Münzen.</div></div>`;
+  }
+  $("hero").innerHTML = h;
+  if ($("go")) {
+    $("go").onclick = async () => {
       const nr=$("nr").value.trim(), pin=$("pin").value.trim();
-      if(!nr||pin.length!==4){ $("msg").textContent="Escribe tu número y tu PIN de 4 cifras. – Nummer und vierstellige PIN eingeben."; return; }
+      if(!nr||pin.length!==4){ $("msg").textContent="Número + PIN de 4 cifras. – Nummer und vierstellige PIN."; return; }
       $("go").disabled=true; $("msg").className="msg ok"; $("msg").textContent="Comprobando …";
-      const r = await E8.login(nr,pin);
-      $("go").disabled=false;
-      if(r.ok){ acct(); if(r.state.fresh){ tab=0; openShop(); drawShop("👋 ¡Bienvenido/a! Primero crea tu avatar, aquí todo es gratis. – Gestalte zuerst deinen Avatar, alles hier ist kostenlos.",true); } }
+      const r = await E8.login(nr,pin); $("go").disabled=false;
+      if(r.ok){ render(); if(r.state.mustSetPin) pinDialog(true); else afterLogin(); }
       else { $("msg").className="msg"; $("msg").textContent=E8.errText(r.error); }
     };
     $("pin").addEventListener("keydown",e=>{ if(e.key==="Enter") $("go").click(); });
-  } else {
-    const s = se.state, L = E8.levelInfo(s.xp||0);
-    const badges = ACH.map(a => { const on = s.stats && a[3](s); return `<span class="badge ${on?"":"off"}" title="${a[2]}"><b>${a[0]}</b>${a[1]}</span>`; }).join("");
-    $("acct").innerHTML = `<div class="me">
-      <div class="av">${E8.avatarSVG(s.equipped)}</div>
-      <div style="flex:1;min-width:240px"><div style="font-size:20px;font-weight:700">Jugador/a n.º ${s.nr} <span class="lvl">Nivel ${L.level} · ${L.name}</span></div>
-        <div class="xp"><i style="width:${L.pct}%"></i></div>
-        <div class="de" style="font-style:normal">${L.next ? `${s.xp||0} / ${L.next} XP hasta el nivel ${L.level+1}` : `${s.xp} XP – ¡nivel máximo!`}</div>
-        <div class="coins" style="margin-top:6px">${s.coins} 🪙</div>
-        <div class="row" style="margin-top:10px">
-          <button class="btn primary" id="wardrobe">👕 Armario y tienda</button>
-          <button class="btn small" id="out">Salir</button>
-        </div>
-        <div class="de" style="margin-top:6px">¡Cierra la sesión cuando termines! – Bitte abmelden, wenn du fertig bist!</div>
-      </div></div>
-      <div class="badges">${badges}</div>`;
-    $("out").onclick=()=>{ E8.logout(); acct(); };
-    $("wardrobe").onclick=openShop;
   }
-  games();
+  if (SEL) $("ava").style.setProperty("--glow", SEL.accent+"cc");
+}
+/* ===== Ausgewähltes Spiel ===== */
+function feat(){
+  const g = SEL, s = state(), n = starsOf(g.id), l = SCORES[g.id]||[];
+  const done = g.id==="daily" && s && s.stats && s.stats.dailyToday;
+  $("feat").innerHTML = `<div class="kicker">${g.isNew?"NUEVO · ":""}${g.topic.toUpperCase()}</div><h1 class="D">${g.name.toUpperCase()}</h1><p>${g.info}</p>
+    <div class="meta">${s && g.id!=="daily" ? `<span class="st">${stStr(n)}</span>` : ""}${done?`<span>✔ Hecho hoy – ¡puedes seguir practicando!</span>`:""}</div>
+    ${g.href?`<a class="play D" href="${g.href}"><span>JUGAR ▶</span></a>`:""}
+    ${l.length?`<div class="top3">🏆 TOP 3 ${l.map((x,i)=>`<span class="p ${["g","s","b"][i]}"><div>${E8.avatarSVG(x.eq)}</div>#${x.nr}</span>`).join("")}</div>`:""}`;
+}
+/* ===== Reihen ===== */
+function shelves(){
+  $("shelves").innerHTML = SHELVES.map(sh => {
+    const games = ALL.filter(g => g.shelf === sh.key);
+    return `<div class="shelf"><h3 class="D">${sh.title.toUpperCase()}${sh.sub?`<small>${sh.sub}</small>`:""}</h3><div class="strip">${games.map(g => {
+      const n = starsOf(g.id);
+      return `<div class="card ${SEL&&SEL.id===g.id?"sel":""}" data-id="${g.id}" style="background:${g.color}">${g.isNew?`<span class="new">NUEVO</span>`:""}<div class="art">${g.art}</div>
+        <div class="lab"><small>${g.topic.toUpperCase()}</small>${g.name}${state()&&g.id!=="daily"?` <span style="color:#ffd23a;font-size:12px">${stStr(n)}</span>`:""}</div>${n?`<div class="prog" style="width:${n*33.4}%"></div>`:""}</div>`;
+    }).join("")}</div></div>`;
+  }).join("");
+  document.querySelectorAll(".card").forEach(c => c.onclick = () => {
+    const g = ALL.find(x => x.id === c.dataset.id);
+    if (SEL && SEL.id === g.id) { location.href = g.href; return; }
+    select(g); window.scrollTo({top:0, behavior:"smooth"});
+  });
+}
+function select(g){
+  SEL = g; try{ sessionStorage.setItem("wpspa10sel", g.id); }catch(e){}
+  setBg(g); feat();
+  document.querySelectorAll(".card").forEach(c => c.classList.toggle("sel", c.dataset.id === g.id));
+  if ($("ava")) $("ava").style.setProperty("--glow", g.accent+"cc");
+}
+function render(){ topBar(); hero(); feat(); shelves(); }
+
+/* ===== Navigation ===== */
+document.querySelectorAll(".nav button").forEach(b => b.onclick = () => {
+  const n = b.dataset.n;
+  if (n === "play") { closeShop(); window.scrollTo({top:0,behavior:"smooth"}); return; }
+  if (!state()) { closeShop(); window.scrollTo({top:0,behavior:"smooth"}); if($("msg")) $("msg").textContent="Primero inicia sesión. – Bitte zuerst anmelden."; return; }
+  if (n === "trophies") return openTrophies();
+  tab = 0; openShop(n);
+});
+function setNav(n){ document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.n === n)); }
+
+/* ===== Trophäen ===== */
+function openTrophies(){
+  const s = state(); setNav("trophies"); $("ov").classList.add("show");
+  $("shop").innerHTML = `<div class="row" style="justify-content:space-between"><div class="D" style="font-size:30px">TROFEOS</div><button class="btn small" onclick="closeShop()">✕ Cerrar</button></div>
+    <h3 class="sec">Insignias</h3><div class="ach">${ACH.map(a=>`<div class="${s.stats&&a[3](s)?"":"off"}"><b>${a[0]}</b><span><strong>${a[1]}</strong><br><span class="de" style="font-style:normal">${a[2]}</span></span></div>`).join("")}</div>
+    <h3 class="sec">Top 3</h3>${ALL.filter(g=>g.id!=="daily").map(g=>{const l=SCORES[g.id]||[];return `<div class="trow"><span class="nm">${g.name}</span>${l.length?l.map((x,i)=>`<span class="top3" style="margin:0"><span class="p ${["g","s","b"][i]}"><div>${E8.avatarSVG(x.eq)}</div>#${x.nr}</span></span>`).join(""):`<span class="de">Nobody yet – be the first!</span>`}</div>`}).join("")}`;
 }
 
-/* ---------- Wardrobe ---------- */
-let tab=0, trying=null, busy=false;
+/* ===== Locker & Shop ===== */
+let tab=0, trying=null, busy=false, MODE="shop";
 const MON=["","ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-function seasonText(it){ if(!it.months) return ""; const m=it.months; return "solo "+(m.length===1?MON[m[0]]:MON[m[0]]+"–"+MON[m[m.length-1]]); }
-function openShop(){ const se=E8.getSession(); if(!se) return; trying=E8.clean(se.state.equipped); $("ov").classList.add("show"); drawShop(); window.scrollTo(0,0); }
-function closeShop(){ $("ov").classList.remove("show"); acct(); }
-function isMine(id){ const it=E8.item(id), s=E8.getSession().state; return it.price===0 || s.owned.indexOf(id)>=0; }
+function seasonText(it){ if(!it.months) return ""; const m=it.months; return (m.length===1?MON[m[0]]:MON[m[0]]+"–"+MON[m[m.length-1]])+" solo"; }
+function openShop(mode){ const s=state(); if(!s) return; MODE=mode||"shop"; setNav(MODE); trying=E8.clean(s.equipped); $("ov").classList.add("show"); drawShop(); }
+function closeShop(){ $("ov").classList.remove("show"); setNav("play"); render(); if(SEL) select(SEL); }
+function isMine(id){ const it=E8.item(id), s=state(); return it.price===0 || s.owned.indexOf(id)>=0; }
 function drawShop(msg, ok){
-  const se=E8.getSession(); if(!se){ closeShop(); return; }
-  const s=se.state, worn=E8.clean(s.equipped), lv=s.level||1;
+  const s=state(); if(!s){ closeShop(); return; }
+  const worn=E8.clean(s.equipped), lv=s.level||1;
   const notMine=E8.SLOTS.filter(k=>!isMine(trying[k]));
   const changed=JSON.stringify(trying)!==JSON.stringify(worn);
   let action="";
   if(notMine.length===1){
     const it=E8.item(trying[notMine[0]]), can=E8.inSeason(it), lvOk=!it.lvl||lv>=it.lvl;
-    action=`<button class="btn primary" id="buy" ${(!can||!lvOk||s.coins<it.price)?"disabled":""}>Comprar «${it.name}» por ${it.price} 🪙</button>`;
+    action=`<button class="btn primary" id="buy" ${(!can||!lvOk||s.coins<it.price)?"disabled":""}>Comprar “${it.name}” por ${it.price} 🪙</button>`;
     if(!can) msg=msg||"Ahora no está disponible. – Gerade nicht erhältlich.";
     else if(!lvOk) msg=msg||`🔒 Necesitas el nivel ${it.lvl}. – Dafür brauchst du Level ${it.lvl}.`;
     else if(s.coins<it.price) msg=msg||`Te faltan ${it.price-s.coins} monedas. – Dir fehlen noch ${it.price-s.coins} Münzen.`;
@@ -207,8 +317,8 @@ function drawShop(msg, ok){
   if(changed) action+=` <button class="btn small" id="reset">Deshacer</button>`;
   const slots=E8.TABS[tab][1];
   const sections=slots.map(slot=>{
-    const items=E8.CATALOG.filter(i=>i.slot===slot && ((E8.inSeason(i)&&E8.available(i))||isMine(i.id)));
-    return (slots.length>1?`<h3 style="margin:14px 0 8px">${E8.SLOTNAME[slot]}</h3>`:"")+`<div class="items">`+items.map(i=>{
+    const items=E8.CATALOG.filter(i=>i.slot===slot && (MODE==="locker" ? isMine(i.id) : ((E8.inSeason(i)&&E8.available(i))||isMine(i.id))));
+    return (slots.length>1?`<h3 class="sec">${E8.SLOTNAME[slot]}</h3>`:"")+`<div class="items">`+items.map(i=>{
       const t=Object.assign({},trying,{[slot]:i.id}), r=E8.rarity(i.price), mine=isMine(i.id), locked=i.lvl&&lv<i.lvl&&!mine;
       return `<div class="item ${trying[slot]===i.id?"sel":""} ${worn[slot]===i.id?"wear":""}" data-slot="${slot}" data-id="${i.id}" style="border-top:4px solid ${r.color}">
         ${locked?`<span class="lock">🔒 Nivel ${i.lvl}</span>`:""}
@@ -221,8 +331,8 @@ function drawShop(msg, ok){
     <div class="shoptop">
       <div class="preview">${E8.avatarSVG(trying)}</div>
       <div style="flex:1;min-width:220px">
-        <div class="row" style="justify-content:space-between"><div><span class="coins">${s.coins} 🪙</span> <span class="lvl">Nivel ${lv}</span></div><button class="btn small" id="close">✕ Cerrar</button></div>
-        <p style="margin:8px 0">Toca algo para probártelo. – Tippe auf ein Teil, um es anzuprobieren.</p>
+        <div class="row" style="justify-content:space-between"><div><span class="D" style="font-size:30px">${MODE==="locker"?"TAQUILLA":"TIENDA"}</span> &nbsp;<span class="coins D">🪙 ${s.coins}</span> <span class="lvl">Nivel ${lv}</span></div><button class="btn small" id="close">✕ Cerrar</button></div>
+        <p style="margin:8px 0">${MODE==="locker"?"Tus cosas – toca para ponértelas. – Deine Sachen, tippe zum Anziehen.":"Toca algo para probártelo. – Tippe auf ein Teil, um es anzuprobieren."}</p>
         <div class="row">${action}</div>
         <div class="msg ${ok?"ok":""}" id="smsg">${msg||""}</div>
       </div>
@@ -236,21 +346,98 @@ function drawShop(msg, ok){
   if($("buy")) $("buy").onclick=async()=>{
     if(busy) return; busy=true; $("buy").disabled=true; $("smsg").className="msg ok"; $("smsg").textContent="…";
     const r=await E8.call("buy",{item:trying[notMine[0]]}); busy=false;
-    if(!r.ok){ if(!E8.getSession()) return closeShop(); return drawShop(E8.errText(r.error)); }
+    if(!r.ok){ if(!state()) return closeShop(); return drawShop(E8.errText(r.error)); }
     const r2=await E8.call("equip",{equipped:trying});
     drawShop(r2.ok?"🎉 ¡Comprado y guardado!":E8.errText(r2.error), r2.ok);
   };
   if($("wear")) $("wear").onclick=async()=>{
     if(busy) return; busy=true; $("wear").disabled=true;
     const r=await E8.call("equip",{equipped:trying}); busy=false;
-    if(!r.ok && !E8.getSession()) return closeShop();
+    if(!r.ok && !state()) return closeShop();
     drawShop(r.ok?"✔ ¡Guardado!":E8.errText(r.error), r.ok);
   };
 }
 
-acct();
-if(E8.online()) E8.api("scores",{}).then(r=>{ if(r.ok){ SCORES=r.scores; if(E8.getSession()) acct(); else games(); } });
-if(E8.getSession()) E8.call("login").then(()=>acct());
+
+
+/* ===== Eigene PIN ===== */
+function afterLogin(){
+  const s = state();
+  if (s && s.fresh){ tab=0; openShop("shop"); drawShop("👋 ¡Bienvenido/a! Primero crea tu avatar – aquí todo es gratis. – Gestalte zuerst deinen Avatar, alles hier ist kostenlos.",true); }
+}
+function pinDialog(first){
+  $("pinbox").innerHTML = `<div style="font-size:46px">🔑</div><h2 class="D" style="margin:4px 0">${first?"ELIGE TU PROPIO PIN":"CAMBIA TU PIN"}</h2>
+    <p>${first?"El PIN de tu profe era solo para el primer login. Ahora elige tu propio PIN de 4 cifras.":"Elige un PIN nuevo de 4 cifras."}</p>
+    <div class="de">${first?"Die PIN von deiner Lehrkraft war nur für das erste Mal. Wähle jetzt deine eigene PIN, die du dir merken kannst. ":""}Nicht 1234, nicht 1111, nicht deine Nummer.</div>
+    <label>PIN NUEVO</label><input id="np1" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
+    <label>OTRA VEZ – noch einmal</label><input id="np2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
+    <div class="msg" id="pmsg" style="min-height:22px;margin:8px 0"></div>
+    <div class="row" style="justify-content:center"><button class="btn primary" id="psave">GUARDAR ✔</button>${first?"":`<button class="btn" id="pcancel">Cancelar</button>`}</div>`;
+  $("pinov").classList.add("show"); setTimeout(()=>$("np1").focus(),50);
+  if ($("pcancel")) $("pcancel").onclick = () => $("pinov").classList.remove("show");
+  $("np2").addEventListener("keydown",e=>{ if(e.key==="Enter") $("psave").click(); });
+  $("psave").onclick = async () => {
+    const a=$("np1").value.trim(), b=$("np2").value.trim(), m=$("pmsg");
+    m.className="msg";
+    if(!/^\d{4}$/.test(a)){ m.textContent="4 cifras, por favor. – Bitte 4 Ziffern."; return; }
+    if(a!==b){ m.textContent=E8.errText("pinmatch"); return; }
+    $("psave").disabled=true; m.className="msg ok"; m.textContent="Guardando …";
+    const r = await E8.setPin(a); $("psave").disabled=false;
+    if(!r.ok){ m.className="msg"; m.textContent=E8.errText(r.error); return; }
+    $("pinbox").innerHTML = `<div style="font-size:46px">✅</div><h2 class="D">¡PIN GUARDADO!</h2><p>¡No lo olvides! La próxima vez entra con tu número y tu PIN nuevo.</p><div class="de">Merk sie dir gut! Ab jetzt meldest du dich mit deiner neuen PIN an.</div><div class="row" style="justify-content:center;margin-top:12px"><button class="btn primary" id="pok">OK ▶</button></div>`;
+    $("pok").onclick = () => { $("pinov").classList.remove("show"); render(); if(first) afterLogin(); };
+  };
+}
+
+/* ===== Tutorial ===== */
+const TOUR = [
+  {sel:null, t:"¡BIENVENIDO/A!", p:"Aquí practicas español con juegos, ganas monedas, subes de nivel y vistes a tu avatar. ¡Vamos a ver cómo funciona!", de:"Hier übst du Spanisch mit Spielen, sammelst Münzen und gestaltest deinen Avatar. Kurze Tour!"},
+  {sel:"#hero", t:"TÚ", p:"Este es tu avatar. Inicia sesión con tu <b>número</b> y el <b>PIN de 4 cifras</b> de tu profe. La primera vez eliges tu <b>propio PIN</b>. Sin login puedes jugar, pero no ganas monedas.", de:"Beim ersten Login wählst du deine eigene PIN. Ohne Login kannst du spielen, bekommst aber keine Münzen."},
+  {sel:".lobby .feat", t:"TU JUEGO", p:"Aquí ves el juego elegido. Pulsa <b>JUGAR</b> para empezar. Solo sigues cuando la respuesta es correcta – los errores vuelven más tarde.", de:"Mit JUGAR startest du. Du kommst nur weiter, wenn alles richtig ist."},
+  {sel:"#shelves .shelf:nth-child(2)", t:"TODOS LOS JUEGOS", p:"Los juegos están ordenados por unidad: jefes de vocabulario y misiones. Toca un juego <b>una vez</b> para verlo y <b>otra vez</b> para jugar.", de:"Einmal tippen = ansehen, nochmal tippen = spielen. Wische die Reihen zur Seite."},
+  {sel:".strip .card[data-id='daily']", t:"RETO DEL DÍA", p:"Cada día hay un jefe nuevo con 10 palabras de todas las unidades. ¡Juega cada día y gana monedas extra!", de:"Jeden Tag neu – Münzen gibt es einmal am Tag."},
+  {sel:"#top", t:"MONEDAS Y NIVEL", p:"La primera vez: 20–40 monedas (más estrellas = más monedas). Juega otra vez y consigue más estrellas para ganar más. Cada moneda te da también XP para tu <b>nivel</b>.", de:"Mehr Sterne = mehr Münzen. Mit Münzen steigst du auch im Level auf – Level schalten besondere Shop-Teile frei."},
+  {sel:".nav", t:"TAQUILLA, TIENDA Y TROFEOS", p:"<b>Tienda</b>: compra ropa, sombreros, mascotas y efectos locos. <b>Taquilla</b>: cambia tu look. <b>Trofeos</b>: tus insignias y el top 3 de cada juego.", de:"In der Tienda kaufst du, in der Taquilla ziehst du dich um, bei Trofeos siehst du Abzeichen und Bestenlisten."},
+  {sel:null, t:"¡UNA COSA MÁS!", p:"En un iPad del cole, pulsa siempre <b>Salir</b> al terminar. ¡Y ahora – a jugar! 🎮", de:"Auf Schul-iPads am Ende immer abmelden! Viel Spaß!"}
+];
+let TI = 0;
+function tour(){ TI = 0; $("tour").classList.add("show"); window.scrollTo(0,0); tourStep(); }
+function tourEnd(){ $("tour").classList.remove("show"); }
+function tourStep(){
+  const s = TOUR[TI], el = s.sel && document.querySelector(s.sel), hole = $("hole"), tip = $("tip");
+  if (el) { el.scrollIntoView({block:"center", behavior:"instant"}); }
+  setTimeout(() => {
+    const vw = innerWidth, vh = innerHeight;
+    if (el) { const r = el.getBoundingClientRect(), p = 8; Object.assign(hole.style,{left:(r.left-p)+"px",top:(r.top-p)+"px",width:(r.width+2*p)+"px",height:Math.min(r.height+2*p,vh-20)+"px"}); }
+    else Object.assign(hole.style,{left:(vw/2)+"px",top:(vh/2)+"px",width:"0px",height:"0px"});
+    tip.innerHTML = `<div class="steps">${TI+1} / ${TOUR.length}</div><h4 class="D">${s.t}</h4><p>${s.p}</p><span class="de">${s.de}</span>
+      <div class="row"><button class="btn primary" id="tn">${TI===TOUR.length-1?"¡Vamos! ▶":"Siguiente ▶"}</button>${TI>0?`<button class="btn" id="tb">◀ Atrás</button>`:""}<button class="btn small" id="ts" style="margin-left:auto">Saltar</button></div>`;
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    let L, T;
+    if (el) { const r = el.getBoundingClientRect();
+      L = Math.min(Math.max(12, r.left), vw - tw - 12);
+      if (r.bottom + 16 + th < vh) { T = r.bottom + 16; }
+      else if (r.top - 16 - th > 0) { T = r.top - 16 - th; }
+      else if (r.right + 16 + tw < vw) { L = r.right + 16; T = Math.max(12, Math.min(r.top, vh - th - 12)); }
+      else if (r.left - 16 - tw > 0) { L = r.left - 16 - tw; T = Math.max(12, Math.min(r.top, vh - th - 12)); }
+      else { T = vh - th - 80; }
+    } else { L = (vw - tw) / 2; T = (vh - th) / 2; }
+    Object.assign(tip.style,{left:L+"px",top:Math.max(12,T)+"px"});
+    $("tn").onclick = () => { if (TI < TOUR.length-1) { TI++; tourStep(); } else tourEnd(); };
+    if ($("tb")) $("tb").onclick = () => { TI--; tourStep(); };
+    $("ts").onclick = tourEnd;
+  }, el ? 60 : 0);
+}
+
+/* ===== Start ===== */
+(function(){
+  let pre = null; try{ pre = sessionStorage.getItem("wpspa10sel"); }catch(e){}
+  SEL = ALL.find(g => g.id === pre) || ALL.find(g => g.isNew) || ALL[0];
+  render(); setBg(SEL);
+  if (E8.online()) E8.api("scores",{}).then(r => { if (r.ok) { SCORES = r.scores; feat(); if (state()) hero(); } });
+  if (state()) E8.call("login").then(() => { topBar(); hero(); feat(); shelves(); const s = state(); if (s && s.mustSetPin) pinDialog(true); });
+  if (location.hash === "#tour") setTimeout(tour, 600);
+})();
 </script>
 </body>
 </html>

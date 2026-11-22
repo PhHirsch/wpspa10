@@ -36,6 +36,13 @@
     if (r.ok) setSession({ nr: String(nr).trim(), pin: String(pin).trim(), state: r.state });
     return r;
   }
+  async function setPin(newpin) {
+    const s = getSession();
+    if (!s) return { ok: false, error: "nologin" };
+    const r = await api("setpin", { nr: s.nr, pin: s.pin, newpin: String(newpin).trim() });
+    if (r.ok) { s.pin = String(newpin).trim(); s.state = r.state; setSession(s); }
+    return r;
+  }
   async function call(action, extra) {
     const s = getSession();
     if (!s) return { ok: false, error: "nologin" };
@@ -53,6 +60,9 @@
       coins: "No tienes suficientes monedas. – Nicht genug Münzen.",
       nologin: "Inicia sesión en la página principal. – Bitte auf der Startseite anmelden.",
       server: "Error del servidor. Inténtalo otra vez. – Serverfehler, versuch es nochmal.",
+      weakpin: "Este PIN es demasiado fácil. Elige otro. – Diese PIN ist zu leicht zu erraten.",
+      samepin: "Elige un PIN nuevo, no el antiguo. – Wähle eine neue PIN, nicht die alte.",
+      pinmatch: "Los dos PIN no son iguales. – Die beiden PINs sind nicht gleich.",
       level: "Necesitas un nivel más alto. – Dafür brauchst du ein höheres Level."
     })[e] || ("Error: " + e);
   }
@@ -422,5 +432,5 @@
   }
 
   function myAvatar() { const s = getSession(); return avatarSVG(s && s.state ? s.state.equipped : null); }
-  window.E8 = { CATALOG: CATALOG, SLOTS: SLOTS, TABS: TABS, SLOTNAME: SLOTNAME, DEFAULT: DEFAULT, LEVEL_XP: LEVEL_XP, getSession: getSession, login: login, logout: logout, call: call, api: api, errText: errText, reportInto: reportInto, avatarSVG: avatarSVG, myAvatar: myAvatar, clean: clean, rarity: rarity, inSeason: inSeason, levelInfo: levelInfo, item: id => byId[id], ACTIVE_UNITS: ACTIVE_UNITS, available: i => !i.unit || ACTIVE_UNITS.indexOf(i.unit) >= 0, online: () => !!API_URL && API_URL.indexOf("/*") !== 0 };
+  window.E8 = { CATALOG: CATALOG, SLOTS: SLOTS, TABS: TABS, SLOTNAME: SLOTNAME, DEFAULT: DEFAULT, LEVEL_XP: LEVEL_XP, getSession: getSession, login: login, setPin: setPin, logout: logout, call: call, api: api, errText: errText, reportInto: reportInto, avatarSVG: avatarSVG, myAvatar: myAvatar, clean: clean, rarity: rarity, inSeason: inSeason, levelInfo: levelInfo, item: id => byId[id], ACTIVE_UNITS: ACTIVE_UNITS, available: i => !i.unit || ACTIVE_UNITS.indexOf(i.unit) >= 0, online: () => !!API_URL && API_URL.indexOf("/*") !== 0 };
 })();
