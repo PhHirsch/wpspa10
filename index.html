@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Español WP 10 – ¡A practicar!</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#0f2328;color:#faf2ee;padding:24px 16px 40px;font-size:17px}
+  .wrap{max-width:960px;margin:0 auto}
+  h1{font-size:32px;margin:0 0 4px}
+  h2{font-size:24px;margin:30px 0 4px}
+  h4{font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:#a9cfd0;margin:18px 0 10px}
+  .sub{color:#a9cfd0;margin:0 0 20px}
+  .box{background:#173a40;border-radius:16px;padding:18px;margin-bottom:22px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  input{font-size:22px;padding:10px 12px;border-radius:10px;border:2px solid #3f7178;background:#0a191d;color:#fff;width:120px;text-align:center}
+  label{font-size:14px;color:#a9cfd0;display:block;margin-bottom:4px}
+  .btn{font-size:18px;padding:11px 20px;border-radius:12px;border:2px solid #4a8088;background:#22525a;color:#fff;cursor:pointer;font-weight:600}
+  .btn.primary{background:#f2c230;border-color:#f2c230;color:#2a2200}
+  .btn.small{font-size:15px;padding:7px 12px}
+  .btn:disabled{opacity:.45}
+  .msg{min-height:22px;margin-top:8px;font-weight:600;color:#ff8a8a}
+  .msg.ok{color:#7dffb0}
+  .me{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .av{width:120px;border-radius:14px;overflow:hidden;flex:none;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+  .coins{font-size:26px;font-weight:800;color:#f2c230}
+  .lvl{display:inline-block;background:#e0673a;border-radius:20px;padding:3px 12px;font-weight:800;font-size:15px}
+  .xp{height:10px;border-radius:6px;background:#0a191d;overflow:hidden;margin-top:6px;width:240px;max-width:100%}
+  .xp i{display:block;height:100%;background:linear-gradient(90deg,#2fb5a4,#f2c230)}
+  .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .badge{display:flex;align-items:center;gap:6px;background:#0a191d;border-radius:20px;padding:4px 10px 4px 6px;font-size:13px;border:1px solid #2f5e64}
+  .badge b{font-size:18px}
+  .badge.off{opacity:.35;filter:grayscale(1)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+  a.tile{display:block;text-decoration:none;color:inherit;border-radius:16px;padding:18px;min-height:170px;position:relative;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  a.tile:active{transform:scale(.98)}
+  .icon{font-size:44px;line-height:1}
+  .bossimg{width:76px;height:76px;float:right;margin:-4px -4px 0 6px}
+  .topic{display:inline-block;margin-top:10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:20px}
+  .name{font-size:21px;font-weight:700;margin-top:8px}
+  .info{font-size:14px;opacity:.85;margin-top:4px}
+  .stars{font-size:18px;letter-spacing:2px;margin-top:8px}
+  .top3{display:flex;gap:6px;margin-top:10px;align-items:center;font-size:12px}
+  .top3 .p{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .top3 .p div{width:34px;height:34px;border-radius:50%;overflow:hidden;border:2px solid #fff3}
+  .top3 .p.g div{border-color:#f2c230}.top3 .p.s div{border-color:#c9d2e3}.top3 .p.b div{border-color:#d08a4a}
+  .de{font-size:14px;color:#a9cfd0;font-style:italic}
+  /* wardrobe */
+  .ov{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;z-index:10;overflow:auto;padding:16px}
+  .ov.show{display:block}
+  .shop{max-width:960px;margin:0 auto;background:#173a40;border-radius:16px;padding:18px}
+  .shoptop{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+  .preview{width:180px;border-radius:16px;overflow:hidden;flex:none}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+  .tab{font-size:15px;padding:7px 12px;border-radius:20px;border:2px solid #3f7178;background:transparent;color:#fff;cursor:pointer}
+  .tab.on{background:#f2c230;border-color:#f2c230;color:#2a2200;font-weight:700}
+  .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+  .item{background:#0a191d;border:3px solid transparent;border-radius:12px;padding:6px;cursor:pointer;text-align:center;font-size:14px;color:#fff;position:relative}
+  .item .mini{border-radius:8px;overflow:hidden}
+  .item.sel{border-color:#f2c230}
+  .item.wear{box-shadow:0 0 0 2px #7dffb0 inset}
+  .item .lock{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.75);border-radius:10px;padding:2px 8px;font-size:12px;font-weight:700}
+  .price{font-weight:700;color:#f2c230}
+  .price.own{color:#7dffb0}
+  .iname{font-weight:600;margin-top:4px;line-height:1.2}
+  .rar{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:2px 0}
+  h3{font-size:17px;color:#c9d2e3}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🇪🇸 Español WP 10</h1>
+  <p class="sub">Apúntate 2 · ¡Elige un juego! – Wähle eine Übung.</p>
+  <div class="box" id="acct"></div>
+  <div id="games"></div>
+</div>
+<div class="ov" id="ov"><div class="shop" id="shop"></div></div>
+
+<script src="game.js?v=1"></script>
+<script src="bosses.js?v=1"></script>
+<script>window.VOCAB = window.VOCAB || {};</script>
+<script>
+/* Grammatik- und Story-Spiele (id = Spiel-ID). Vokabel-Bosse kommen automatisch aus vocab-*.js */
+const GRAMMAR = [];
+/* Überschriften der Unidades (Schlüssel wie in vocab-*.js bzw. GRAMMAR.unit) */
+const UNITS = {u1:"Unidad 1",u2:"Unidad 2",u3:"Unidad 3",u4:"Unidad 4",u5:"Unidad 5",u6:"Unidad 6"};
+const BOSSCOL = {tornado:"linear-gradient(135deg,#3a4256,#6a7a96)",robot:"linear-gradient(135deg,#2a3a4a,#4a6a8a)",ghost:"linear-gradient(135deg,#2a2a5a,#5a5aa0)",bossy:"linear-gradient(135deg,#5a1e1a,#a0402a)",slime:"linear-gradient(135deg,#1e4a24,#3f8a2a)",manager:"linear-gradient(135deg,#2e1d5a,#6a3cb0)",locker:"linear-gradient(135deg,#12305a,#2a68b8)"};
+const $ = id => document.getElementById(id);
+let SCORES = {};
+
+/* ---------- Erfolge ---------- */
+const BOSS_IDS = Object.values(VOCAB).flatMap(u => u.sections.map(s => s.id));
+const BOSS_UNITS = Object.keys(VOCAB).map(k => VOCAB[k].sections.map(x => x.id));
+const ACH = [
+  ["🎯","Primeros pasos","Termina tu primer juego – Erstes Spiel beendet", s => s.stats.plays >= 1],
+  ["⭐","¡Perfecto!","3 estrellas en un juego – 3 Sterne in einem Spiel", s => Object.values(s.stars).some(x => x >= 3)],
+  ["🐝","Abeja trabajadora","Juega 5 juegos diferentes – 5 verschiedene Spiele", s => Object.keys(s.stars).length >= 5],
+  ["🚀","Imparable","Juega 10 juegos diferentes – 10 verschiedene Spiele", s => Object.keys(s.stars).length >= 10],
+  ["🌟","Coleccionista","Consigue 25 estrellas – 25 Sterne sammeln", s => Object.values(s.stars).reduce((a,b)=>a+b,0) >= 25],
+  ["⚔️","Cazajefes","Derrota a tu primer jefe – Ersten Boss besiegt", s => Object.keys(s.stars).some(g => g.indexOf("boss-") === 0)],
+  ["👑","Terror de los jefes","Derrota a todos los jefes de una unidad – Alle Bosse einer Unidad", s => BOSS_UNITS.some(l => l.length > 0 && l.every(i => s.stars[i]))],
+  ["🏠","Héroe de los deberes","Practica en casa (tarde/fin de semana) – Zu Hause geübt", s => s.stats.home],
+  ["💪","Nunca te rindas","Repite un juego y consigue más estrellas – Verbessert", s => s.stats.improved],
+  ["📅","Cada día","Juega 5 retos diarios – 5 Tages-Challenges", s => s.stats.daily >= 5],
+  ["🏆","Salón de la fama","Entra en un top 3 – In einer Top 3", s => Object.values(SCORES).some(l => l.some(x => x.nr === s.nr))],
+  ["💎","Pro","Llega al nivel 5 – Level 5 erreicht", s => s.level >= 5]
+];
+
+/* ---------- Spiele ---------- */
+function starsOf(id){ const se=E8.getSession(); if(!se || id==="daily") return ""; const n=se.state.stars[id]||0; return `<div class="stars">${"⭐".repeat(n)}${"☆".repeat(3-n)}</div>`; }
+function top3(id){
+  const l = SCORES[id]; if(!l || !l.length) return "";
+  return `<div class="top3">🏆 ${l.map((x,i)=>`<span class="p ${["g","s","b"][i]}"><div>${E8.avatarSVG(x.eq)}</div>#${x.nr}</span>`).join("")}</div>`;
+}
+function tile(o){
+  return `<a class="tile" href="${o.href}" style="background:${o.color}">${o.img||""}<div class="icon">${o.icon||""}</div>
+    <div class="topic">${o.topic}</div><div class="name">${o.name}</div><div class="info">${o.info}</div>${starsOf(o.id)}${top3(o.id)}</a>`;
+}
+function games(){
+  let h = "";
+  const se = E8.getSession();
+  const done = se && se.state.stats && se.state.stats.dailyToday;
+  if (BOSS_IDS.length) h += `<div class="grid" style="margin-bottom:8px">${tile({id:"daily",href:"boss.html?id=daily",color:"linear-gradient(135deg,#7a2a8a,#e0533a)",icon:"🔥",topic:"Reto del día",name:"El jefe del día",info:(done?"✔ ¡Hecho hoy! Puedes seguir practicando. – Heute schon erledigt.":"10 palabras al azar · cada día nuevo · hasta 15 🪙")})}</div>`;
+  const keys = [...new Set(Object.keys(UNITS).concat(Object.keys(VOCAB), GRAMMAR.map(g => g.unit)))];
+  keys.forEach(key => {
+    const u = VOCAB[key], gr = GRAMMAR.filter(g => g.unit === key);
+    if (!u && !gr.length) return;
+    h += `<h2>${u ? u.unit : (UNITS[key] || key)}</h2>`;
+    if (u) [...new Set(u.sections.map(s => s.part))].forEach(p => {
+      h += `<h4>${p}</h4><div class="grid">` + u.sections.filter(s => s.part === p).map(s => tile({id:s.id, href:"boss.html?id="+s.id, color:BOSSCOL[s.boss]||"#333", img:`<div class="bossimg">${BOSSART[s.boss]}</div>`, topic:"Jefe de vocabulario", name:s.title, info:`${s.bossName} · ${s.words.length} palabras<br>${s.pages}`})).join("") + `</div>`;
+    });
+    if (gr.length) h += `<h4>Gramática y más</h4><div class="grid">` + gr.map(g => tile({id:g.id, href:g.file, color:g.color, icon:g.icon, topic:g.topic, name:g.name, info:g.info})).join("") + `</div>`;
+  });
+  if (!h) h = `<div class="box"><b>¡Pronto hay juegos aquí! 🎲</b><div class="de">Hier erscheinen bald die ersten Spiele.</div></div>`;
+  $("games").innerHTML = h;
+}
+
+/* ---------- Konto ---------- */
+function acct(){
+  const se = E8.getSession();
+  if(!E8.online()){ $("acct").style.display="none"; games(); return; }
+  if(!se){
+    $("acct").innerHTML = `
+      <b>¡Inicia sesión para ganar monedas 🪙 y vestir a tu avatar!</b>
+      <div class="de">Melde dich an, um Münzen zu sammeln und deinen Avatar einzukleiden.</div>
+      <div class="row" style="margin-top:12px;align-items:flex-end">
+        <div><label>Número</label><input id="nr" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></div>
+        <div><label>PIN</label><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></div>
+        <button class="btn primary" id="go">Entrar</button>
+      </div>
+      <div class="msg" id="msg"></div>
+      <div class="de">También puedes jugar sin iniciar sesión, pero sin monedas. – Ohne Anmeldung spielen geht auch, aber ohne Münzen.</div>`;
+    $("go").onclick = async ()=>{
+      const nr=$("nr").value.trim(), pin=$("pin").value.trim();
+      if(!nr||pin.length!==4){ $("msg").textContent="Escribe tu número y tu PIN de 4 cifras. – Nummer und vierstellige PIN eingeben."; return; }
+      $("go").disabled=true; $("msg").className="msg ok"; $("msg").textContent="Comprobando …";
+      const r = await E8.login(nr,pin);
+      $("go").disabled=false;
+      if(r.ok){ acct(); if(r.state.fresh){ tab=0; openShop(); drawShop("👋 ¡Bienvenido/a! Primero crea tu avatar, aquí todo es gratis. – Gestalte zuerst deinen Avatar, alles hier ist kostenlos.",true); } }
+      else { $("msg").className="msg"; $("msg").textContent=E8.errText(r.error); }
+    };
+    $("pin").addEventListener("keydown",e=>{ if(e.key==="Enter") $("go").click(); });
+  } else {
+    const s = se.state, L = E8.levelInfo(s.xp||0);
+    const badges = ACH.map(a => { const on = s.stats && a[3](s); return `<span class="badge ${on?"":"off"}" title="${a[2]}"><b>${a[0]}</b>${a[1]}</span>`; }).join("");
+    $("acct").innerHTML = `<div class="me">
+      <div class="av">${E8.avatarSVG(s.equipped)}</div>
+      <div style="flex:1;min-width:240px"><div style="font-size:20px;font-weight:700">Jugador/a n.º ${s.nr} <span class="lvl">Nivel ${L.level} · ${L.name}</span></div>
+        <div class="xp"><i style="width:${L.pct}%"></i></div>
+        <div class="de" style="font-style:normal">${L.next ? `${s.xp||0} / ${L.next} XP hasta el nivel ${L.level+1}` : `${s.xp} XP – ¡nivel máximo!`}</div>
+        <div class="coins" style="margin-top:6px">${s.coins} 🪙</div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="wardrobe">👕 Armario y tienda</button>
+          <button class="btn small" id="out">Salir</button>
+        </div>
+        <div class="de" style="margin-top:6px">¡Cierra la sesión cuando termines! – Bitte abmelden, wenn du fertig bist!</div>
+      </div></div>
+      <div class="badges">${badges}</div>`;
+    $("out").onclick=()=>{ E8.logout(); acct(); };
+    $("wardrobe").onclick=openShop;
+  }
+  games();
+}
+
+/* ---------- Wardrobe ---------- */
+let tab=0, trying=null, busy=false;
+const MON=["","ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+function seasonText(it){ if(!it.months) return ""; const m=it.months; return "solo "+(m.length===1?MON[m[0]]:MON[m[0]]+"–"+MON[m[m.length-1]]); }
+function openShop(){ const se=E8.getSession(); if(!se) return; trying=E8.clean(se.state.equipped); $("ov").classList.add("show"); drawShop(); window.scrollTo(0,0); }
+function closeShop(){ $("ov").classList.remove("show"); acct(); }
+function isMine(id){ const it=E8.item(id), s=E8.getSession().state; return it.price===0 || s.owned.indexOf(id)>=0; }
+function drawShop(msg, ok){
+  const se=E8.getSession(); if(!se){ closeShop(); return; }
+  const s=se.state, worn=E8.clean(s.equipped), lv=s.level||1;
+  const notMine=E8.SLOTS.filter(k=>!isMine(trying[k]));
+  const changed=JSON.stringify(trying)!==JSON.stringify(worn);
+  let action="";
+  if(notMine.length===1){
+    const it=E8.item(trying[notMine[0]]), can=E8.inSeason(it), lvOk=!it.lvl||lv>=it.lvl;
+    action=`<button class="btn primary" id="buy" ${(!can||!lvOk||s.coins<it.price)?"disabled":""}>Comprar «${it.name}» por ${it.price} 🪙</button>`;
+    if(!can) msg=msg||"Ahora no está disponible. – Gerade nicht erhältlich.";
+    else if(!lvOk) msg=msg||`🔒 Necesitas el nivel ${it.lvl}. – Dafür brauchst du Level ${it.lvl}.`;
+    else if(s.coins<it.price) msg=msg||`Te faltan ${it.price-s.coins} monedas. – Dir fehlen noch ${it.price-s.coins} Münzen.`;
+  } else if(notMine.length>1){ msg=msg||"Te estás probando varias cosas que no tienes. Cómpralas una a una. – Mehrere Teile sind noch nicht gekauft."; }
+  else if(changed) action=`<button class="btn primary" id="wear">✔ Guardar mi look</button>`;
+  if(changed) action+=` <button class="btn small" id="reset">Deshacer</button>`;
+  const slots=E8.TABS[tab][1];
+  const sections=slots.map(slot=>{
+    const items=E8.CATALOG.filter(i=>i.slot===slot && ((E8.inSeason(i)&&E8.available(i))||isMine(i.id)));
+    return (slots.length>1?`<h3 style="margin:14px 0 8px">${E8.SLOTNAME[slot]}</h3>`:"")+`<div class="items">`+items.map(i=>{
+      const t=Object.assign({},trying,{[slot]:i.id}), r=E8.rarity(i.price), mine=isMine(i.id), locked=i.lvl&&lv<i.lvl&&!mine;
+      return `<div class="item ${trying[slot]===i.id?"sel":""} ${worn[slot]===i.id?"wear":""}" data-slot="${slot}" data-id="${i.id}" style="border-top:4px solid ${r.color}">
+        ${locked?`<span class="lock">🔒 Nivel ${i.lvl}</span>`:""}
+        <div class="mini">${E8.avatarSVG(t)}</div><div class="iname">${i.name}</div>
+        <div class="rar" style="color:${r.color}">${i.price?r.name:"&nbsp;"}${i.unit?" · Unidad "+i.unit:""}${i.months?" · "+seasonText(i):""}</div>
+        <div class="price ${mine?"own":""}">${i.price===0?"gratis":mine?"✔ tuyo":i.price+" 🪙"}</div></div>`;
+    }).join("")+`</div>`;
+  }).join("");
+  $("shop").innerHTML = `
+    <div class="shoptop">
+      <div class="preview">${E8.avatarSVG(trying)}</div>
+      <div style="flex:1;min-width:220px">
+        <div class="row" style="justify-content:space-between"><div><span class="coins">${s.coins} 🪙</span> <span class="lvl">Nivel ${lv}</span></div><button class="btn small" id="close">✕ Cerrar</button></div>
+        <p style="margin:8px 0">Toca algo para probártelo. – Tippe auf ein Teil, um es anzuprobieren.</p>
+        <div class="row">${action}</div>
+        <div class="msg ${ok?"ok":""}" id="smsg">${msg||""}</div>
+      </div>
+    </div>
+    <div class="tabs">${E8.TABS.map(([n],i)=>`<button class="tab ${i===tab?"on":""}" data-i="${i}">${n}</button>`).join("")}</div>
+    ${sections}`;
+  $("close").onclick=closeShop;
+  if($("reset")) $("reset").onclick=()=>{trying=E8.clean(s.equipped);drawShop();};
+  document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{tab=+b.dataset.i;drawShop();});
+  document.querySelectorAll(".item").forEach(b=>b.onclick=()=>{trying[b.dataset.slot]=b.dataset.id;drawShop();});
+  if($("buy")) $("buy").onclick=async()=>{
+    if(busy) return; busy=true; $("buy").disabled=true; $("smsg").className="msg ok"; $("smsg").textContent="…";
+    const r=await E8.call("buy",{item:trying[notMine[0]]}); busy=false;
+    if(!r.ok){ if(!E8.getSession()) return closeShop(); return drawShop(E8.errText(r.error)); }
+    const r2=await E8.call("equip",{equipped:trying});
+    drawShop(r2.ok?"🎉 ¡Comprado y guardado!":E8.errText(r2.error), r2.ok);
+  };
+  if($("wear")) $("wear").onclick=async()=>{
+    if(busy) return; busy=true; $("wear").disabled=true;
+    const r=await E8.call("equip",{equipped:trying}); busy=false;
+    if(!r.ok && !E8.getSession()) return closeShop();
+    drawShop(r.ok?"✔ ¡Guardado!":E8.errText(r.error), r.ok);
+  };
+}
+
+acct();
+if(E8.online()) E8.api("scores",{}).then(r=>{ if(r.ok){ SCORES=r.scores; if(E8.getSession()) acct(); else games(); } });
+if(E8.getSession()) E8.call("login").then(()=>acct());
+</script>
+</body>
+</html>

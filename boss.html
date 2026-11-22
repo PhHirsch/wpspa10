@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Jefe de vocabulario</title>
+<style>
+  :root{--bg:#120e22;--panel:#1f1838;--txt:#f2eefe;--muted:#a99fc8;--ok:#4cff9a;--bad:#ff5a6e;--gold:#f2c230;--cyan:#4fe3ff}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#3a2a6a 0%,var(--bg) 60%);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:18px;padding-bottom:40px}
+  main{max-width:820px;margin:0 auto;padding:12px 14px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  a.back{color:var(--muted);text-decoration:none;font-size:15px}
+  .panel{background:var(--panel);border:1px solid #3a2e66;border-radius:16px;padding:18px;margin-top:12px;box-shadow:0 14px 40px rgba(0,0,0,.4)}
+  h1{font-size:30px;margin:6px 0}
+  .de{color:var(--muted);font-size:15px;font-style:italic}
+  .arena{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:10px;min-height:200px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.08));border-radius:16px;padding:14px 18px 10px;overflow:hidden}
+  .arena:after{content:"";position:absolute;left:0;right:0;bottom:0;height:22px;background:rgba(0,0,0,.25)}
+  .hero{width:130px;border-radius:50%;overflow:hidden;border:4px solid var(--cyan);box-shadow:0 0 20px rgba(79,227,255,.4);flex:none;z-index:1;background:#000}
+  .boss{width:200px;flex:none;z-index:1;transition:filter .2s}
+  .boss.hit{animation:hit .4s}
+  .hero.hurt{animation:hurt .45s}
+  @keyframes hit{0%,100%{transform:translateX(0)}20%{transform:translateX(14px) rotate(4deg);filter:brightness(2.2)}60%{transform:translateX(-6px)}}
+  @keyframes hurt{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(8px)}}
+  .shot{position:absolute;left:150px;bottom:80px;font-size:34px;z-index:2;animation:shot .45s ease-in forwards;pointer-events:none}
+  @keyframes shot{to{transform:translateX(calc(var(--d) * 1px)) rotate(360deg);opacity:.4}}
+  .zap{position:absolute;right:200px;bottom:90px;font-size:34px;z-index:2;animation:zap .45s ease-in forwards;pointer-events:none}
+  @keyframes zap{to{transform:translateX(calc(var(--d) * -1px));opacity:.3}}
+  .flash{position:fixed;inset:0;background:rgba(255,60,80,.25);pointer-events:none;animation:fl .4s forwards;z-index:5}
+  @keyframes fl{to{opacity:0}}
+  .hpwrap{flex:1;min-width:220px}
+  .hpname{font-weight:800;font-size:17px;display:flex;justify-content:space-between}
+  .hp{height:18px;border-radius:10px;background:#2c2350;overflow:hidden;border:1px solid #4a3c80;margin-top:4px}
+  .hp i{display:block;height:100%;background:linear-gradient(90deg,#ff3a5a,#ff9a3a);transition:width .4s}
+  .q{font-size:26px;font-weight:700;margin:6px 0 4px;text-align:center}
+  .qsub{text-align:center;color:var(--muted);font-size:15px}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  @media(max-width:560px){.opts{grid-template-columns:1fr}.boss{width:140px}.hero{width:96px}}
+  .btn{font-size:20px;padding:14px 16px;border-radius:12px;border:2px solid #4a3c80;background:#2a2150;color:var(--txt);cursor:pointer;font-weight:600}
+  .btn:active{transform:translateY(2px)}
+  .btn.primary{background:var(--gold);border-color:var(--gold);color:#2a2000}
+  .btn.right{border-color:var(--ok);background:#0f3a26;color:var(--ok)}
+  .btn.wrong{border-color:var(--bad);background:#3a0f1c;color:var(--bad);animation:hurt .35s}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+  .acc{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px}.acc button{font-size:20px;min-width:44px;padding:8px;border-radius:10px;border:2px solid #4a3c80;background:#2a2150;color:var(--txt)}
+  input.ty{font-size:24px;padding:12px 14px;border-radius:12px;border:2px solid var(--cyan);background:#130f26;color:var(--txt);width:100%;max-width:420px;text-align:center}
+  .hint{font-family:Menlo,Consolas,monospace;letter-spacing:.25em;color:var(--gold);text-align:center;margin-top:6px;font-size:20px}
+  .fb{min-height:28px;margin-top:12px;font-weight:700;text-align:center}
+  .fb.good{color:var(--ok)} .fb.bad{color:var(--bad)}
+  .center{text-align:center}
+  .list{columns:2;font-size:16px;margin:10px 0;padding-left:18px}
+  @media(max-width:560px){.list{columns:1}}
+  .small{font-size:14px;color:var(--muted)}
+  .stat{display:inline-block;background:#2a2150;border-radius:10px;padding:6px 12px;margin:4px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=1"></script>
+<script src="bosses.js?v=1"></script>
+<script>window.VOCAB = window.VOCAB || {};</script>
+<script>
+const $ = id => document.getElementById(id);
+const P = new URLSearchParams(location.search);
+const GAME = P.get("id") || "daily";
+const DAILY = GAME === "daily";
+const TODAY = (d => d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate())(new Date());
+const KEY = "wpspa10-boss-" + GAME + (DAILY ? "-" + TODAY : "");
+
+/* ---------- Abschnitt bzw. Tages-Challenge ---------- */
+const SECTIONS = Object.values(window.VOCAB).flatMap(u => u.sections.map(s => Object.assign({ unit: u.unit }, s)));
+function seeded(seed) { let h = 1779033703 ^ seed.length; for (let i = 0; i < seed.length; i++) { h = Math.imul(h ^ seed.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; } return () => { h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); return ((h ^= h >>> 16) >>> 0) / 4294967296; }; }
+let SEC;
+if (!SECTIONS.length) {
+  SEC = null;
+} else if (DAILY) {
+  const rnd = seeded(TODAY);
+  const all = SECTIONS.flatMap(s => s.words);
+  const pick = [], used = new Set();
+  while (pick.length < Math.min(10, all.length)) { const i = Math.floor(rnd() * all.length); if (!used.has(i)) { used.add(i); pick.push(all[i]); } }
+  const kinds = Object.keys(BOSSART);
+  SEC = { id: "daily", title: "Reto del día", pages: "10 palabras al azar de todas las unidades", boss: kinds[Math.floor(rnd() * kinds.length)], bossName: "El jefe del día", words: pick, pool: all };
+} else {
+  SEC = SECTIONS.find(s => s.id === GAME) || SECTIONS[0];
+  SEC.pool = SEC.words;
+}
+
+/* ---------- Hilfen fürs Eintippen ---------- */
+function expand(s) {
+  const m = s.match(/\(([^)]*)\)/);
+  if (!m) return [s];
+  return expand(s.replace(m[0], m[1])).concat(expand(s.replace(m[0], "")));
+}
+function norm(s) { return s.toLowerCase().replace(/[’‘`´]/g, "'").replace(/[¿¡.!?]+/g, "").replace(/\s+/g, " ").trim(); }
+const noAcc = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").normalize("NFC");
+const noArt = s => s.replace(/^(el|la|los|las|un|una|unos|unas) /, "");
+function variants(es) {
+  const out = new Set();
+  es.split(/\s*\/\s*/).forEach(p => expand(p).forEach(v => { v = norm(v); if (v) out.add(v); }));
+  return [...out];
+}
+function mainForm(es) { return norm(es.split(/\s*\/\s*/)[0].replace(/\([^)]*\)/g, "")); }
+function hintOf(es) { const m = mainForm(es); return m.split("").map((c, i) => i === 0 ? c : c === " " ? "  " : c === "-" || c === "'" ? c : "_").join(""); }
+/* Prüft Eingabe: "ok", "acc" (nur Akzente falsch), "art" (Artikel fehlt/falsch) oder "no" */
+function check(es, given) {
+  const g = norm(given), V = variants(es);
+  if (V.indexOf(g) >= 0) return "ok";
+  if (V.some(v => noAcc(v) === noAcc(g))) return "acc";
+  if (V.some(v => noArt(v) === noArt(g) && noArt(v) !== v)) return "art";
+  return "no";
+}
+const deTokens = de => de.toLowerCase().replace(/\(.*?\)/g, "").split(/[;,/]/).map(t => t.trim()).filter(Boolean);
+function overlap(a, b) { const A = deTokens(a[1]); return deTokens(b[1]).some(t => A.indexOf(t) >= 0) || mainForm(a[0]) === mainForm(b[0]); }
+function distractors(w, n) {
+  const pool = SEC.pool.filter(x => x !== w && !overlap(x, w));
+  const out = [];
+  while (out.length < n && pool.length) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+  return out;
+}
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/* ---------- Zustand ---------- */
+let S = null;
+function me() { const s = E8.getSession(); return s ? s.nr : null; }
+function save() { try { sessionStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
+function load() { try { const x = JSON.parse(sessionStorage.getItem(KEY)); if (x && x.queue) S = x; } catch (e) { } }
+function newGame() {
+  const q = shuffle(SEC.words.map((w, i) => ({ w: i, t: (r => r < .42 ? "de2en" : r < .66 ? "en2de" : "type")(Math.random()) })));
+  S = { nr: me(), queue: q, hp: SEC.words.length, total: SEC.words.length, mistakes: 0, wrong: [], start: Date.now(), end: 0, done: false };
+  save();
+}
+
+/* ---------- Bildschirme ---------- */
+function intro() {
+  $("app").innerHTML = `
+  <div class="top"><a class="back" href="./">← Todos los juegos</a><span class="small">${DAILY ? "Reto del día" : SEC.unit + " · " + SEC.part}</span></div>
+  <div class="panel center">
+    <div class="small">${DAILY ? "¡Cada día un jefe nuevo!" : "Lucha contra el jefe de vocabulario"}</div>
+    <h1>${SEC.bossName}</h1>
+    <div style="max-width:240px;margin:0 auto">${BOSSART[SEC.boss]}</div>
+    <p><b>${SEC.title}</b> · ${SEC.words.length} palabras<br><span class="small">${DAILY ? SEC.pages : "Vocabulario " + SEC.pages}</span></p>
+    <p>Cada respuesta correcta golpea al jefe. Las palabras falsas vuelven más tarde: ¡tienes que acertarlas todas!</p>
+    <p class="de">Jede richtige Antwort trifft den Boss. Falsche Wörter kommen später nochmal – du musst alle richtig haben, um zu gewinnen.</p>
+    ${DAILY ? dailyNote() : ""}
+    <div class="row"><button class="btn primary" id="go">⚔️ ¡A luchar!</button></div>
+  </div>`;
+  $("go").onclick = () => { newGame(); render(); };
+}
+function dailyNote() {
+  const s = E8.getSession();
+  if (!s) return `<p class="small">Inicia sesión en la página principal para ganar monedas (1 vez al día). – Anmelden für Münzen.</p>`;
+  return s.state.stats && s.state.stats.dailyToday ? `<p class="small">✔ Ya tienes las monedas de hoy. ¡Puedes seguir practicando!</p>` : `<p class="small">🪙 ¡Hasta 15 monedas hoy!</p>`;
+}
+function resume() {
+  $("app").innerHTML = `<div class="top"><a class="back" href="./">← Todos los juegos</a></div>
+  <div class="panel center"><h1>¡Bienvenido/a otra vez!</h1><p>Alguien ya empezó esta lucha en este iPad. – Hier hat schon jemand angefangen.</p>
+  <div class="row"><button class="btn primary" id="c">Continuar</button><button class="btn" id="n">Soy otro jugador / otra jugadora</button></div></div>`;
+  $("c").onclick = render; $("n").onclick = () => { S = null; try { sessionStorage.removeItem(KEY); } catch (e) { } intro(); };
+}
+function arena() {
+  return `<div class="arena" id="arena"><div class="hero" id="hero">${E8.myAvatar()}</div><div class="boss" id="boss">${BOSSART[SEC.boss]}</div></div>`;
+}
+function render() {
+  if (S.done) return finish();
+  const cur = S.queue[0], w = SEC.words[cur.w];
+  let qHTML = "";
+  if (cur.t === "de2en") {
+    const opts = shuffle([w].concat(distractors(w, 3)));
+    qHTML = `<div class="qsub">¿Cómo se dice en español? <span class="small">– Wie heißt das auf Spanisch?</span></div><div class="q">${w[1]}</div><div class="opts">${opts.map(o => `<button class="btn" data-ok="${o === w ? 1 : 0}">${o[0]}</button>`).join("")}</div>`;
+  } else if (cur.t === "en2de") {
+    const opts = shuffle([w].concat(distractors(w, 3)));
+    qHTML = `<div class="qsub">¿Qué significa en alemán? <span class="small">– Was heißt das auf Deutsch?</span></div><div class="q">${w[0]}</div><div class="opts">${opts.map(o => `<button class="btn" data-ok="${o === w ? 1 : 0}">${o[1]}</button>`).join("")}</div>`;
+  } else {
+    qHTML = `<div class="qsub">Escribe la palabra en español: <span class="small">– Tippe das spanische Wort.</span></div><div class="q">${w[1]}</div><div class="hint">${hintOf(w[0])}</div>
+      <div class="row" style="margin-top:12px"><input class="ty" id="ty" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="btn primary" id="chk">¡Ataca!</button></div><div class="acc">${["á","é","í","ó","ú","ñ","ü","¿","¡"].map(c=>`<button type="button" data-c="${c}">${c}</button>`).join("")}</div>`;
+  }
+  const left = S.hp;
+  $("app").innerHTML = `
+  <div class="top"><a class="back" href="./">← Todos los juegos</a><span class="small">Errores: ${S.mistakes}</span></div>
+  <div class="panel">
+    <div class="hpwrap"><div class="hpname"><span>${SEC.bossName}</span><span>${left} / ${S.total}</span></div><div class="hp"><i style="width:${left / S.total * 100}%"></i></div></div>
+    ${arena()}
+    <div style="margin-top:12px">${qHTML}</div>
+    <div class="fb" id="fb"></div>
+  </div>`;
+  let locked = false;
+  const answer = (ok, given, why) => {
+    if (locked) return; locked = true;
+    if (ok) {
+      S.hp--; S.queue.shift();
+      attack();
+      $("fb").className = "fb good"; $("fb").innerHTML = ["¡Golpe! 💥", "¡Genial! ⚡", "¡Bam! 💥", "¡Correcto! 🔥"][Math.floor(Math.random() * 4)] + (cur.t === "type" && given && norm(given) !== mainForm(w[0]) ? ` <span class="small">(${w[0]})</span>` : "");
+    } else {
+      S.mistakes++; if (S.wrong.indexOf(cur.w) < 0) S.wrong.push(cur.w);
+      S.queue.shift(); S.queue.splice(Math.min(3, S.queue.length), 0, { w: cur.w, t: "type" });
+      hurt();
+      $("fb").className = "fb bad"; $("fb").innerHTML = `${why === "acc" ? "¡Casi! Ojo con los acentos. – Achte auf die Akzente.<br>" : why === "art" ? "¡Casi! Ojo con el artículo. – Achte auf den Artikel.<br>" : ""}✘ <b>${w[0]}</b> = ${w[1]}<div class="small">Esta palabra vuelve más tarde. – Das Wort kommt nochmal.</div>`;
+    }
+    if (!S.queue.length) { S.done = true; S.end = Date.now(); }
+    save();
+    setTimeout(render, ok ? 900 : 2600);
+  };
+  document.querySelectorAll(".opts .btn").forEach(b => b.onclick = () => {
+    const ok = b.dataset.ok === "1"; b.classList.add(ok ? "right" : "wrong");
+    if (!ok) document.querySelectorAll('.opts .btn[data-ok="1"]').forEach(x => x.classList.add("right"));
+    answer(ok, "");
+  });
+  if ($("ty")) {
+    $("ty").focus();
+    const go = () => { const v = $("ty").value; if (!v.trim()) return; const c = check(w[0], v); answer(c === "ok", v, c); };
+    document.querySelectorAll(".acc button").forEach(b => b.onclick = () => { const t = $("ty"), p = t.selectionStart ?? t.value.length; t.value = t.value.slice(0, p) + b.dataset.c + t.value.slice(t.selectionEnd ?? p); t.focus(); t.setSelectionRange(p + 1, p + 1); });
+    $("chk").onclick = go; $("ty").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  }
+}
+function attack() {
+  const a = $("arena"), hero = $("hero"), boss = $("boss");
+  const d = boss.offsetLeft - hero.offsetLeft - hero.offsetWidth / 2;
+  const s = document.createElement("div"); s.className = "shot"; s.textContent = ["⭐", "⚡", "🔥", "💥"][Math.floor(Math.random() * 4)];
+  s.style.left = (hero.offsetLeft + hero.offsetWidth - 20) + "px"; s.style.setProperty("--d", d); a.appendChild(s);
+  setTimeout(() => boss.classList.add("hit"), 380);
+}
+function hurt() {
+  const a = $("arena"), hero = $("hero"), boss = $("boss");
+  const d = boss.offsetLeft - hero.offsetLeft;
+  const s = document.createElement("div"); s.className = "zap"; s.textContent = "💢";
+  s.style.left = (boss.offsetLeft) + "px"; s.style.right = "auto"; s.style.setProperty("--d", d); a.appendChild(s);
+  setTimeout(() => { hero.classList.add("hurt"); const f = document.createElement("div"); f.className = "flash"; document.body.appendChild(f); setTimeout(() => f.remove(), 450); }, 380);
+}
+function finish() {
+  const sec = Math.round((S.end - S.start) / 1000);
+  const wrongList = S.wrong.map(i => SEC.words[i]);
+  $("app").innerHTML = `
+  <div class="top"><a class="back" href="./">← Todos los juegos</a></div>
+  <div class="panel center">
+    <div class="small">${SEC.bossName}</div><h1>🏆 ¡Jefe derrotado!</h1>
+    <div class="arena" style="justify-content:center;min-height:160px"><div class="hero">${E8.myAvatar()}</div><div style="font-size:60px;align-self:center;z-index:1">🎉</div></div>
+    <p><span class="stat">Errores: <b>${S.mistakes}</b></span><span class="stat">Tiempo: <b>${Math.floor(sec / 60)} min ${sec % 60} s</b></span><span class="stat">Palabras: <b>${S.total}</b></span></p>
+    <div id="coinbox" style="margin:12px auto;padding:12px;background:#2a2150;border-radius:12px;max-width:460px"></div>
+    ${wrongList.length ? `<div style="text-align:left"><b>Practica estas palabras:</b> <span class="small">– Diese Wörter solltest du nochmal üben:</span><ul class="list">${wrongList.map(w => `<li><b>${w[0]}</b> – ${w[1]}</li>`).join("")}</ul></div>` : `<p>🌟 Sin errores, ¡perfecto!</p>`}
+    <div class="row"><button class="btn primary" id="again">Otra vez / otro jugador</button><button class="btn" onclick="location.href='./'">← Todos los juegos</button></div>
+  </div>`;
+  E8.reportInto("coinbox", GAME, S, save);
+  $("again").onclick = () => { S = null; try { sessionStorage.removeItem(KEY); } catch (e) { } intro(); };
+}
+
+/* ---------- Start ---------- */
+if (!SEC) { $("app").innerHTML = `<div class="top"><a class="back" href="./">← Todos los juegos</a></div><div class="panel center"><h1>Todavía no hay jefes 🐉</h1><p class="de">Hier gibt es noch keine Vokabel-Bosse.</p></div>`; throw 0; }
+load();
+if (S && me() && S.nr !== me()) { S = null; try { sessionStorage.removeItem(KEY); } catch (e) { } }
+if (S && !S.done && S.queue.length < S.total + 5 && (S.total - S.hp) > 0) resume();
+else if (S && S.done) finish();
+else intro();
+</script>
+</body>
+</html>

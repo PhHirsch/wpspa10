@@ -1,0 +1,84 @@
+/* Español WP 10 – Login, Münzen, Avatar (gemeinsam für alle Spiele) */
+(function () {
+  // Web-App-URL aus Google Apps Script (Bereitstellung). Leer = ohne Login.
+  const API_URL = "/*API_URL*/";
+
+  const CATALOG = /*CATALOG*/;
+  const SLOTS = ["skin", "eyes", "lashes", "face", "hairstyle", "haircolor", "top", "hat", "glasses", "jewellery", "extra", "aura", "bg"];
+  const TABS = [["Cara", ["skin", "eyes", "lashes", "face"]], ["Pelo", ["hairstyle", "haircolor"]], ["Ropa", ["top"]], ["Sombreros", ["hat"]], ["Gafas", ["glasses"]], ["Joyas", ["jewellery"]], ["Extras", ["extra", "aura"]], ["Fondos", ["bg"]]];
+  const SLOTNAME = { skin: "Tono de piel", eyes: "Ojos", lashes: "Forma de los ojos", face: "Pintura y pegatinas", hairstyle: "Peinado", haircolor: "Color de pelo", top: "Ropa", hat: "Sombreros", glasses: "Gafas", jewellery: "Joyas", extra: "Mascotas y gadgets", aura: "Aura", bg: "Fondos" };
+  const DEFAULT = { skin: "skin2", eyes: "eye-brown", lashes: "lash-off", face: "face-none", hairstyle: "hs-short", haircolor: "hc-brown", top: "top-tshirt-white", hat: "hat-none", glasses: "gl-none", jewellery: "jw-none", extra: "ex-none", aura: "aura-none", bg: "bg-plain" };
+  const LEVEL_XP = [0, 50, 120, 220, 350, 500, 700, 950, 1250, 1600, 2000, 2500];
+  const LEVEL_NAMES = ["", "Aprendiz", "Aprendiz", "Talento", "Talento", "Pro", "Pro", "Estrella", "Estrella", "Leyenda", "Leyenda", "Leyenda+"];
+  const ACTIVE_UNITS = /*UNITS*/;
+  const SKEY = "wpspa10session", MAXAGE = 90 * 60 * 1000;
+
+  function getSession() {
+    try {
+      const s = JSON.parse(sessionStorage.getItem(SKEY));
+      if (s && Date.now() - s.t < MAXAGE) return s;
+      sessionStorage.removeItem(SKEY);
+    } catch (e) {}
+    return null;
+  }
+  function setSession(s) { s.t = Date.now(); try { sessionStorage.setItem(SKEY, JSON.stringify(s)); } catch (e) {} }
+  function logout() { try { sessionStorage.removeItem(SKEY); } catch (e) {} }
+
+  async function api(action, data) {
+    if (!API_URL || API_URL.indexOf("/*") === 0) return { ok: false, error: "offline" };
+    try {
+      const r = await fetch(API_URL, { method: "POST", body: JSON.stringify(Object.assign({ action: action }, data)) });
+      return await r.json();
+    } catch (e) { return { ok: false, error: "network" }; }
+  }
+  async function login(nr, pin) {
+    const r = await api("login", { nr: String(nr).trim(), pin: String(pin).trim() });
+    if (r.ok) setSession({ nr: String(nr).trim(), pin: String(pin).trim(), state: r.state });
+    return r;
+  }
+  async function call(action, extra) {
+    const s = getSession();
+    if (!s) return { ok: false, error: "nologin" };
+    const r = await api(action, Object.assign({ nr: s.nr, pin: s.pin }, extra || {}));
+    if (r.ok && r.state) { s.state = r.state; setSession(s); }
+    if (r.error === "login" || r.error === "locked") logout();
+    return r;
+  }
+  function errText(e) {
+    return ({
+      offline: "El login todavía no está listo. – Login ist noch nicht eingerichtet.",
+      network: "No hay conexión. Inténtalo otra vez. – Keine Verbindung, versuch es nochmal.",
+      login: "Número o PIN incorrecto. – Nummer oder PIN falsch.",
+      locked: "Demasiados intentos. Espera 5 minutos. – Zu viele Fehlversuche, warte 5 Minuten.",
+      coins: "No tienes suficientes monedas. – Nicht genug Münzen.",
+      nologin: "Inicia sesión en la página principal. – Bitte auf der Startseite anmelden.",
+      server: "Error del servidor. Inténtalo otra vez. – Serverfehler, versuch es nochmal.",
+      level: "Necesitas un nivel más alto. – Dafür brauchst du ein höheres Level."
+    })[e] || ("Error: " + e);
+  }
+
+  /* Ergebnis am Ende eines Spiels melden und anzeigen */
+  function reportInto(elId, game, S, save) {
+    const box = document.getElementById(elId);
+    if (!box) return;
+    if (!API_URL || API_URL.indexOf("/*") === 0) { box.style.display = "none"; return; }
+    const se = getSession();
+    const prevLevel = se && se.state ? se.state.level : 0;
+    const show = r => {
+      let t = `<div style="font-size:24px;font-weight:700">+${r.earned} 🪙</div>`;
+      t += `<div>${"⭐".repeat(r.stars)}${"☆".repeat(3 - r.stars)} · Ahora tienes <b>${r.state.coins} 🪙</b>.</div>`;
+      if (!r.first && !r.improved && !r.daily) t += `<div style="font-size:14px;opacity:.75">Ya lo jugaste: menos monedas. ¡Más estrellas = más monedas! – Wiederholung: weniger Münzen, mehr Sterne bringen mehr.</div>`;
+      if (r.improved) t += `<div style="font-size:14px;opacity:.75">¡Nuevo récord! – Neuer Rekord!</div>`;
+      if (r.daily && !r.earned) t += `<div style="font-size:14px;opacity:.75">Monedas diarias solo 1 vez al día. – Tagesmünzen gibt es nur 1x pro Tag.</div>`;
+      if (prevLevel && r.state.level > prevLevel) t += `<div style="font-size:22px;font-weight:800;margin-top:6px">🎉 ¡SUBES DE NIVEL! Nivel ${r.state.level}</div>`;
+      box.innerHTML = t;
+    };
+    if (!se) { box.innerHTML = "🪙 Inicia sesión en la página principal para ganar monedas. <div style='font-size:14px;opacity:.75'>Melde dich auf der Startseite an, um Münzen zu sammeln.</div>"; return; }
+    if (S.reportedResult) { show(S.reportedResult); return; }
+    box.textContent = "Guardando tus monedas … 🪙";
+    call("result", { game: game, mistakes: S.mistakes, secs: S.end && S.start ? Math.round((S.end - S.start) / 1000) : 0, total: S.total || 0 }).then(r => {
+      if (r.ok) { S.reportedResult = r; save(); show(r); }
+      else box.innerHTML = "⚠️ " + errText(r.error) + " <button onclick='location.reload()' style='font-size:16px'>Otra vez</button>";
+    });
+  }
+

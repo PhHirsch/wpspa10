@@ -1,0 +1,1062 @@
+[
+{
+"id": "skin1",
+"slot": "skin",
+"name": "Tono 1",
+"price": 0,
+"color": "#f6d7c3"
+},
+{
+"id": "skin2",
+"slot": "skin",
+"name": "Tono 2",
+"price": 0,
+"color": "#eec1a0"
+},
+{
+"id": "skin3",
+"slot": "skin",
+"name": "Tono 3",
+"price": 0,
+"color": "#d9a177"
+},
+{
+"id": "skin4",
+"slot": "skin",
+"name": "Tono 4",
+"price": 0,
+"color": "#b97d53"
+},
+{
+"id": "skin5",
+"slot": "skin",
+"name": "Tono 5",
+"price": 0,
+"color": "#8d5a3b"
+},
+{
+"id": "skin6",
+"slot": "skin",
+"name": "Tono 6",
+"price": 0,
+"color": "#5c3a24"
+},
+{
+"id": "eye-brown",
+"slot": "eyes",
+"name": "Marrón",
+"price": 0,
+"color": "#6b4428"
+},
+{
+"id": "eye-dark",
+"slot": "eyes",
+"name": "Castaño oscuro",
+"price": 0,
+"color": "#3a2416"
+},
+{
+"id": "eye-blue",
+"slot": "eyes",
+"name": "Azul",
+"price": 0,
+"color": "#3c7fc4"
+},
+{
+"id": "eye-green",
+"slot": "eyes",
+"name": "Verde",
+"price": 0,
+"color": "#4f8a4a"
+},
+{
+"id": "eye-grey",
+"slot": "eyes",
+"name": "Gris",
+"price": 0,
+"color": "#7c8a96"
+},
+{
+"id": "lash-off",
+"slot": "lashes",
+"name": "Sencillo",
+"price": 0
+},
+{
+"id": "lash-on",
+"slot": "lashes",
+"name": "Pestañas",
+"price": 0
+},
+{
+"id": "hs-short",
+"slot": "hairstyle",
+"name": "Corto",
+"price": 0,
+"kind": "short"
+},
+{
+"id": "hs-buzz",
+"slot": "hairstyle",
+"name": "Rapado",
+"price": 0,
+"kind": "buzz"
+},
+{
+"id": "hs-curly",
+"slot": "hairstyle",
+"name": "Rizado",
+"price": 0,
+"kind": "curly"
+},
+{
+"id": "hs-bob",
+"slot": "hairstyle",
+"name": "Media melena",
+"price": 0,
+"kind": "bob"
+},
+{
+"id": "hs-long",
+"slot": "hairstyle",
+"name": "Largo",
+"price": 0,
+"kind": "long"
+},
+{
+"id": "hs-ponytail",
+"slot": "hairstyle",
+"name": "Coleta",
+"price": 0,
+"kind": "ponytail"
+},
+{
+"id": "hs-bun",
+"slot": "hairstyle",
+"name": "Moño",
+"price": 0,
+"kind": "bun"
+},
+{
+"id": "hs-braids",
+"slot": "hairstyle",
+"name": "Trenzas",
+"price": 0,
+"kind": "braids"
+},
+{
+"id": "hc-black",
+"slot": "haircolor",
+"name": "Negro",
+"price": 0,
+"color": "#1e1915"
+},
+{
+"id": "hc-darkbrown",
+"slot": "haircolor",
+"name": "Castaño oscuro",
+"price": 0,
+"color": "#3b2618"
+},
+{
+"id": "hc-brown",
+"slot": "haircolor",
+"name": "Marrón",
+"price": 0,
+"color": "#6b4226"
+},
+{
+"id": "hc-lightbrown",
+"slot": "haircolor",
+"name": "Castaño claro",
+"price": 0,
+"color": "#9a6a40"
+},
+{
+"id": "hc-blonde",
+"slot": "haircolor",
+"name": "Rubio",
+"price": 0,
+"color": "#d9b45c"
+},
+{
+"id": "hc-ginger",
+"slot": "haircolor",
+"name": "Pelirrojo",
+"price": 0,
+"color": "#b9562a"
+},
+{
+"id": "hc-blue",
+"slot": "haircolor",
+"name": "Azul",
+"price": 150,
+"color": "#3a78d8"
+},
+{
+"id": "hc-pink",
+"slot": "haircolor",
+"name": "Rosa",
+"price": 150,
+"color": "#e66aa8"
+},
+{
+"id": "hc-purple",
+"slot": "haircolor",
+"name": "Morado",
+"price": 150,
+"color": "#8a5cd0"
+},
+{
+"id": "hc-green",
+"slot": "haircolor",
+"name": "Verde",
+"price": 150,
+"color": "#3fa86a"
+},
+{
+"id": "hc-silver",
+"slot": "haircolor",
+"name": "Plateado",
+"price": 200,
+"color": "#c9ced6"
+},
+{
+"id": "hc-rainbow",
+"slot": "haircolor",
+"name": "Arcoíris ✨",
+"price": 800,
+"color": "#e66aa8",
+"fx": "rainbow",
+"lvl": 4
+},
+{
+"id": "top-tshirt-white",
+"slot": "top",
+"name": "Camiseta blanca",
+"price": 0,
+"kind": "tshirt",
+"color": "#f2f2f0"
+},
+{
+"id": "top-tshirt-navy",
+"slot": "top",
+"name": "Camiseta azul marino",
+"price": 40,
+"kind": "tshirt",
+"color": "#2d3e66"
+},
+{
+"id": "top-tshirt-red",
+"slot": "top",
+"name": "Camiseta roja",
+"price": 40,
+"kind": "tshirt",
+"color": "#cf3b3b"
+},
+{
+"id": "top-tshirt-yellow",
+"slot": "top",
+"name": "Camiseta amarilla",
+"price": 40,
+"kind": "tshirt",
+"color": "#f0c03a"
+},
+{
+"id": "top-hoodie-grey",
+"slot": "top",
+"name": "Sudadera gris",
+"price": 60,
+"kind": "hoodie",
+"color": "#8d939c"
+},
+{
+"id": "top-hoodie-pink",
+"slot": "top",
+"name": "Sudadera rosa",
+"price": 70,
+"kind": "hoodie",
+"color": "#e86aa6"
+},
+{
+"id": "top-hoodie-green",
+"slot": "top",
+"name": "Sudadera verde",
+"price": 70,
+"kind": "hoodie",
+"color": "#3f9a6e"
+},
+{
+"id": "top-hoodie-black",
+"slot": "top",
+"name": "Sudadera negra",
+"price": 80,
+"kind": "hoodie",
+"color": "#2a2b30"
+},
+{
+"id": "top-sweater-purple",
+"slot": "top",
+"name": "Jersey morado",
+"price": 90,
+"kind": "sweater",
+"color": "#7e5cc4"
+},
+{
+"id": "top-sweater-cream",
+"slot": "top",
+"name": "Jersey crema",
+"price": 90,
+"kind": "sweater",
+"color": "#eadfc8"
+},
+{
+"id": "top-jacket",
+"slot": "top",
+"name": "Chaqueta vaquera",
+"price": 180,
+"kind": "jacket",
+"color": "#4a6d9c"
+},
+{
+"id": "top-football",
+"slot": "top",
+"name": "Camiseta de fútbol",
+"price": 200,
+"kind": "football",
+"color": "#d23b3b"
+},
+{
+"id": "top-dress-teal",
+"slot": "top",
+"name": "Vestido turquesa",
+"price": 200,
+"kind": "dress",
+"color": "#2fa79a"
+},
+{
+"id": "top-dress-red",
+"slot": "top",
+"name": "Vestido rojo",
+"price": 220,
+"kind": "dress",
+"color": "#c8324a"
+},
+{
+"id": "top-detective",
+"slot": "top",
+"name": "Gabardina de detective",
+"price": 400,
+"kind": "detective",
+"color": "#b8935a"
+},
+{
+"id": "top-space",
+"slot": "top",
+"name": "Traje espacial",
+"price": 450,
+"kind": "space",
+"color": "#eef1f5"
+},
+{
+"id": "top-xmas",
+"slot": "top",
+"name": "Jersey de Navidad 🎄",
+"price": 150,
+"kind": "xmas",
+"color": "#c8312b",
+"months": [
+12
+]
+},
+{
+"id": "hat-none",
+"slot": "hat",
+"name": "Sin sombrero",
+"price": 0
+},
+{
+"id": "hat-bow",
+"slot": "hat",
+"name": "Lazo",
+"price": 50,
+"kind": "bow",
+"color": "#ff4f8b"
+},
+{
+"id": "hat-cap-red",
+"slot": "hat",
+"name": "Gorra roja",
+"price": 60,
+"kind": "cap",
+"color": "#cf3b3b"
+},
+{
+"id": "hat-cap-blue",
+"slot": "hat",
+"name": "Gorra azul",
+"price": 60,
+"kind": "cap",
+"color": "#2f5fb3"
+},
+{
+"id": "hat-beanie-yellow",
+"slot": "hat",
+"name": "Gorro amarillo",
+"price": 70,
+"kind": "beanie",
+"color": "#e9b62f"
+},
+{
+"id": "hat-beanie-grey",
+"slot": "hat",
+"name": "Gorro gris",
+"price": 70,
+"kind": "beanie",
+"color": "#7d838c"
+},
+{
+"id": "hat-santa",
+"slot": "hat",
+"name": "Gorro de Papá Noel 🎄",
+"price": 100,
+"kind": "santa",
+"color": "#c8312b",
+"months": [
+12
+]
+},
+{
+"id": "hat-bunny",
+"slot": "hat",
+"name": "Orejas de conejo 🐣",
+"price": 120,
+"kind": "bunny",
+"color": "#f4f1ea",
+"months": [
+3,
+4
+]
+},
+{
+"id": "hat-flowers",
+"slot": "hat",
+"name": "Corona de flores 🌼",
+"price": 120,
+"kind": "flowers",
+"color": "#ff8fb1",
+"months": [
+6,
+7
+]
+},
+{
+"id": "hat-detective",
+"slot": "hat",
+"name": "Sombrero de detective",
+"price": 350,
+"kind": "detective",
+"color": "#7d6a4f"
+},
+{
+"id": "hat-crown",
+"slot": "hat",
+"name": "Corona 👑",
+"price": 1200,
+"kind": "crown",
+"color": "#f2c230",
+"fx": "sparkle",
+"lvl": 6
+},
+{
+"id": "gl-none",
+"slot": "glasses",
+"name": "Sin gafas",
+"price": 0
+},
+{
+"id": "gl-round",
+"slot": "glasses",
+"name": "Gafas redondas",
+"price": 50,
+"kind": "round"
+},
+{
+"id": "gl-square",
+"slot": "glasses",
+"name": "Gafas cuadradas",
+"price": 60,
+"kind": "square"
+},
+{
+"id": "gl-sun",
+"slot": "glasses",
+"name": "Gafas de sol",
+"price": 180,
+"kind": "sun"
+},
+{
+"id": "gl-heart",
+"slot": "glasses",
+"name": "Gafas de corazón",
+"price": 350,
+"kind": "heart"
+},
+{
+"id": "gl-star",
+"slot": "glasses",
+"name": "Gafas de estrella",
+"price": 400,
+"kind": "star"
+},
+{
+"id": "jw-none",
+"slot": "jewellery",
+"name": "Nada",
+"price": 0
+},
+{
+"id": "jw-studs",
+"slot": "jewellery",
+"name": "Pendientes de oro",
+"price": 50,
+"kind": "studs"
+},
+{
+"id": "jw-hoops",
+"slot": "jewellery",
+"name": "Aros",
+"price": 80,
+"kind": "hoops"
+},
+{
+"id": "ex-none",
+"slot": "extra",
+"name": "Nada",
+"price": 0
+},
+{
+"id": "ex-headphones",
+"slot": "extra",
+"name": "Cascos",
+"price": 220,
+"kind": "headphones"
+},
+{
+"id": "ex-cat",
+"slot": "extra",
+"name": "Gato",
+"price": 450,
+"kind": "cat"
+},
+{
+"id": "ex-dog",
+"slot": "extra",
+"name": "Perro",
+"price": 450,
+"kind": "dog"
+},
+{
+"id": "bg-plain",
+"slot": "bg",
+"name": "Claro",
+"price": 0,
+"kind": "plain",
+"color": "#e7ecf4"
+},
+{
+"id": "bg-blue",
+"slot": "bg",
+"name": "Azul",
+"price": 0,
+"kind": "plain",
+"color": "#cfe0f5"
+},
+{
+"id": "bg-mint",
+"slot": "bg",
+"name": "Menta",
+"price": 40,
+"kind": "plain",
+"color": "#cdeee0"
+},
+{
+"id": "bg-sunset",
+"slot": "bg",
+"name": "Atardecer",
+"price": 120,
+"kind": "sunset"
+},
+{
+"id": "bg-london",
+"slot": "bg",
+"name": "Londres",
+"price": 150,
+"kind": "london"
+},
+{
+"id": "bg-beach",
+"slot": "bg",
+"name": "Playa",
+"price": 150,
+"kind": "beach"
+},
+{
+"id": "bg-snow",
+"slot": "bg",
+"name": "Noche de nieve 🎄",
+"price": 120,
+"kind": "snow",
+"months": [
+12
+]
+},
+{
+"id": "bg-space",
+"slot": "bg",
+"name": "Espacio",
+"price": 250,
+"kind": "space"
+},
+{
+"id": "bg-gold",
+"slot": "bg",
+"name": "Purpurina dorada ✨",
+"price": 900,
+"kind": "gold",
+"lvl": 5
+},
+{
+"id": "bg-galaxy",
+"slot": "bg",
+"name": "Galaxia (animada) ✨",
+"price": 1500,
+"kind": "galaxy",
+"lvl": 8
+},
+{
+"id": "eye-hetero",
+"slot": "eyes",
+"name": "Dos colores",
+"price": 0,
+"color": "#3c7fc4",
+"kind": "hetero"
+},
+{
+"id": "eye-cat",
+"slot": "eyes",
+"name": "Ojos de gato",
+"price": 400,
+"color": "#c8b820",
+"kind": "cat"
+},
+{
+"id": "eye-galaxy",
+"slot": "eyes",
+"name": "Ojos de galaxia ✨",
+"price": 500,
+"color": "#8a3cc4",
+"kind": "galaxy"
+},
+{
+"id": "eye-glow",
+"slot": "eyes",
+"name": "Ojos brillantes ✨",
+"price": 700,
+"color": "#3ff0ff",
+"kind": "glow",
+"lvl": 5
+},
+{
+"id": "face-none",
+"slot": "face",
+"name": "Nada",
+"price": 0
+},
+{
+"id": "face-freckles",
+"slot": "face",
+"name": "Pecas",
+"price": 0,
+"kind": "freckles"
+},
+{
+"id": "face-star",
+"slot": "face",
+"name": "Pegatina de estrella",
+"price": 80,
+"kind": "star"
+},
+{
+"id": "face-glitter",
+"slot": "face",
+"name": "Mejillas con purpurina ✨",
+"price": 120,
+"kind": "glitter"
+},
+{
+"id": "face-tiger",
+"slot": "face",
+"name": "Pintura de tigre",
+"price": 300,
+"kind": "tiger"
+},
+{
+"id": "face-mask",
+"slot": "face",
+"name": "Antifaz de héroe",
+"price": 350,
+"kind": "mask"
+},
+{
+"id": "face-cyborg",
+"slot": "face",
+"name": "Cíborg ✨",
+"price": 900,
+"kind": "cyborg",
+"lvl": 6
+},
+{
+"id": "hc-split",
+"slot": "haircolor",
+"name": "Mitad y mitad",
+"price": 400,
+"color": "#e66aa8",
+"fx": "split"
+},
+{
+"id": "hc-neon",
+"slot": "haircolor",
+"name": "Neón ✨",
+"price": 600,
+"color": "#2ff3e0",
+"fx": "neon"
+},
+{
+"id": "hc-fire",
+"slot": "haircolor",
+"name": "Pelo de fuego 🔥",
+"price": 900,
+"color": "#ff7a1a",
+"fx": "fire",
+"lvl": 6
+},
+{
+"id": "hc-galaxy",
+"slot": "haircolor",
+"name": "Pelo de galaxia ✨",
+"price": 1000,
+"color": "#5a2ca0",
+"fx": "galaxy",
+"lvl": 7
+},
+{
+"id": "top-hoexter",
+"slot": "top",
+"name": "Sudadera Höxter",
+"price": 120,
+"kind": "hoodie",
+"color": "#1f4e8c",
+"text": "HÖXTER"
+},
+{
+"id": "top-school",
+"slot": "top",
+"name": "Sudadera del insti",
+"price": 150,
+"kind": "hoodie",
+"color": "#2a2b30",
+"text": "SEK HX"
+},
+{
+"id": "top-hero",
+"slot": "top",
+"name": "Traje de superhéroe",
+"price": 500,
+"kind": "hero",
+"color": "#2f5fd0"
+},
+{
+"id": "top-galaxy",
+"slot": "top",
+"name": "Sudadera galaxia ✨",
+"price": 700,
+"kind": "galaxyhoodie",
+"color": "#2a1d5c"
+},
+{
+"id": "top-armor",
+"slot": "top",
+"name": "Armadura de caballero",
+"price": 800,
+"kind": "armor",
+"color": "#b9c1cc",
+"lvl": 5
+},
+{
+"id": "top-led",
+"slot": "top",
+"name": "Chaqueta LED ✨",
+"price": 1000,
+"kind": "led",
+"color": "#1d1f26",
+"lvl": 7
+},
+{
+"id": "hat-party",
+"slot": "hat",
+"name": "Gorro de fiesta",
+"price": 100,
+"kind": "party"
+},
+{
+"id": "hat-chef",
+"slot": "hat",
+"name": "Gorro de cocinero",
+"price": 150,
+"kind": "chef"
+},
+{
+"id": "hat-catears",
+"slot": "hat",
+"name": "Orejas de gato",
+"price": 200,
+"kind": "catears"
+},
+{
+"id": "hat-devil",
+"slot": "hat",
+"name": "Cuernos de diablo",
+"price": 300,
+"kind": "devil"
+},
+{
+"id": "hat-pirate",
+"slot": "hat",
+"name": "Sombrero pirata",
+"price": 400,
+"kind": "pirate"
+},
+{
+"id": "hat-viking",
+"slot": "hat",
+"name": "Casco vikingo",
+"price": 450,
+"kind": "viking"
+},
+{
+"id": "hat-propeller",
+"slot": "hat",
+"name": "Gorra con hélice ✨",
+"price": 450,
+"kind": "propeller"
+},
+{
+"id": "hat-wizard",
+"slot": "hat",
+"name": "Sombrero de mago ✨",
+"price": 500,
+"kind": "wizard"
+},
+{
+"id": "hat-unicorn",
+"slot": "hat",
+"name": "Cuerno de unicornio 🦄",
+"price": 700,
+"kind": "unicorn",
+"lvl": 4
+},
+{
+"id": "hat-astro",
+"slot": "hat",
+"name": "Casco de astronauta",
+"price": 800,
+"kind": "astro",
+"lvl": 5
+},
+{
+"id": "hat-halo",
+"slot": "hat",
+"name": "Aureola ✨",
+"price": 1000,
+"kind": "halo",
+"lvl": 7
+},
+{
+"id": "gl-3d",
+"slot": "glasses",
+"name": "Gafas 3D",
+"price": 150,
+"kind": "3d"
+},
+{
+"id": "gl-monocle",
+"slot": "glasses",
+"name": "Monóculo",
+"price": 250,
+"kind": "monocle"
+},
+{
+"id": "gl-pixel",
+"slot": "glasses",
+"name": "Gafas píxel",
+"price": 300,
+"kind": "pixel"
+},
+{
+"id": "gl-vr",
+"slot": "glasses",
+"name": "Gafas de realidad virtual",
+"price": 500,
+"kind": "vr"
+},
+{
+"id": "gl-visor",
+"slot": "glasses",
+"name": "Visor cíber ✨",
+"price": 900,
+"kind": "visor",
+"lvl": 6
+},
+{
+"id": "ex-hamster",
+"slot": "extra",
+"name": "Hámster",
+"price": 300,
+"kind": "hamster"
+},
+{
+"id": "ex-parrot",
+"slot": "extra",
+"name": "Loro",
+"price": 400,
+"kind": "parrot"
+},
+{
+"id": "ex-owl",
+"slot": "extra",
+"name": "Búho",
+"price": 450,
+"kind": "owl"
+},
+{
+"id": "ex-drone",
+"slot": "extra",
+"name": "Dron robot ✨",
+"price": 700,
+"kind": "drone",
+"lvl": 5
+},
+{
+"id": "ex-dragon",
+"slot": "extra",
+"name": "Dragón bebé ✨",
+"price": 1500,
+"kind": "dragon",
+"lvl": 8
+},
+{
+"id": "aura-none",
+"slot": "aura",
+"name": "Sin aura",
+"price": 0
+},
+{
+"id": "aura-hearts",
+"slot": "aura",
+"name": "Corazones flotantes ✨",
+"price": 300,
+"kind": "hearts"
+},
+{
+"id": "aura-sparkle",
+"slot": "aura",
+"name": "Destellos ✨",
+"price": 500,
+"kind": "sparkle"
+},
+{
+"id": "aura-lightning",
+"slot": "aura",
+"name": "Rayos ⚡",
+"price": 900,
+"kind": "lightning",
+"lvl": 6
+},
+{
+"id": "aura-fire",
+"slot": "aura",
+"name": "Aura de fuego 🔥",
+"price": 1000,
+"kind": "fire",
+"lvl": 7
+},
+{
+"id": "aura-gold",
+"slot": "aura",
+"name": "Aura dorada ✨",
+"price": 1200,
+"kind": "gold",
+"lvl": 8
+},
+{
+"id": "bg-corvey",
+"slot": "bg",
+"name": "Castillo de Corvey",
+"price": 150,
+"kind": "corvey"
+},
+{
+"id": "bg-weser",
+"slot": "bg",
+"name": "Río Weser",
+"price": 150,
+"kind": "weser"
+},
+{
+"id": "bg-underwater",
+"slot": "bg",
+"name": "Bajo el mar ✨",
+"price": 400,
+"kind": "underwater"
+},
+{
+"id": "bg-disco",
+"slot": "bg",
+"name": "Discoteca ✨",
+"price": 600,
+"kind": "disco"
+},
+{
+"id": "bg-volcano",
+"slot": "bg",
+"name": "Volcán ✨",
+"price": 700,
+"kind": "volcano",
+"lvl": 4
+},
+{
+"id": "bg-code",
+"slot": "bg",
+"name": "Lluvia de código ✨",
+"price": 800,
+"kind": "code",
+"lvl": 5
+},
+{
+"id": "bg-fireworks",
+"slot": "bg",
+"name": "Fuegos artificiales ✨",
+"price": 1000,
+"kind": "fireworks",
+"lvl": 6
+},
+{
+"id": "bg-aurora",
+"slot": "bg",
+"name": "Auroras boreales ✨",
+"price": 1200,
+"kind": "aurora",
+"lvl": 7
+}
+]
