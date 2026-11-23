@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Jefe de vocabulario</title>
+<title>Jefe de vocabulario · The Hirsch Games</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   :root{--bg:#120e22;--panel:#1f1838;--txt:#f2eefe;--muted:#a99fc8;--ok:#4cff9a;--bad:#ff5a6e;--gold:#f2c230;--cyan:#4fe3ff}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -56,14 +57,15 @@
 </head>
 <body>
 <main id="app"></main>
-<script src="game.js?v=10"></script>
-<script src="bosses.js?v=1"></script>
+<script src="game.js?v=11"></script>
+<script src="bosses.js?v=5"></script>
 <script>window.VOCAB = window.VOCAB || {};</script>
 <script>
 const $ = id => document.getElementById(id);
 const P = new URLSearchParams(location.search);
 const GAME = P.get("id") || "daily";
 const DAILY = GAME === "daily";
+const REVIEW = GAME === "review";
 const TODAY = (d => d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate())(new Date());
 const KEY = "wpspa10-boss-" + GAME + (DAILY ? "-" + TODAY : "");
 
@@ -80,6 +82,11 @@ if (!SECTIONS.length) {
   while (pick.length < Math.min(10, all.length)) { const i = Math.floor(rnd() * all.length); if (!used.has(i)) { used.add(i); pick.push(all[i]); } }
   const kinds = Object.keys(BOSSART);
   SEC = { id: "daily", title: "Reto del día", pages: "10 palabras al azar de todas las unidades", boss: kinds[Math.floor(rnd() * kinds.length)], bossName: "El jefe del día", words: pick, pool: all };
+} else if (REVIEW) {
+  const se = E8.getSession(), list = se && se.state && se.state.review ? se.state.review.slice().reverse() : [];
+  const all = SECTIONS.flatMap(s => s.words), seen = new Set(), pick = [];
+  list.forEach(k => { const w = all.find(x => x[0] === k); if (w && !seen.has(k) && pick.length < 12) { seen.add(k); pick.push(w); } });
+  SEC = { id: "review", title: "Tu caja de errores", pages: "palabras que tuviste mal", boss: "slime", bossName: "El Monstruo de los Errores", words: pick, pool: all, unit: "", part: "" };
 } else {
   SEC = SECTIONS.find(s => s.id === GAME) || SECTIONS[0];
   SEC.pool = SEC.words;
@@ -123,15 +130,30 @@ function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { co
 let S = null;
 function me() { const s = E8.getSession(); return s ? s.nr : null; }
 function save() { try { sessionStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
-function load() { try { const x = JSON.parse(sessionStorage.getItem(KEY)); if (x && x.queue) S = x; } catch (e) { } }
+function load() { try { const x = JSON.parse(sessionStorage.getItem(KEY)); if (x && x.queue && (!REVIEW || (x.total === SEC.words.length && x.sig === SEC.words.map(w => w[0]).join("|")))) S = x; } catch (e) { } }
 function newGame() {
   const q = shuffle(SEC.words.map((w, i) => ({ w: i, t: (r => r < .42 ? "de2en" : r < .66 ? "en2de" : "type")(Math.random()) })));
-  S = { nr: me(), queue: q, hp: SEC.words.length, total: SEC.words.length, mistakes: 0, wrong: [], start: Date.now(), end: 0, done: false };
+  S = { nr: me(), queue: q, hp: SEC.words.length, total: SEC.words.length, mistakes: 0, wrong: [], start: Date.now(), end: 0, done: false, sig: SEC.words.map(w => w[0]).join("|") };
   save();
 }
 
 /* ---------- Bildschirme ---------- */
 function intro() {
+  if (REVIEW && !SEC.words.length) {
+    $("app").innerHTML = `<div class="top"><a class="back" href="./">← Todos los juegos</a></div><div class="panel center"><h1>📦 ¡Tu caja de errores está vacía!</h1><p>${E8.getSession() ? "¡Genial! Ahora no hay palabras para practicar. Primero lucha contra un jefe de vocabulario." : "Primero inicia sesión en la página principal."}</p><p class="de">${E8.getSession() ? "Super – gerade gibt es keine Wörter zum Üben." : "Bitte melde dich zuerst auf der Startseite an."}</p><div class="row"><a class="btn primary" href="./">← Volver</a></div></div>`;
+    return;
+  }
+  if (REVIEW) {
+    $("app").innerHTML = `<div class="top"><a class="back" href="./">← Todos los juegos</a><span class="small">Caja de errores</span></div>
+    <div class="panel center"><div class="small">¡Tu propio jefe – hecho de tus errores!</div><h1>${SEC.bossName}</h1>
+    <div style="max-width:240px;margin:0 auto">${BOSSART[SEC.boss]}</div>
+    <p><b>${SEC.words.length} palabras</b> que tuviste mal en los combates.<br>¡Si aciertas una palabra, sale de la caja!</p>
+    <p class="de">Das sind Wörter, die du in Boss-Kämpfen falsch hattest. Wenn du ein Wort richtig hast, verschwindet es aus der Kiste.</p>
+    <p class="small">🪙 Monedas 1 vez al día · Münzen 1x pro Tag</p>
+    <div class="row"><button class="btn primary" id="go">⚔️ ¡A luchar!</button></div></div>`;
+    $("go").onclick = () => { newGame(); render(); };
+    return;
+  }
   $("app").innerHTML = `
   <div class="top"><a class="back" href="./">← Todos los juegos</a><span class="small">${DAILY ? "Reto del día" : SEC.unit + " · " + SEC.part}</span></div>
   <div class="panel center">
@@ -239,6 +261,8 @@ function finish() {
     ${wrongList.length ? `<div style="text-align:left"><b>Practica estas palabras:</b> <span class="small">– Diese Wörter solltest du nochmal üben:</span><ul class="list">${wrongList.map(w => `<li><b>${w[0]}</b> – ${w[1]}</li>`).join("")}</ul></div>` : `<p>🌟 Sin errores, ¡perfecto!</p>`}
     <div class="row"><button class="btn primary" id="again">Otra vez / otro jugador</button><button class="btn" onclick="location.href='./'">← Todos los juegos</button></div>
   </div>`;
+  S.wrongWords = S.wrong.map(i => SEC.words[i][0]);
+  S.fixedWords = SEC.words.filter((w, i) => S.wrong.indexOf(i) < 0).map(w => w[0]);
   E8.reportInto("coinbox", GAME, S, save);
   $("again").onclick = () => { S = null; try { sessionStorage.removeItem(KEY); } catch (e) { } intro(); };
 }

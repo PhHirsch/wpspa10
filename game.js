@@ -24,6 +24,24 @@
   function setSession(s) { s.t = Date.now(); try { sessionStorage.setItem(SKEY, JSON.stringify(s)); } catch (e) {} }
   function logout() { try { sessionStorage.removeItem(SKEY); } catch (e) {} }
 
+  /* Warteschlange: Ergebnisse ohne Verbindung (ohne PIN!) auf dem Gerät merken und später senden */
+  const QKEY = SKEY + "-queue";
+  function qGet() { try { return JSON.parse(localStorage.getItem(QKEY)) || []; } catch (e) { return []; } }
+  function qSet(a) { try { localStorage.setItem(QKEY, JSON.stringify(a)); } catch (e) {} }
+  let flushing = false;
+  async function flushQueue() {
+    const s = getSession(); if (!s || flushing) return;
+    const mine = qGet().filter(x => x.nr === s.nr); if (!mine.length) return;
+    flushing = true;
+    for (const it of mine) {
+      const r = await api("result", Object.assign({ nr: s.nr, pin: s.pin }, it.data));
+      if (!r.ok && r.error === "network") break;
+      qSet(qGet().filter(x => x.id !== it.id));
+      if (r.ok && r.state) { const t = getSession(); if (t) { t.state = r.state; setSession(t); } }
+    }
+    flushing = false;
+  }
+
   async function api(action, data) {
     if (!API_URL || API_URL.indexOf("/*") === 0) return { ok: false, error: "offline" };
     try {
@@ -33,7 +51,7 @@
   }
   async function login(nr, pin) {
     const r = await api("login", { nr: String(nr).trim(), pin: String(pin).trim() });
-    if (r.ok) setSession({ nr: String(nr).trim(), pin: String(pin).trim(), state: r.state });
+    if (r.ok) { setSession({ nr: String(nr).trim(), pin: String(pin).trim(), state: r.state }); flushQueue(); }
     return r;
   }
   async function setPin(newpin) {
@@ -48,6 +66,7 @@
     if (!s) return { ok: false, error: "nologin" };
     const r = await api(action, Object.assign({ nr: s.nr, pin: s.pin }, extra || {}));
     if (r.ok && r.state) { s.state = r.state; setSession(s); }
+    if (r.ok && action !== "result") flushQueue();
     if (r.error === "login" || r.error === "locked") logout();
     return r;
   }
@@ -63,7 +82,8 @@
       weakpin: "Este PIN es demasiado fácil. Elige otro. – Diese PIN ist zu leicht zu erraten.",
       samepin: "Elige un PIN nuevo, no el antiguo. – Wähle eine neue PIN, nicht die alte.",
       pinmatch: "Los dos PIN no son iguales. – Die beiden PINs sind nicht gleich.",
-      level: "Necesitas un nivel más alto. – Dafür brauchst du ein höheres Level."
+      level: "Necesitas un nivel más alto. – Dafür brauchst du ein höheres Level.",
+      stars: "Necesitas más estrellas. – Dafür brauchst du mehr Sterne."
     })[e] || ("Error: " + e);
   }
 
@@ -75,10 +95,12 @@
     const se = getSession();
     const prevLevel = se && se.state ? se.state.level : 0;
     const show = r => {
+      if (r.queued) { box.innerHTML = "📡 Ahora no hay internet. Tu resultado está guardado en este aparato y se envía automáticamente la próxima vez que estés en línea y con sesión iniciada.<div style='font-size:14px;opacity:.75'>Kein Internet: Dein Ergebnis ist gespeichert und wird später automatisch gesendet.</div>"; return; }
       let t = `<div style="font-size:24px;font-weight:700">+${r.earned} 🪙</div>`;
       t += `<div>${"⭐".repeat(r.stars)}${"☆".repeat(3 - r.stars)} · Ahora tienes <b>${r.state.coins} 🪙</b>.</div>`;
       if (!r.first && !r.improved && !r.daily) t += `<div style="font-size:14px;opacity:.75">Ya lo jugaste: menos monedas. ¡Más estrellas = más monedas! – Wiederholung: weniger Münzen, mehr Sterne bringen mehr.</div>`;
       if (r.improved) t += `<div style="font-size:14px;opacity:.75">¡Nuevo récord! – Neuer Rekord!</div>`;
+      if (r.review && !r.earned) t += `<div style="font-size:14px;opacity:.75">Monedas de la caja de errores solo 1 vez al día. – Münzen für die Fehler-Kiste gibt es nur 1x pro Tag.</div>`;
       if (r.daily && !r.earned) t += `<div style="font-size:14px;opacity:.75">Monedas diarias solo 1 vez al día. – Tagesmünzen gibt es nur 1x pro Tag.</div>`;
       if (prevLevel && r.state.level > prevLevel) t += `<div style="font-size:22px;font-weight:800;margin-top:6px">🎉 ¡SUBES DE NIVEL! Nivel ${r.state.level}</div>`;
       box.innerHTML = t;
@@ -86,8 +108,10 @@
     if (!se) { box.innerHTML = "🪙 Inicia sesión en la página principal para ganar monedas. <div style='font-size:14px;opacity:.75'>Melde dich auf der Startseite an, um Münzen zu sammeln.</div>"; return; }
     if (S.reportedResult) { show(S.reportedResult); return; }
     box.textContent = "Guardando tus monedas … 🪙";
-    call("result", { game: game, mistakes: S.mistakes, secs: S.end && S.start ? Math.round((S.end - S.start) / 1000) : 0, total: S.total || 0 }).then(r => {
+    const data = { game: game, mistakes: S.mistakes, secs: S.end && S.start ? Math.round((S.end - S.start) / 1000) : 0, total: S.total || 0, wrong: S.wrongWords || [], fixed: S.fixedWords || [] };
+    call("result", data).then(r => {
       if (r.ok) { S.reportedResult = r; save(); show(r); }
+      else if (r.error === "network") { const q = qGet(); q.push({ id: Date.now() + "-" + Math.random().toString(36).slice(2), nr: se.nr, data: data }); qSet(q); S.reportedResult = { queued: true }; save(); show(S.reportedResult); }
       else box.innerHTML = "⚠️ " + errText(r.error) + " <button onclick='location.reload()' style='font-size:16px'>Otra vez</button>";
     });
   }
@@ -432,5 +456,6 @@
   }
 
   function myAvatar() { const s = getSession(); return avatarSVG(s && s.state ? s.state.equipped : null); }
-  window.E8 = { CATALOG: CATALOG, SLOTS: SLOTS, TABS: TABS, SLOTNAME: SLOTNAME, DEFAULT: DEFAULT, LEVEL_XP: LEVEL_XP, getSession: getSession, login: login, setPin: setPin, logout: logout, call: call, api: api, errText: errText, reportInto: reportInto, avatarSVG: avatarSVG, myAvatar: myAvatar, clean: clean, rarity: rarity, inSeason: inSeason, levelInfo: levelInfo, item: id => byId[id], ACTIVE_UNITS: ACTIVE_UNITS, available: i => !i.unit || ACTIVE_UNITS.indexOf(i.unit) >= 0, online: () => !!API_URL && API_URL.indexOf("/*") !== 0 };
+  window.E8 = { CATALOG: CATALOG, SLOTS: SLOTS, TABS: TABS, SLOTNAME: SLOTNAME, DEFAULT: DEFAULT, LEVEL_XP: LEVEL_XP, getSession: getSession, login: login, setPin: setPin, logout: logout, call: call, api: api, errText: errText, reportInto: reportInto, avatarSVG: avatarSVG, myAvatar: myAvatar, clean: clean, rarity: rarity, inSeason: inSeason, levelInfo: levelInfo, item: id => byId[id], ACTIVE_UNITS: ACTIVE_UNITS, available: i => !i.unit || ACTIVE_UNITS.indexOf(i.unit) >= 0, online: () => !!API_URL && API_URL.indexOf("/*") !== 0, flushQueue: flushQueue, pending: () => { const s = getSession(); return qGet().filter(x => !s || x.nr === s.nr).length; } };
+  if (getSession()) setTimeout(flushQueue, 1500);
 })();

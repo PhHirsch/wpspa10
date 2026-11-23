@@ -16,7 +16,7 @@ const LEVEL_XP = [0, 50, 120, 220, 350, 500, 700, 950, 1250, 1600, 2000, 2500];
 
 // Shop-Katalog wird automatisch von der Website geladen (keine Änderung hier nötig)
 const KATALOG_URL = "https://phhirsch.github.io/wpspa10/shop.json";
-let ITEMS = {}, SLOTS = [], DEFAULT = {};
+let ITEMS = {}, SLOTS = [], DEFAULT = {}, HITEMS = {}, HSLOTS = [], HDEFAULT = {}, HSTAGES = [0], HYARD = {};
 function loadCat() {
   const cache = CacheService.getScriptCache(), props = PropertiesService.getScriptProperties();
   let t = cache.get("cat");
@@ -32,12 +32,15 @@ function loadCat() {
   const c = JSON.parse(t);
   ITEMS = {}; Object.keys(c.items).forEach(id => { const a = c.items[id]; ITEMS[id] = { slot: a[0], price: a[1], lvl: a[2] || 0, months: a[3] || null }; });
   SLOTS = c.slots; DEFAULT = c.default;
+  HITEMS = {}; const h = c.house || { items: {}, slots: [], default: {}, stages: [0], yardStage: {} };
+  Object.keys(h.items).forEach(id => { const a = h.items[id]; HITEMS[id] = { slot: a[0], price: a[1], lvl: a[2] || 0, months: a[3] || null, stars: a[4] || 0 }; });
+  HSLOTS = h.slots; HDEFAULT = h.default; HSTAGES = h.stages; HYARD = h.yardStage;
 }
 /** Nach dem Einfügen einmal ausführen, um den Katalog-Zugriff zu testen. */
 function katalogTesten() { CacheService.getScriptCache().remove("cat"); loadCat(); Logger.log(Object.keys(ITEMS).length + " Shop-Teile geladen."); }
 
 // Spalten im Blatt "Spieler"
-const C = {NR:0, PIN:1, MUENZEN:2, GEKAUFT:3, AVATAR:4, FEHL:5, GESPERRT:6, LOGIN:7, EIGEN:8};
+const C = {NR:0, PIN:1, MUENZEN:2, GEKAUFT:3, AVATAR:4, FEHL:5, GESPERRT:6, LOGIN:7, EIGEN:8, HAUS:9, FEHLER:10};
 const TZ = "Europe/Berlin";
 
 /** Einmal ausführen: legt die Blätter an. */
@@ -46,13 +49,13 @@ function einrichten() {
   let sp = ss.getSheetByName("Spieler");
   if (!sp) sp = ss.insertSheet("Spieler", 0);
   if (sp.getLastRow() === 0) {
-    sp.appendRow(["Nr", "PIN", "Münzen", "Gekauft", "Avatar", "Fehlversuche", "Gesperrt bis", "Letzter Login", "Eigene PIN"]);
+    sp.appendRow(["Nr", "PIN", "Münzen", "Gekauft", "Avatar", "Fehlversuche", "Gesperrt bis", "Letzter Login", "Eigene PIN", "Haus", "Fehler-Kiste"]);
     sp.getRange("B:B").setNumberFormat("@");
     const rows = [];
     for (let i = 1; i <= ANZAHL_SPIELER; i++) {
-      rows.push([i, String(Math.floor(Math.random() * 10000)).padStart(4, "0"), 0, "", "", 0, "", "", ""]);
+      rows.push([i, String(Math.floor(Math.random() * 10000)).padStart(4, "0"), 0, "", "", 0, "", "", "", "", ""]);
     }
-    sp.getRange(2, 1, rows.length, 9).setValues(rows);
+    sp.getRange(2, 1, rows.length, 11).setValues(rows);
     sp.setFrozenRows(1);
     sp.getRange("1:1").setFontWeight("bold");
   }
@@ -98,6 +101,7 @@ function handle(d) {
   if (!d || typeof d.action !== "string") return { ok: false, error: "bad" };
   loadCat();
   if (d.action === "scores") return { ok: true, scores: scores() };
+  if (d.action === "houses") return { ok: true, houses: houses() };
   const a = auth(d);
   if (a.error) return { ok: false, error: a.error };
   const p = a.p;
@@ -109,6 +113,7 @@ function handle(d) {
     case "buy": return buy(p, d);
     case "equip": return equip(p, d);
     case "setpin": return setPin(p, d);
+    case "house": return equipHouse(p, d);
   }
   return { ok: false, error: "bad" };
 }
@@ -161,7 +166,18 @@ function setPin(p, d) {
   return { ok: true, state: state(p) };
 }
 
-function owned(v) { return String(v[C.GEKAUFT] || "").split(",").map(s => s.trim()).filter(s => ITEMS[s]); }
+function owned(v) { return String(v[C.GEKAUFT] || "").split(",").map(s => s.trim()).filter(s => ITEMS[s] || HITEMS[s]); }
+function hfam(s) { return s.indexOf("yard") === 0 ? "yard" : s; }
+function houseOf(v) {
+  let e = {};
+  try { e = JSON.parse(v[C.HAUS] || "{}"); } catch (x) {}
+  const r = Object.assign({}, HDEFAULT);
+  HSLOTS.forEach(s => { if (HITEMS[e[s]] && HITEMS[e[s]].slot === hfam(s)) r[s] = e[s]; });
+  return r;
+}
+function stageOf(stars) { let s = 0; HSTAGES.forEach((t, i) => { if (stars >= t) s = i; }); return s; }
+function reviewOf(v) { try { const a = JSON.parse(v[C.FEHLER] || "[]"); return Array.isArray(a) ? a : []; } catch (x) { return []; } }
+function cleanList(a) { return Array.isArray(a) ? a.slice(0, 40).map(x => String(x).slice(0, 60)).filter(Boolean) : []; }
 function equippedOf(v) {
   let e = {};
   try { e = JSON.parse(v[C.AVATAR] || "{}"); } catch (x) {}
@@ -187,6 +203,7 @@ function state(p) {
       if (t[0] >= 6 || t[1] >= 15 || t[1] < 7) home = true;
     }
     if (g === "daily") { daily++; return; }
+    if (g === "review") return;
     if (plays[g] && s > (stars[g] || 0)) improved = true;
     stars[g] = Math.max(stars[g] || 0, s);
     plays[g] = (plays[g] || 0) + 1;
@@ -195,7 +212,8 @@ function state(p) {
   const dailyToday = res.some(r => r[2] === "daily" && r[0] instanceof Date && Utilities.formatDate(r[0], TZ, "yyyy-MM-dd") === today);
   return {
     fresh: !p.v[C.AVATAR], mustSetPin: String(p.v[C.EIGEN] || "").trim() !== "ja", nr: String(p.v[C.NR]), coins: Number(p.v[C.MUENZEN]) || 0,
-    owned: owned(p.v), equipped: equippedOf(p.v), stars: stars,
+    owned: owned(p.v), equipped: equippedOf(p.v), stars: stars, house: houseOf(p.v), review: reviewOf(p.v),
+    starsTotal: Object.keys(stars).reduce((a, k) => a + stars[k], 0),
     xp: xp, level: levelOf(xp), stats: { plays: res.length, home: home, improved: improved, daily: daily, dailyToday: dailyToday }
   };
 }
@@ -215,6 +233,7 @@ function result(p, d) {
   const todayCount = prev.filter(r => r[0] instanceof Date && Utilities.formatDate(r[0], TZ, "yyyy-MM-dd") === today).length;
   let earned;
   if (game === "daily") earned = todayCount === 0 ? stars * MUENZEN_DAILY_PRO_STERN : 0;
+  else if (game === "review") earned = todayCount === 0 ? stars * 3 : 0;
   else if (prev.length === 0) earned = 10 + stars * 10;
   else if (stars > best) earned = (stars - best) * 10;
   else earned = todayCount < MAX_BELOHNTE_WDH_PRO_TAG ? MUENZEN_WIEDERHOLUNG : 0;
@@ -223,12 +242,20 @@ function result(p, d) {
   const coins = (Number(p.v[C.MUENZEN]) || 0) + earned;
   p.sh.getRange(p.row, C.MUENZEN + 1).setValue(coins);
   p.v[C.MUENZEN] = coins;
+  const wrong = cleanList(d.wrong), fixed = cleanList(d.fixed);
+  if (wrong.length || fixed.length) {
+    let list = reviewOf(p.v).filter(w => fixed.indexOf(w) < 0 && wrong.indexOf(w) < 0).concat(wrong);
+    list = list.slice(-80);
+    p.sh.getRange(1, C.FEHLER + 1).setValue("Fehler-Kiste");
+    p.sh.getRange(p.row, C.FEHLER + 1).setValue(JSON.stringify(list));
+    p.v[C.FEHLER] = JSON.stringify(list);
+  }
   try { uebersicht(); } catch (x) {}
-  return { ok: true, earned: earned, stars: stars, first: prev.length === 0, improved: prev.length > 0 && stars > best, daily: game === "daily", state: state(p) };
+  return { ok: true, earned: earned, stars: stars, first: prev.length === 0, improved: prev.length > 0 && stars > best, daily: game === "daily", review: game === "review", state: state(p) };
 }
 
 function buy(p, d) {
-  const it = ITEMS[d.item];
+  const it = ITEMS[d.item] || HITEMS[d.item];
   if (!it || it.price <= 0) return { ok: false, error: "bad" };
   const o = owned(p.v);
   if (o.indexOf(d.item) >= 0) return { ok: false, error: "owned" };
@@ -237,6 +264,7 @@ function buy(p, d) {
     if (it.months.indexOf(m) < 0) return { ok: false, error: "season" };
   }
   if (it.lvl && state(p).level < it.lvl) return { ok: false, error: "level" };
+  if (it.stars && state(p).starsTotal < it.stars) return { ok: false, error: "stars" };
   const coins = Number(p.v[C.MUENZEN]) || 0;
   if (coins < it.price) return { ok: false, error: "coins" };
   o.push(d.item);
@@ -260,6 +288,34 @@ function equip(p, d) {
   return { ok: true, state: state(p) };
 }
 
+/** Haus speichern (frei kombinierbar, nur gekaufte Teile). */
+function equipHouse(p, d) {
+  const want = d.house || {}, o = owned(p.v), st = stageOf(state(p).starsTotal), e = {};
+  for (const s of HSLOTS) {
+    let id = want[s] || HDEFAULT[s];
+    const it = HITEMS[id];
+    if (!it || it.slot !== hfam(s) || (it.price > 0 && o.indexOf(id) < 0)) return { ok: false, error: "bad" };
+    if (hfam(s) === "yard" && st < (HYARD[s] || 99)) id = HDEFAULT[s];
+    e[s] = id;
+  }
+  p.sh.getRange(1, C.HAUS + 1).setValue("Haus");
+  p.sh.getRange(p.row, C.HAUS + 1).setValue(JSON.stringify(e));
+  p.v[C.HAUS] = JSON.stringify(e);
+  return { ok: true, state: state(p) };
+}
+
+/** Nachbarschaft: alle Häuser (nur Nummern). */
+function houses() {
+  const stars = {}, P = players(), out = [];
+  allResults().forEach(r => { const g = r[2], nr = String(r[1]); if (!g || g === "daily" || g === "review") return; stars[nr] = stars[nr] || {}; stars[nr][g] = Math.max(stars[nr][g] || 0, Number(r[4]) || 0); });
+  for (let i = 1; i < P.v.length; i++) {
+    const v = P.v[i], nr = String(v[C.NR]); if (!nr || (!v[C.AVATAR] && !stars[nr])) continue;
+    const st = Object.keys(stars[nr] || {}).reduce((a, k) => a + stars[nr][k], 0);
+    out.push({ nr: nr, h: houseOf(v), eq: equippedOf(v), st: st });
+  }
+  return out;
+}
+
 /** Top 3 pro Spiel: wenigste Fehler, bei Gleichstand schnellste Zeit. */
 function scores() {
   const best = {}, xp = {};
@@ -267,7 +323,7 @@ function scores() {
   res.forEach(r => {
     const g = r[2], nr = String(r[1]);
     xp[nr] = (xp[nr] || 0) + (Number(r[5]) || 0);
-    if (!g || g === "daily") return;
+    if (!g || g === "daily" || g === "review") return;
     const m = Number(r[3]) || 0, t = Number(r[7]) || 99999;
     best[g] = best[g] || {};
     const b = best[g][nr];
@@ -289,7 +345,7 @@ function uebersicht() {
   ensureSheets();
   const ss = SpreadsheetApp.getActive(), sh = ss.getSheetByName("Übersicht");
   const P = players(), res = allResults();
-  const games = [...new Set(res.map(r => r[2]).filter(g => g && g !== "daily"))].sort();
+  const games = [...new Set(res.map(r => r[2]).filter(g => g && g !== "daily" && g !== "review"))].sort();
   const data = {};
   res.forEach(r => {
     const nr = String(r[1]); data[nr] = data[nr] || { xp: 0, g: {}, last: null, daily: 0 };

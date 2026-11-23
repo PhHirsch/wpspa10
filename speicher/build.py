@@ -19,3 +19,13 @@ open("Code.gs","w").write(s)
 shop={"items":{c["id"]:[c["slot"],c["price"],c.get("lvl",0)]+([c["months"]] if "months" in c else []) for c in cat if c.get("unit",0)==0 or c.get("unit") in ACTIVE_UNITS},"slots":slots,"default":default}
 open("/home/claude/wpspa10/shop.json","w").write(json.dumps(shop,separators=(",",":")))
 print(len(cat),"items", slots)
+
+# ===== Haus-Baukasten =====
+import house_items as HI
+hcat=HI.H
+hj=open("house_head.part").read().replace("/*HCATALOG*/",json.dumps(hcat,ensure_ascii=False)).replace("/*HSLOTS*/",json.dumps(HI.HSLOTS)).replace("/*HDEFAULT*/",json.dumps(HI.HDEFAULT)).replace("/*STAGES*/",json.dumps(HI.STAGES)).replace("/*YARDSTAGE*/",json.dumps(HI.YARD_STAGE))
+open("/home/claude/wpspa10/house.js","w").write(hj)
+shop["house"]={"items":{c["id"]:[c["slot"],c["price"],c.get("lvl",0),c.get("months",0),c.get("stars",0)] for c in hcat if c.get("unit",0)==0 or c.get("unit") in ACTIVE_UNITS},
+  "slots":HI.HSLOTS,"default":HI.HDEFAULT,"stages":HI.STAGES,"yardStage":HI.YARD_STAGE}
+open("/home/claude/wpspa10/shop.json","w").write(json.dumps(shop,separators=(",",":")))
+print(len(hcat),"Hausteile")

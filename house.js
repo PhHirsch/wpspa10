@@ -1,0 +1,407 @@
+/* Haus-Baukasten: 2.5D-Renderer (isometrisch) + Katalog. Wird von build.py zu house.js zusammengesetzt. */
+(function () {
+  const HCAT = [{"id": "g-grass", "slot": "ground", "name": "Césped verde", "price": 0, "kind": "grass", "color": "#79b955"}, {"id": "g-meadow", "slot": "ground", "name": "Prado de flores", "price": 80, "kind": "meadow", "color": "#86c25e"}, {"id": "g-weser", "slot": "ground", "name": "Orilla del Weser", "price": 150, "kind": "weser", "color": "#73b052"}, {"id": "g-beach", "slot": "ground", "name": "Playa", "price": 200, "kind": "beach", "color": "#ecd79a"}, {"id": "g-snow", "slot": "ground", "name": "Nieve", "price": 120, "kind": "snow", "color": "#f4f8fc", "months": [12, 1, 2]}, {"id": "g-autumn", "slot": "ground", "name": "Hojas de otoño", "price": 100, "kind": "autumn", "color": "#b8913f", "months": [10, 11]}, {"id": "g-desert", "slot": "ground", "name": "Desierto", "price": 180, "kind": "desert", "color": "#e2bd78"}, {"id": "g-moon", "slot": "ground", "name": "Superficie lunar 🌙", "price": 700, "lvl": 5, "kind": "moon", "color": "#b9bcc6"}, {"id": "g-candy", "slot": "ground", "name": "País de los caramelos 🍭", "price": 800, "lvl": 6, "kind": "candy", "color": "#f7a8cf"}, {"id": "g-lava", "slot": "ground", "name": "Isla de lava 🌋", "price": 1200, "lvl": 8, "stars": 40, "kind": "lava", "color": "#3a2a2a"}, {"id": "w-plaster", "slot": "wall", "name": "Revoque", "price": 0, "kind": "plaster"}, {"id": "w-wood", "slot": "wall", "name": "Tablas de madera", "price": 80, "kind": "wood"}, {"id": "w-brick", "slot": "wall", "name": "Ladrillos", "price": 120, "kind": "brick"}, {"id": "w-timber", "slot": "wall", "name": "Entramado (como en Höxter)", "price": 200, "kind": "timber"}, {"id": "w-log", "slot": "wall", "name": "Troncos", "price": 220, "kind": "log"}, {"id": "w-stone", "slot": "wall", "name": "Piedra", "price": 250, "kind": "stone"}, {"id": "w-glass", "slot": "wall", "name": "Cristal (moderno)", "price": 400, "lvl": 4, "kind": "glass"}, {"id": "w-rainbow", "slot": "wall", "name": "Rayas arcoíris 🌈", "price": 600, "lvl": 5, "kind": "rainbow"}, {"id": "w-gold", "slot": "wall", "name": "Oro 👑", "price": 1500, "lvl": 9, "stars": 50, "kind": "gold"}, {"id": "wc-cream", "slot": "wcolor", "name": "Crema", "price": 0, "color": "#efe3c8"}, {"id": "wc-white", "slot": "wcolor", "name": "Blanco", "price": 30, "color": "#f4f4f2"}, {"id": "wc-sky", "slot": "wcolor", "name": "Azul cielo", "price": 40, "color": "#a9cdea"}, {"id": "wc-mint", "slot": "wcolor", "name": "Menta", "price": 40, "color": "#b5e0c4"}, {"id": "wc-rose", "slot": "wcolor", "name": "Rosa", "price": 40, "color": "#f2b8c6"}, {"id": "wc-sun", "slot": "wcolor", "name": "Amarillo sol", "price": 40, "color": "#f5d36b"}, {"id": "wc-peach", "slot": "wcolor", "name": "Melocotón", "price": 40, "color": "#f4b98e"}, {"id": "wc-lilac", "slot": "wcolor", "name": "Lila", "price": 50, "color": "#c7b4e6"}, {"id": "wc-grey", "slot": "wcolor", "name": "Gris piedra", "price": 40, "color": "#a9adb3"}, {"id": "wc-red", "slot": "wcolor", "name": "Rojo granero", "price": 60, "color": "#b5453a"}, {"id": "wc-navy", "slot": "wcolor", "name": "Azul marino", "price": 60, "color": "#3b4f7a"}, {"id": "wc-black", "slot": "wcolor", "name": "Negro", "price": 80, "color": "#34363b"}, {"id": "wc-neon", "slot": "wcolor", "name": "Verde neón ⚡", "price": 300, "color": "#7cff4f"}, {"id": "r-gable", "slot": "roof", "name": "Tejado a dos aguas", "price": 0, "kind": "gable"}, {"id": "r-hip", "slot": "roof", "name": "Tejado a cuatro aguas", "price": 100, "kind": "hip"}, {"id": "r-flat", "slot": "roof", "name": "Tejado plano", "price": 100, "kind": "flat"}, {"id": "r-green", "slot": "roof", "name": "Tejado verde (jardín arriba)", "price": 250, "kind": "green"}, {"id": "r-thatch", "slot": "roof", "name": "Tejado de paja", "price": 250, "kind": "thatch"}, {"id": "r-pagoda", "slot": "roof", "name": "Tejado de pagoda", "price": 400, "lvl": 4, "kind": "pagoda"}, {"id": "rc-red", "slot": "rcolor", "name": "Rojo teja", "price": 0, "color": "#b8442f"}, {"id": "rc-brown", "slot": "rcolor", "name": "Marrón", "price": 30, "color": "#7a4a2c"}, {"id": "rc-slate", "slot": "rcolor", "name": "Pizarra", "price": 40, "color": "#4a5260"}, {"id": "rc-green", "slot": "rcolor", "name": "Verde", "price": 50, "color": "#3f7a45"}, {"id": "rc-blue", "slot": "rcolor", "name": "Azul", "price": 50, "color": "#2f5d9a"}, {"id": "rc-black", "slot": "rcolor", "name": "Negro", "price": 50, "color": "#2a2a2e"}, {"id": "rc-purple", "slot": "rcolor", "name": "Morado", "price": 80, "color": "#6a3fa0"}, {"id": "rc-pink", "slot": "rcolor", "name": "Rosa chicle", "price": 100, "color": "#e0679a"}, {"id": "rc-gold", "slot": "rcolor", "name": "Oro ✨", "price": 600, "color": "#e2b23a"}, {"id": "win-classic", "slot": "window", "name": "Ventanas clásicas", "price": 0, "kind": "classic"}, {"id": "win-shutter", "slot": "window", "name": "Ventanas con contraventanas", "price": 80, "kind": "shutter"}, {"id": "win-round", "slot": "window", "name": "Ventanas redondas", "price": 100, "kind": "round"}, {"id": "win-arch", "slot": "window", "name": "Ventanas en arco", "price": 120, "kind": "arch"}, {"id": "win-wide", "slot": "window", "name": "Ventanas panorámicas", "price": 150, "kind": "wide"}, {"id": "win-stained", "slot": "window", "name": "Vidrieras", "price": 300, "lvl": 3, "kind": "stained"}, {"id": "win-heart", "slot": "window", "name": "Ventanas de corazón 💖", "price": 400, "lvl": 4, "kind": "heart"}, {"id": "d-wood", "slot": "door", "name": "Puerta de madera", "price": 0, "kind": "door", "color": "#6b4226"}, {"id": "d-red", "slot": "door", "name": "Puerta roja", "price": 50, "kind": "door", "color": "#c0392b"}, {"id": "d-blue", "slot": "door", "name": "Puerta azul", "price": 50, "kind": "door", "color": "#2f5d9a"}, {"id": "d-arch", "slot": "door", "name": "Puerta en arco", "price": 120, "kind": "arch", "color": "#5a3a1a"}, {"id": "d-glass", "slot": "door", "name": "Puerta de cristal", "price": 150, "kind": "glass", "color": "#3a3f48"}, {"id": "d-castle", "slot": "door", "name": "Portón de castillo", "price": 350, "lvl": 4, "kind": "castle", "color": "#4a3220"}, {"id": "d-space", "slot": "door", "name": "Escotilla espacial 🚀", "price": 600, "lvl": 6, "kind": "space", "color": "#9aa4b4"}, {"id": "rx-none", "slot": "roofx", "name": "Nada", "price": 0}, {"id": "rx-chimney", "slot": "roofx", "name": "Chimenea con humo", "price": 80, "kind": "chimney"}, {"id": "rx-solar", "slot": "roofx", "name": "Placas solares", "price": 150, "kind": "solar"}, {"id": "rx-dish", "slot": "roofx", "name": "Antena parabólica", "price": 120, "kind": "dish"}, {"id": "rx-flag", "slot": "roofx", "name": "Bandera", "price": 100, "kind": "flag"}, {"id": "rx-rooster", "slot": "roofx", "name": "Veleta de gallo", "price": 120, "kind": "rooster"}, {"id": "rx-turbine", "slot": "roofx", "name": "Aerogenerador", "price": 250, "kind": "turbine"}, {"id": "rx-lights", "slot": "roofx", "name": "Luces de Navidad 🎄", "price": 150, "kind": "lights", "months": [12, 1]}, {"id": "rx-telescope", "slot": "roofx", "name": "Telescopio", "price": 400, "lvl": 5, "kind": "telescope"}, {"id": "rx-heli", "slot": "roofx", "name": "Helipuerto 🚁", "price": 900, "lvl": 7, "stars": 35, "kind": "heli"}, {"id": "f-none", "slot": "fence", "name": "Sin valla", "price": 0}, {"id": "f-picket", "slot": "fence", "name": "Valla blanca", "price": 80, "kind": "picket", "color": "#f4f4f2"}, {"id": "f-wood", "slot": "fence", "name": "Valla de madera", "price": 80, "kind": "picket", "color": "#8a5a32"}, {"id": "f-hedge", "slot": "fence", "name": "Seto", "price": 120, "kind": "hedge", "color": "#3f8a3a"}, {"id": "f-stone", "slot": "fence", "name": "Muro de piedra", "price": 180, "kind": "stone", "color": "#a9a49a"}, {"id": "f-lights", "slot": "fence", "name": "Guirnalda de luces ✨", "price": 200, "kind": "lights", "color": "#7a5a32", "months": [11, 12, 1]}, {"id": "y-none", "slot": "yard", "name": "Vacío", "price": 0}, {"id": "y-tree", "slot": "yard", "name": "Roble", "price": 60, "kind": "tree"}, {"id": "y-pine", "slot": "yard", "name": "Pino", "price": 60, "kind": "pine"}, {"id": "y-apple", "slot": "yard", "name": "Manzano", "price": 90, "kind": "apple"}, {"id": "y-flowers", "slot": "yard", "name": "Macizo de flores", "price": 70, "kind": "flowers"}, {"id": "y-veg", "slot": "yard", "name": "Huerto", "price": 90, "kind": "veg"}, {"id": "y-bench", "slot": "yard", "name": "Banco de jardín", "price": 80, "kind": "bench"}, {"id": "y-bbq", "slot": "yard", "name": "Barbacoa", "price": 120, "kind": "bbq"}, {"id": "y-doghouse", "slot": "yard", "name": "Caseta de perro", "price": 150, "kind": "doghouse"}, {"id": "y-gnomes", "slot": "yard", "name": "Gnomos de jardín", "price": 150, "kind": "gnomes"}, {"id": "y-trampoline", "slot": "yard", "name": "Cama elástica", "price": 200, "kind": "trampoline"}, {"id": "y-swing", "slot": "yard", "name": "Columpio", "price": 200, "kind": "swing"}, {"id": "y-pond", "slot": "yard", "name": "Estanque con patos", "price": 220, "kind": "pond"}, {"id": "y-car", "slot": "yard", "name": "Coche familiar", "price": 300, "kind": "car"}, {"id": "y-pool", "slot": "yard", "name": "Piscina", "price": 400, "stars": 15, "kind": "pool"}, {"id": "y-boat", "slot": "yard", "name": "Barco del Weser", "price": 350, "kind": "boat"}, {"id": "y-corvey", "slot": "yard", "name": "Mini Corvey (Höxter)", "price": 500, "stars": 20, "kind": "corvey"}, {"id": "y-fountain", "slot": "yard", "name": "Fuente", "price": 450, "lvl": 4, "kind": "fountain"}, {"id": "y-xmas", "slot": "yard", "name": "Árbol de Navidad 🎄", "price": 150, "kind": "xmas", "months": [12, 1]}, {"id": "y-snowman", "slot": "yard", "name": "Muñeco de nieve ⛄", "price": 100, "kind": "snowman", "months": [12, 1, 2]}, {"id": "y-pumpkins", "slot": "yard", "name": "Calabazas 🎃", "price": 100, "kind": "pumpkins", "months": [10, 11]}, {"id": "y-eggs", "slot": "yard", "name": "Huevos de Pascua 🐣", "price": 100, "kind": "eggs", "months": [3, 4]}, {"id": "y-dino", "slot": "yard", "name": "Estatua de dinosaurio 🦖", "price": 700, "lvl": 6, "kind": "dino"}, {"id": "y-ufo", "slot": "yard", "name": "OVNI aterrizado 🛸", "price": 1000, "lvl": 7, "kind": "ufo"}, {"id": "y-rocket", "slot": "yard", "name": "Cohete 🚀", "price": 1500, "lvl": 9, "stars": 50, "kind": "rocket"}];
+  const HSLOTS = ["ground", "wall", "wcolor", "roof", "rcolor", "window", "door", "roofx", "fence", "yard1", "yard2", "yard3", "yard4"];
+  const HDEFAULT = {"ground": "g-grass", "wall": "w-plaster", "wcolor": "wc-cream", "roof": "r-gable", "rcolor": "rc-red", "window": "win-classic", "door": "d-wood", "roofx": "rx-none", "fence": "f-none", "yard1": "y-none", "yard2": "y-none", "yard3": "y-none", "yard4": "y-none"};
+  const STAGES = [0, 5, 12, 20, 30, 45, 65];
+  const YARD_STAGE = {"yard1": 1, "yard2": 2, "yard3": 4, "yard4": 5};
+  const STAGE_NAMES = ["Tienda", "Cabaña", "Casita", "Casa", "Casa grande", "Villa", "Mansión"];
+  const HTABS = [["Edificio", ["wall", "wcolor", "window", "door"]], ["Tejado", ["roof", "rcolor", "roofx"]], ["Jardín", ["yard", "fence"]], ["Suelo", ["ground"]]];
+  const HSLOTNAME = { ground: "Suelo", wall: "Paredes", wcolor: "Color de las paredes", roof: "Tejado", rcolor: "Color del tejado", window: "Ventanas", door: "Puerta", roofx: "En el tejado", fence: "Valla", yard: "Jardín" };
+  const byId = {}; HCAT.forEach(i => byId[i.id] = i);
+  const fam = s => s.indexOf("yard") === 0 ? "yard" : s;
+
+  function hclean(h) {
+    const r = Object.assign({}, HDEFAULT);
+    if (h) HSLOTS.forEach(s => { const it = byId[h[s]]; if (it && it.slot === fam(s)) r[s] = h[s]; });
+    return r;
+  }
+  function stageOf(stars) { let s = 0; STAGES.forEach((t, i) => { if (stars >= t) s = i; }); return s; }
+  function yardOpen(slot, stage) { return stage >= (YARD_STAGE[slot] || 99); }
+
+  /* ---------- Farben & Geometrie ---------- */
+  function rgb(c) { c = c.replace("#", ""); if (c.length === 3) c = c.split("").map(x => x + x).join(""); return [0, 2, 4].map(i => parseInt(c.substr(i, 2), 16)); }
+  function sh(c, f) { return "#" + rgb(c).map(v => Math.max(0, Math.min(255, Math.round(f < 1 ? v * f : v + (255 - v) * (f - 1))))).map(v => v.toString(16).padStart(2, "0")).join(""); }
+  const K = 20, CX = 0.8660254 * K, SY = 0.5 * K, N = 10;
+  const P = (x, y, z) => [(x - y) * CX, (x + y) * SY - z * K];
+  const f1 = n => (Math.round(n * 10) / 10);
+  const pts = a => a.map(p => { const q = P(p[0], p[1], p[2]); return f1(q[0]) + "," + f1(q[1]); }).join(" ");
+  const poly = (a, fill, ex) => `<polygon points="${pts(a)}" fill="${fill}"${ex ? " " + ex : ""}/>`;
+  const ln = (a, b, st, w, ex) => { const p = P(a[0], a[1], a[2]), q = P(b[0], b[1], b[2]); return `<line x1="${f1(p[0])}" y1="${f1(p[1])}" x2="${f1(q[0])}" y2="${f1(q[1])}" stroke="${st}" stroke-width="${w}" stroke-linecap="round"${ex ? " " + ex : ""}/>`; };
+  const ball = (x, y, z, r, fill, ex) => { const p = P(x, y, z); return `<circle cx="${f1(p[0])}" cy="${f1(p[1])}" r="${f1(r * K)}" fill="${fill}"${ex ? " " + ex : ""}/>`; };
+  const shadow = (x, y, rx, ry) => { const p = P(x, y, 0); return `<ellipse cx="${f1(p[0])}" cy="${f1(p[1])}" rx="${f1(rx * K)}" ry="${f1(ry * K)}" fill="#000" opacity=".18"/>`; };
+  function rng(seed) { let s = seed * 9301 + 49297; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
+  // Kreis/Ellipse in der Bodenebene
+  function disc(x, y, z, r, fill, ex, n) { n = n || 18; const a = []; for (let i = 0; i < n; i++) { const t = i / n * Math.PI * 2; a.push([x + Math.cos(t) * r, y + Math.sin(t) * r, z]); } return poly(a, fill, ex); }
+  // Quader (ohne Muster): Deckel, Vorderseite (+y), rechte Seite (+x)
+  function blk(x, y, z, dx, dy, dz, c, ex) {
+    return poly([[x, y + dy, z], [x + dx, y + dy, z], [x + dx, y + dy, z + dz], [x, y + dy, z + dz]], sh(c, .92), ex) +
+      poly([[x + dx, y, z], [x + dx, y + dy, z], [x + dx, y + dy, z + dz], [x + dx, y, z + dz]], sh(c, .72), ex) +
+      poly([[x, y, z + dz], [x + dx, y, z + dz], [x + dx, y + dy, z + dz], [x, y + dy, z + dz]], sh(c, 1.1), ex);
+  }
+  // Fläche einer Wand: Punkt (u,v) in 3D
+  function face(o, u, v) { return (a, b) => [o[0] + u[0] * a + v[0] * b, o[1] + u[1] * a + v[1] * b, o[2] + u[2] * a + v[2] * b]; }
+  const fpoly = (F, uv, fill, ex) => poly(uv.map(q => F(q[0], q[1])), fill, ex);
+  const fln = (F, a, b, st, w, ex) => ln(F(a[0], a[1]), F(b[0], b[1]), st, w, ex);
+  const fcirc = (F, cu, cv, r, fill, ex, n) => { n = n || 14; const a = []; for (let i = 0; i < n; i++) { const t = i / n * Math.PI * 2; a.push([cu + Math.cos(t) * r, cv + Math.sin(t) * r]); } return fpoly(F, a, fill, ex); };
+
+  /* ---------- Wände mit Material ---------- */
+  const BEAM = "#4a3020";
+  function wallSurface(F, L, H, mat, base, f, floors) {
+    let s = "";
+    const col = mat === "glass" ? "#9fd3ea" : mat === "gold" ? "#e2b23a" : mat === "timber" ? sh(base, 1.08) : base;
+    s += fpoly(F, [[0, 0], [L, 0], [L, H], [0, H]], sh(col, f));
+    const dark = sh(col, f * .78), light = sh(col, Math.min(1.35, f * 1.25));
+    if (mat === "wood") for (let v = .3; v < H; v += .3) s += fln(F, [0, v], [L, v], dark, 1);
+    if (mat === "brick") { let row = 0; for (let v = .25; v < H; v += .25, row++) { s += fln(F, [0, v], [L, v], light, .8); for (let u = (row % 2 ? .25 : .5); u < L; u += .5) s += fln(F, [u, v - .25], [u, v], light, .8); } }
+    if (mat === "log") { for (let v = .4; v < H; v += .4) { s += fln(F, [0, v], [L, v], dark, 2.2); } for (let v = .2; v < H; v += .4) s += fcirc(F, L, v, .18, light, `stroke="${dark}" stroke-width=".8"`, 10); }
+    if (mat === "stone") { const R = rng(Math.round(L * 7 + H)); for (let v = 0; v < H - .01; v += .45) { let u = -R() * .4; while (u < L) { const w = .5 + R() * .5; s += fpoly(F, [[Math.max(0, u), v], [Math.min(L, u + w), v], [Math.min(L, u + w), Math.min(H, v + .45)], [Math.max(0, u), Math.min(H, v + .45)]], "none", `stroke="${dark}" stroke-width=".9"`); u += w; } } }
+    if (mat === "timber") {
+      const fh = H / floors;
+      s += fpoly(F, [[0, 0], [L, 0], [L, H], [0, H]], "none", `stroke="${BEAM}" stroke-width="3"`);
+      for (let k = 1; k < floors; k++) s += fln(F, [0, k * fh], [L, k * fh], BEAM, 3);
+      const n = Math.max(2, Math.round(L / 1.1)), w = L / n;
+      for (let k = 0; k < floors; k++) for (let i = 0; i <= n; i++) { s += fln(F, [i * w, k * fh], [i * w, (k + 1) * fh], BEAM, 2.2); if (i < n && (i + k) % 2 === 0 && (i === 0 || i === n - 1)) { s += fln(F, [i * w, k * fh], [(i + 1) * w, (k + 1) * fh], BEAM, 2); s += fln(F, [(i + 1) * w, k * fh], [i * w, (k + 1) * fh], BEAM, 2); } }
+    }
+    if (mat === "glass") { for (let u = 1; u < L; u += 1) s += fln(F, [u, 0], [u, H], "#2c3440", 1.6); for (let k = 1; k < floors; k++) s += fln(F, [0, k * H / floors], [L, k * H / floors], "#2c3440", 2.4); s += fpoly(F, [[0, 0], [L, 0], [L, H], [0, H]], "none", `stroke="#2c3440" stroke-width="2.4"`); s += fln(F, [L * .1, H * .9], [L * .35, H * .2], "#ffffff", 3, 'opacity=".35"'); }
+    if (mat === "rainbow") { const C = ["#e63946", "#f4a261", "#e9c46a", "#2a9d8f", "#457b9d", "#6a4c93"]; C.forEach((c, i) => s += fpoly(F, [[0, H * i / 6], [L, H * i / 6], [L, H * (i + 1) / 6], [0, H * (i + 1) / 6]], sh(c, f))); }
+    if (mat === "gold") { for (let u = -H; u < L; u += 1.2) s += fln(F, [Math.max(0, u), Math.max(0, -u)], [Math.min(L, u + H), Math.min(H, L - u)], "#fff6c8", 2.5, 'opacity=".5"'); }
+    return s;
+  }
+  // Giebeldreieck (nur Farbe + einfache Linien)
+  function gable(F, L, R, mat, base, f) {
+    const col = mat === "glass" ? "#9fd3ea" : mat === "gold" ? "#e2b23a" : mat === "rainbow" ? "#e9c46a" : mat === "timber" ? sh(base, 1.08) : base;
+    let s = fpoly(F, [[0, 0], [L, 0], [L / 2, R]], sh(col, f));
+    if (mat === "wood" || mat === "log" || mat === "brick") for (let v = .35; v < R; v += .35) { const w = L / 2 * (1 - v / R); s += fln(F, [L / 2 - w, v], [L / 2 + w, v], sh(col, f * .78), mat === "log" ? 2 : 1); }
+    if (mat === "timber") { s += fln(F, [L / 2, 0], [L / 2, R], BEAM, 2.4); s += fln(F, [0, 0], [L, 0], BEAM, 3); s += fln(F, [L * .25, 0], [L / 2, R * .6], BEAM, 2); s += fln(F, [L * .75, 0], [L / 2, R * .6], BEAM, 2); }
+    return s;
+  }
+
+  /* ---------- Fenster & Türen ---------- */
+  function windowAt(F, cu, cv, kind, f) {
+    const gl = sh("#bfe4f7", f), fr = "#ffffff", fr2 = sh("#e9e9e9", f);
+    const rect = (w, h) => [[cu - w / 2, cv - h / 2], [cu + w / 2, cv - h / 2], [cu + w / 2, cv + h / 2], [cu - w / 2, cv + h / 2]];
+    let s = "";
+    if (kind === "round") { s += fcirc(F, cu, cv, .4, fr2); s += fcirc(F, cu, cv, .32, gl); s += fln(F, [cu - .32, cv], [cu + .32, cv], fr2, 1.2); return s; }
+    if (kind === "wide") { s += fpoly(F, rect(1.3, .75), "#2c3440"); s += fpoly(F, rect(1.2, .65), gl); s += fln(F, [cu, cv - .32], [cu, cv + .32], "#2c3440", 1.2); return s; }
+    if (kind === "arch") { const a = [[cu - .3, cv - .45], [cu + .3, cv - .45], [cu + .3, cv + .15]]; for (let i = 0; i <= 8; i++) { const t = i / 8 * Math.PI; a.push([cu + Math.cos(t) * .3, cv + .15 + Math.sin(t) * .3]); } a.push([cu - .3, cv + .15]); s += fpoly(F, a, gl, `stroke="${fr2}" stroke-width="2.2"`); s += fln(F, [cu, cv - .45], [cu, cv + .45], fr2, 1.2); return s; }
+    if (kind === "stained") { const C = ["#e63946", "#ffd166", "#06d6a0", "#118ab2"]; [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach((d, i) => s += fpoly(F, [[cu, cv], [cu + .28 * d[0], cv], [cu + .28 * d[0], cv + .32 * d[1]], [cu, cv + .32 * d[1]]], sh(C[i], f))); s += fpoly(F, rect(.56, .64), "none", `stroke="#3a3a3a" stroke-width="1.6"`); return s; }
+    if (kind === "heart") { const a = []; for (let i = 0; i < 24; i++) { const t = i / 24 * Math.PI * 2; const x = 16 * Math.pow(Math.sin(t), 3), y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t); a.push([cu + x / 40, cv + y / 40]); } s += fpoly(F, a, sh("#ff8fb8", f), `stroke="#ffffff" stroke-width="1.6"`); return s; }
+    s += fpoly(F, rect(.62, .72), fr2); s += fpoly(F, rect(.5, .6), gl);
+    s += fln(F, [cu, cv - .3], [cu, cv + .3], fr2, 1.3); s += fln(F, [cu - .25, cv], [cu + .25, cv], fr2, 1.3);
+    if (kind === "shutter") { s += fpoly(F, [[cu - .62, cv - .36], [cu - .34, cv - .36], [cu - .34, cv + .36], [cu - .62, cv + .36]], sh("#3f7a45", f)); s += fpoly(F, [[cu + .34, cv - .36], [cu + .62, cv - .36], [cu + .62, cv + .36], [cu + .34, cv + .36]], sh("#3f7a45", f)); }
+    return s;
+  }
+  function doorAt(F, cu, it, f) {
+    const c = it.color, k = it.kind; let s = "";
+    if (k === "castle") { const a = [[cu - .55, 0], [cu + .55, 0], [cu + .55, 1.3]]; for (let i = 0; i <= 10; i++) { const t = i / 10 * Math.PI; a.push([cu + Math.cos(t) * .55, 1.3 + Math.sin(t) * .55]); } a.push([cu - .55, 1.3]); s += fpoly(F, a, sh(c, f), `stroke="#2a1a10" stroke-width="2.5"`); s += fln(F, [cu, 0], [cu, 1.85], "#2a1a10", 1.6); [.3, .8, 1.3].forEach(v => s += fln(F, [cu - .5, v], [cu + .5, v], "#8a8a8a", 1.4)); return s; }
+    if (k === "space") { s += fcirc(F, cu, .85, .62, sh("#6a7484", f)); s += fcirc(F, cu, .85, .5, sh(c, f)); s += fcirc(F, cu, .85, .2, "#3ff0ff", `opacity=".8"`); s += fln(F, [cu - .5, .85], [cu + .5, .85], "#556070", 1.4); return s; }
+    if (k === "arch") { const a = [[cu - .38, 0], [cu + .38, 0], [cu + .38, 1.1]]; for (let i = 0; i <= 8; i++) { const t = i / 8 * Math.PI; a.push([cu + Math.cos(t) * .38, 1.1 + Math.sin(t) * .38]); } a.push([cu - .38, 1.1]); s += fpoly(F, a, sh(c, f)); s += fcirc(F, cu + .22, .7, .05, "#ffd166"); return s; }
+    if (k === "glass") { s += fpoly(F, [[cu - .4, 0], [cu + .4, 0], [cu + .4, 1.55], [cu - .4, 1.55]], sh(c, f)); s += fpoly(F, [[cu - .3, .1], [cu + .3, .1], [cu + .3, 1.45], [cu - .3, 1.45]], sh("#bfe4f7", f)); return s; }
+    s += fpoly(F, [[cu - .38, 0], [cu + .38, 0], [cu + .38, 1.5], [cu - .38, 1.5]], sh(c, f));
+    s += fpoly(F, [[cu - .28, .85], [cu + .28, .85], [cu + .28, 1.38], [cu - .28, 1.38]], "none", `stroke="${sh(c, f * .7)}" stroke-width="1.2"`);
+    s += fcirc(F, cu + .24, .72, .05, "#ffd166");
+    return s;
+  }
+
+  /* ---------- Gebäude-Teil: Quader mit Wänden, Fenstern, Dach ---------- */
+  function building(b, h, opt) {
+    const it = k => byId[h[k]];
+    const mat = it("wall").kind, base = it("wcolor").color, win = it("window").kind;
+    const x0 = b.x, y0 = b.y, dx = b.dx, dy = b.dy, dz = b.dz, x1 = x0 + dx, y1 = y0 + dy;
+    let s = "";
+    // Kontaktschatten
+    s += poly([[x0 - .25, y0 - .25, 0], [x1 + .3, y0 - .25, 0], [x1 + .3, y1 + .3, 0], [x0 - .25, y1 + .3, 0]], "#000", 'opacity=".16"');
+    const floors = b.floors || 1;
+    const FY = face([x0, y1, 0], [1, 0, 0], [0, 0, 1]), FX = face([x1, y1, 0], [0, -1, 0], [0, 0, 1]);
+    s += wallSurface(FY, dx, dz, mat, base, 1, floors) + wallSurface(FX, dy, dz, mat, base, .78, floors);
+    if (mat !== "glass") {
+      const fh = dz / floors;
+      [[FY, dx, 1, true], [FX, dy, .78, false]].forEach(([F, L, f, front]) => {
+        const n = Math.max(1, Math.round(L / (win === "wide" ? 1.9 : 1.45)));
+        for (let k = 0; k < floors; k++) for (let i = 0; i < n; i++) {
+          const cu = L * (i + .5) / n, cv = k * fh + fh * .58;
+          if (front && k === 0 && b.door && Math.abs(cu - (b.doorU || dx / 2)) < (win === "wide" ? 1.1 : .85)) continue;
+          s += windowAt(F, cu, cv, win, f);
+        }
+      });
+    }
+    if (b.door) s += doorAt(FY, b.doorU || dx / 2, it("door"), 1);
+    // Kante
+    s += ln([x1, y1, 0], [x1, y1, dz], sh(base, .6), 1.2, 'opacity=".5"');
+    s += roof(b, h, opt);
+    return s;
+  }
+
+  function roof(b, h, opt) {
+    const kind = byId[h.roof].kind, rc = kind === "thatch" ? "#c9a24a" : byId[h.rcolor].color;
+    const mat = byId[h.wall].kind, base = byId[h.wcolor].color;
+    const x0 = b.x, y0 = b.y, x1 = b.x + b.dx, y1 = b.y + b.dy, z1 = b.dz, ym = y0 + b.dy / 2;
+    let s = "", info = { x0: x0, x1: x1, y0: y0, y1: y1, z1: z1, ym: ym, zr: z1, flat: false };
+    const FX = face([x1, y1, z1], [0, -1, 0], [0, 0, 1]);
+    if (kind === "flat" || kind === "green") {
+      const t = kind === "green" ? "#6fae4b" : sh(rc, .95);
+      s += poly([[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], t);
+      if (kind === "green") { const R = rng(Math.round(b.dx * 13)); for (let i = 0; i < b.dx * 2; i++) s += ball(x0 + .4 + R() * (b.dx - .8), y0 + .4 + R() * (b.dy - .8), z1 + .15, .18 + R() * .12, ["#4f9a3a", "#3f8a2f", "#e9c46a", "#ff8fb1"][i % 4]); }
+      const pc = kind === "green" ? sh(base, .9) : rc;
+      s += blk(x0 - .1, y0 - .1, z1, b.dx + .2, .18, .35, pc) + blk(x0 - .1, y0 - .1, z1, .18, b.dy + .2, .35, pc);
+      s += blk(x1 - .08, y0 - .1, z1, .18, b.dy + .2, .35, pc) + blk(x0 - .1, y1 - .08, z1, b.dx + .2, .18, .35, pc);
+      info.flat = true; info.zr = z1 + .35; return opt && opt.info ? info : s;
+    }
+    const o = kind === "thatch" ? .45 : kind === "pagoda" ? .7 : .3;
+    let rh = Math.min(b.dy * (kind === "thatch" ? .7 : .55), 2.4); if (kind === "pagoda") rh *= .5;
+    const zr = z1 + rh; info.zr = zr;
+    if (opt && opt.info) { if (kind === "pagoda") info.zr = zr + 1.6; return info; }
+    const ridgeLines = (a, c) => { let r = ""; for (let t = .2; t < 1; t += .2) r += ln([a[0][0] + (a[3][0] - a[0][0]) * t, a[0][1] + (a[3][1] - a[0][1]) * t, a[0][2] + (a[3][2] - a[0][2]) * t], [a[1][0] + (a[2][0] - a[1][0]) * t, a[1][1] + (a[2][1] - a[1][1]) * t, a[1][2] + (a[2][2] - a[1][2]) * t], sh(c, .8), 1, 'opacity=".6"'); return r; };
+    if (kind === "gable" || kind === "thatch") {
+      const back = [[x0 - o, y0 - o, z1], [x1 + o, y0 - o, z1], [x1 + o, ym, zr], [x0 - o, ym, zr]];
+      const front = [[x0 - o, y1 + o, z1 - (kind === "thatch" ? .2 : 0)], [x1 + o, y1 + o, z1 - (kind === "thatch" ? .2 : 0)], [x1 + o, ym, zr], [x0 - o, ym, zr]];
+      s += poly(back, sh(rc, .62));
+      s += gable(face([x1, y1, z1], [0, -1, 0], [0, 0, 1]), b.dy, rh, mat, base, .78);
+      s += poly(front, sh(rc, 1)) + ridgeLines(front, rc);
+      if (kind === "thatch") { const R = rng(7); for (let i = 0; i < b.dx * 6; i++) { const t = R(); s += ln([x0 - o + t * (b.dx + 2 * o), y1 + o, z1 - .2], [x0 - o + t * (b.dx + 2 * o), y1 + o - .5, z1 + .1], "#8a6a2a", 1, 'opacity=".55"'); } s += poly([[x0 - o, y1 + o, z1 - .2], [x1 + o, y1 + o, z1 - .2], [x1 + o, y1 + o, z1 - .45], [x0 - o, y1 + o, z1 - .45]], "#a88432"); }
+      else s += poly([[x0 - o, y1 + o, z1], [x1 + o, y1 + o, z1], [x1 + o, y1 + o, z1 - .14], [x0 - o, y1 + o, z1 - .14]], sh(rc, .55));
+      s += ln([x1 + o, y0 - o, z1], [x1 + o, ym, zr], sh(rc, .45), 2.2) + ln([x1 + o, ym, zr], [x1 + o, y1 + o, z1 - (kind === "thatch" ? .2 : 0)], sh(rc, .45), 2.2);
+      s += ln([x0 - o, ym, zr], [x1 + o, ym, zr], sh(rc, .5), 2);
+      return s;
+    }
+    // Walmdach / Pagode
+    const hip = (X0, X1, Y0, Y1, Z, R, O, c, up) => {
+      const YM = (Y0 + Y1) / 2, D = Y1 - Y0; let xa = X0 + D / 2, xb = X1 - D / 2; if (xb < xa) xa = xb = (X0 + X1) / 2;
+      const ZR = Z + R; let r = "";
+      const e = up ? .25 : 0;
+      r += poly([[X0 - O, Y0 - O, Z + e], [X1 + O, Y0 - O, Z + e], [xb, YM, ZR], [xa, YM, ZR]], sh(c, .62));
+      r += poly([[X0 - O, Y0 - O, Z + e], [X0 - O, Y1 + O, Z + e], [xa, YM, ZR]], sh(c, .7));
+      r += poly([[X1 + O, Y0 - O, Z + e], [X1 + O, Y1 + O, Z + e], [xb, YM, ZR]], sh(c, .8));
+      const fr = [[X0 - O, Y1 + O, Z + e], [X1 + O, Y1 + O, Z + e], [xb, YM, ZR], [xa, YM, ZR]];
+      r += poly(fr, c) + ridgeLines(fr, c);
+      if (up) r += poly([[X0 - O, Y1 + O, Z + e], [X1 + O, Y1 + O, Z + e], [X1 + O * .6, Y1 + O * .6, Z - .05], [X0 - O * .6, Y1 + O * .6, Z - .05]], sh(c, .5));
+      r += ln([X1 + O, Y1 + O, Z + e], [xb, YM, ZR], sh(c, .45), 1.8);
+      return r;
+    };
+    if (kind === "hip") return s + hip(x0, x1, y0, y1, z1, rh, o, rc, false);
+    // Pagode: zwei Stockwerke
+    s += hip(x0, x1, y0, y1, z1, rh, o, rc, true);
+    const ix = b.dx * .22, iy = b.dy * .22;
+    s += blk(x0 + ix, y0 + iy, zr - .3, b.dx - 2 * ix, b.dy - 2 * iy, .9, base);
+    s += hip(x0 + ix, x1 - ix, y0 + iy, y1 - iy, zr + .6, rh * .9, .45, rc, true);
+    s += ln([(x0 + x1) / 2, ym, zr + .6 + rh * .9 - .2], [(x0 + x1) / 2, ym, zr + 1.9], "#e2b23a", 2.5);
+    return s;
+  }
+
+  /* ---------- Dach-Extras ---------- */
+  function roofExtra(kind, I) {
+    if (!kind) return "";
+    const mx = I.x0 + (I.x1 - I.x0) * .5;
+    const onFront = (u, t) => [I.x0 + (I.x1 - I.x0) * u, I.y1 + (I.ym - I.y1) * t, I.z1 + (I.zr - I.z1) * t];
+    let s = "";
+    if (kind === "chimney") { const x = I.x0 + (I.x1 - I.x0) * .75, y = I.y0 + .5; s += blk(x, y, I.z1, .55, .55, (I.zr - I.z1) + .9, "#8a4b3c"); const p = P(x + .3, y + .3, I.zr + 1.1); [0, 1, 2].forEach(i => s += `<circle cx="${f1(p[0])}" cy="${f1(p[1])}" r="${5 + i * 2}" fill="#cfd3d8" opacity="0"><animate attributeName="cy" values="${f1(p[1])};${f1(p[1] - 40)}" dur="3s" begin="${i}s" repeatCount="indefinite"/><animate attributeName="opacity" values=".8;0" dur="3s" begin="${i}s" repeatCount="indefinite"/></circle>`); }
+    if (kind === "solar") { if (I.flat) { for (let i = 0; i < 3; i++) s += poly([[I.x0 + .5 + i * 1.1, I.y0 + .6, I.z1 + .3], [I.x0 + 1.4 + i * 1.1, I.y0 + .6, I.z1 + .3], [I.x0 + 1.4 + i * 1.1, I.y0 + 1.5, I.z1 + .8], [I.x0 + .5 + i * 1.1, I.y0 + 1.5, I.z1 + .8]], "#1f3a66", 'stroke="#a8c0e0" stroke-width="1"'); } else { const a = [onFront(.1, .2), onFront(.55, .2), onFront(.55, .8), onFront(.1, .8)]; s += poly(a, "#1f3a66", 'stroke="#a8c0e0" stroke-width="1.2"'); for (let k = 1; k < 4; k++) s += ln(onFront(.1 + .45 * k / 4, .2), onFront(.1 + .45 * k / 4, .8), "#a8c0e0", .8); s += ln(onFront(.1, .5), onFront(.55, .5), "#a8c0e0", .8); } }
+    if (kind === "dish") { const p = P(I.x1 - .7, I.ym, I.zr + .15); s += `<g transform="translate(${f1(p[0])} ${f1(p[1])})"><line x1="0" y1="0" x2="0" y2="-10" stroke="#888" stroke-width="2"/><ellipse cx="-2" cy="-16" rx="11" ry="8" fill="#e6e8ec" stroke="#9aa" transform="rotate(-25 -2 -16)"/><circle cx="2" cy="-17" r="2" fill="#666"/></g>`; }
+    if (kind === "flag") { const p = P(I.x0 + .5, I.ym, I.zr); s += `<line x1="${f1(p[0])}" y1="${f1(p[1])}" x2="${f1(p[0])}" y2="${f1(p[1] - 48)}" stroke="#ddd" stroke-width="2.5"/><path d="M${f1(p[0])} ${f1(p[1] - 48)} q12 -5 24 0 q12 5 24 0 v16 q-12 5 -24 0 q-12 -5 -24 0z" fill="#e63946"><animateTransform attributeName="transform" type="skewY" values="0;4;0;-3;0" dur="2s" repeatCount="indefinite"/></path>`; }
+    if (kind === "rooster") { const p = P(mx, I.ym, I.zr); s += `<g transform="translate(${f1(p[0])} ${f1(p[1])})"><line x1="0" y1="0" x2="0" y2="-26" stroke="#333" stroke-width="2"/><line x1="-8" y1="-14" x2="8" y2="-14" stroke="#333" stroke-width="1.5"/><path d="M-9 -28 q0 -10 9 -10 l2 -4 2 4 q6 0 6 6 l-4 1 q4 6 -4 9 q-6 2 -11 -6z" fill="#2a2a2a"><animateTransform attributeName="transform" type="rotate" values="-15;15;-15" dur="6s" repeatCount="indefinite"/></path></g>`; }
+    if (kind === "turbine") { const p = P(I.x1 - .6, I.ym, I.zr); const hy = p[1] - 70; s += `<line x1="${f1(p[0])}" y1="${f1(p[1])}" x2="${f1(p[0])}" y2="${f1(hy)}" stroke="#eef1f4" stroke-width="3"/><g transform="translate(${f1(p[0])} ${f1(hy)})"><g>${[0, 120, 240].map(a => `<path d="M0 0 L-3 -30 L0 -34 L3 -30Z" fill="#f4f6f8" stroke="#bbb" stroke-width=".6" transform="rotate(${a})"/>`).join("")}<animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="4s" repeatCount="indefinite"/></g><circle r="3.5" fill="#ccc"/></g>`; }
+    if (kind === "lights") { const C = ["#ff4d4d", "#ffd23a", "#4dff88", "#4dc3ff", "#ff7af0"]; const n = 14; for (let i = 0; i <= n; i++) { const q = [I.x0 - .3 + (I.x1 - I.x0 + .6) * i / n, I.y1 + .3, I.z1 - .1]; s += ball(q[0], q[1], q[2], .1, C[i % 5], `opacity=".95"`) .replace("/>", `><animate attributeName="opacity" values="1;.25;1" dur="${1 + (i % 3) * .4}s" repeatCount="indefinite"/></circle>`); } }
+    if (kind === "telescope") { const p = P(mx + .6, I.ym, I.zr); s += `<g transform="translate(${f1(p[0])} ${f1(p[1])})"><path d="M0 0 l-8 -2 M0 0 l8 -2 M0 0 l0 -14" stroke="#555" stroke-width="2"/><rect x="-4" y="-34" width="9" height="26" rx="3" fill="#3a4a8a" transform="rotate(35 0 -14)"/></g>`; }
+    if (kind === "heli") { const c = [mx, I.ym, I.zr + .12]; s += disc(c[0], c[1], c[2], 1.3, "#5a5f68", 'stroke="#ffd23a" stroke-width="2"'); const p = P(c[0], c[1], c[2]); s += `<text x="${f1(p[0])}" y="${f1(p[1] + 5)}" font-size="16" font-weight="800" fill="#fff" text-anchor="middle" font-family="Arial">H</text>`; }
+    return s;
+  }
+
+  /* ---------- Turm (Anwesen) ---------- */
+  function tower(cx, cy, r, H, h) {
+    const base = byId[h.wcolor].color, mat = byId[h.wall].kind, rc = byId[h.roof].kind === "thatch" ? "#c9a24a" : byId[h.rcolor].color;
+    const col = mat === "glass" ? "#9fd3ea" : mat === "gold" ? "#e2b23a" : base;
+    let s = disc(cx + .1, cy + .1, 0, r + .3, "#000", 'opacity=".16"');
+    const n = 10, pt = (i, z, rr) => { const t = i / n * Math.PI * 2; return [cx + Math.cos(t) * (rr || r), cy + Math.sin(t) * (rr || r), z]; };
+    const faces = [];
+    for (let i = 0; i < n; i++) { const t = (i + .5) / n * Math.PI * 2; const vis = Math.cos(t) + Math.sin(t); if (vis > -.2) faces.push([i, vis]); }
+    faces.sort((a, b) => a[1] - b[1]).forEach(([i, vis]) => { const f = .7 + .25 * Math.max(0, Math.sin((i + .5) / n * Math.PI * 2) * .7 + .3); s += poly([pt(i, 0), pt(i + 1, 0), pt(i + 1, H), pt(i, H)], sh(col, f)); if (mat === "brick" || mat === "stone" || mat === "log" || mat === "wood") for (let z = .5; z < H; z += .5) s += ln(pt(i, z), pt(i + 1, z), sh(col, f * .8), .8); });
+    // Fenster vorne
+    const t = Math.PI / 4, F = face([cx + Math.cos(t) * r - .25, cy + Math.sin(t) * r + .25, 0], [.7071, -.7071, 0], [0, 0, 1]);
+    [H * .35, H * .7].forEach(v => s += windowAt(F, .25, v, "arch", .95));
+    const ap = [cx, cy, H + 2.4];
+    for (let i = 0; i < n; i++) { const tt = (i + .5) / n * Math.PI * 2; if (Math.cos(tt) + Math.sin(tt) > -.3) s += poly([pt(i, H, r + .25), pt(i + 1, H, r + .25), ap], sh(rc, .7 + .3 * Math.max(0, Math.sin(tt)))); }
+    s += ln(ap, [ap[0], ap[1], ap[2] + .6], "#e2b23a", 2);
+    return s;
+  }
+
+  /* ---------- Zelt ---------- */
+  function tent(h) {
+    const c = byId[h.rcolor].color, x0 = 2.4, x1 = 5, y0 = 2, y1 = 4.8, xm = 3.7, H = 2.2;
+    let s = poly([[x0 - .2, y0 - .2, 0], [x1 + .3, y0 - .2, 0], [x1 + .3, y1 + .3, 0], [x0 - .2, y1 + .3, 0]], "#000", 'opacity=".15"');
+    s += poly([[x0, y0, 0], [x0, y1, 0], [xm, y1, H], [xm, y0, H]], sh(c, .75));
+    s += poly([[x1, y0, 0], [x1, y1, 0], [xm, y1, H], [xm, y0, H]], sh(c, .62));
+    s += poly([[x0, y1, 0], [x1, y1, 0], [xm, y1, H]], sh(c, 1));
+    s += poly([[xm - .55, y1, 0], [xm + .55, y1, 0], [xm, y1, 1.3]], "#2a1f18");
+    s += ln([xm, y0, H], [xm, y1, H], sh(c, .45), 2);
+    // Lagerfeuer
+    const fx = 5.4, fy = 6.2; s += shadow(fx, fy, .7, .35);
+    s += ln([fx - .4, fy - .2, .1], [fx + .4, fy + .2, .1], "#6b4226", 4) + ln([fx - .4, fy + .2, .1], [fx + .4, fy - .2, .1], "#6b4226", 4);
+    const p = P(fx, fy, .2); s += `<path d="M${f1(p[0] - 7)} ${f1(p[1])} q7 -22 7 -26 q2 8 7 12 q2 8 -3 14z" fill="#ff8a2a"><animateTransform attributeName="transform" type="scale" values="1 1;1 1.12;1 1" dur=".6s" repeatCount="indefinite" additive="sum"/></path><path d="M${f1(p[0] - 3)} ${f1(p[1])} q3 -12 3 -14 q2 6 4 8 q0 6 -7 6z" fill="#ffd23a"/>`;
+    return s;
+  }
+
+  /* ---------- Garten-Teile ---------- */
+  function yard(kind, ax, ay) {
+    if (!kind) return "";
+    let s = "";
+    const tree = (crown, c2) => shadow(ax + .2, ay + .2, .9, .45) + blk(ax - .12, ay - .12, 0, .24, .24, 1.1, "#7a4a2a") + ball(ax, ay, 1.8, .85, crown) + ball(ax - .3, ay + .2, 1.6, .55, sh(crown, 1.12)) + ball(ax + .35, ay - .1, 2.2, .5, sh(crown, .88)) + (c2 || "");
+    const pine = (dec) => { let r = shadow(ax + .2, ay + .2, .8, .4) + blk(ax - .1, ay - .1, 0, .2, .2, .6, "#6b4226"); const p = P(ax, ay, .5); [[0, 30, 22], [-16, 24, 17], [-30, 18, 12]].forEach(([dy, w, hh]) => r += `<path d="M${f1(p[0] - w)} ${f1(p[1] + dy)} L${f1(p[0])} ${f1(p[1] + dy - hh * 1.6)} L${f1(p[0] + w)} ${f1(p[1] + dy)}z" fill="#2f6e3a"/><path d="M${f1(p[0])} ${f1(p[1] + dy)} L${f1(p[0])} ${f1(p[1] + dy - hh * 1.6)} L${f1(p[0] + w)} ${f1(p[1] + dy)}z" fill="#255a2f"/>`); if (dec) { const C = ["#ff4d4d", "#ffd23a", "#4dc3ff", "#ff7af0"]; for (let i = 0; i < 10; i++) r += `<circle cx="${f1(p[0] - 18 + (i * 37 % 36))}" cy="${f1(p[1] - 4 - (i * 23 % 50))}" r="2.6" fill="${C[i % 4]}"><animate attributeName="opacity" values="1;.3;1" dur="${1 + i % 3 * .5}s" repeatCount="indefinite"/></circle>`; r += `<path d="M${f1(p[0])} ${f1(p[1] - 72)} l3 7 7 0 -6 4 2 7 -6 -4 -6 4 2 -7 -6 -4 7 0z" fill="#ffd23a"/>`; } return r; };
+    const car = (c, extra) => shadow(ax + .2, ay + .2, 1.3, .6) + blk(ax - .9, ay - .4, .2, 1.8, .8, .45, c) + blk(ax - .45, ay - .35, .65, .9, .7, .4, sh(c, 1.05)) + poly([[ax - .45, ay + .35, .68], [ax + .45, ay + .35, .68], [ax + .45, ay + .35, 1.0], [ax - .45, ay + .35, 1.0]], "#bfe4f7") + ball(ax - .5, ay + .42, .2, .2, "#222") + ball(ax + .55, ay + .42, .2, .2, "#222") + ball(ax + .9, ay - .2, .2, .2, "#222") + (extra || "");
+    const P0 = P(ax, ay, 0);
+    switch (kind) {
+      case "tree": return tree("#4f9a3a");
+      case "apple": { let r = tree("#4a9440"); const R = rng(3); for (let i = 0; i < 7; i++) r += ball(ax - .6 + R() * 1.2, ay - .3 + R() * .6, 1.4 + R() * 1.1, .09, "#e63946"); return r; }
+      case "pine": return pine(false);
+      case "xmas": return pine(true);
+      case "flowers": { let r = blk(ax - .7, ay - .35, 0, 1.4, .7, .18, "#7a4a2a"); const C = ["#ff5d8f", "#ffd23a", "#ffffff", "#b36bff", "#ff8a2a"], R = rng(5); for (let i = 0; i < 14; i++) { const x = ax - .6 + R() * 1.2, y = ay - .25 + R() * .5; r += ln([x, y, .18], [x, y, .45], "#3f8a2f", 1.2) + ball(x, y, .5, .08, C[i % 5]); } return r; }
+      case "veg": { let r = blk(ax - .8, ay - .6, 0, 1.6, 1.2, .2, "#6b4226"); for (let i = 0; i < 3; i++) for (let j = 0; j < 4; j++) r += ball(ax - .6 + j * .4, ay - .4 + i * .4, .32, .12, i === 1 ? "#ff8a2a" : "#4f9a3a"); return r; }
+      case "bench": return shadow(ax, ay, .9, .4) + blk(ax - .8, ay - .25, .4, 1.6, .5, .1, "#a8743a") + blk(ax - .8, ay - .3, .5, 1.6, .08, .5, "#8a5a2a") + blk(ax - .75, ay + .15, 0, .1, .1, .4, "#333") + blk(ax + .65, ay + .15, 0, .1, .1, .4, "#333");
+      case "bbq": { const p = P(ax, ay, .9); return shadow(ax, ay, .5, .25) + ln([ax - .3, ay, 0], [ax, ay, .8], "#333", 2) + ln([ax + .3, ay, 0], [ax, ay, .8], "#333", 2) + `<path d="M${f1(p[0] - 13)} ${f1(p[1])} a13 9 0 0 0 26 0z" fill="#222"/><ellipse cx="${f1(p[0])}" cy="${f1(p[1])}" rx="13" ry="4" fill="#555"/>` + [0, 1].map(i => `<circle cx="${f1(p[0])}" cy="${f1(p[1] - 6)}" r="4" fill="#ccc" opacity="0"><animate attributeName="cy" values="${f1(p[1] - 6)};${f1(p[1] - 36)}" dur="2.5s" begin="${i * 1.2}s" repeatCount="indefinite"/><animate attributeName="opacity" values=".7;0" dur="2.5s" begin="${i * 1.2}s" repeatCount="indefinite"/></circle>`).join(""); }
+      case "doghouse": { const b = { x: ax - .55, y: ay - .45, dx: 1.1, dy: .9, dz: .7 }; let r = blk(b.x, b.y, 0, b.dx, b.dy, b.dz, "#b5453a"); r += poly([[b.x - .1, b.y - .1, .7], [b.x + 1.2, b.y - .1, .7], [b.x + 1.2, ay, 1.15], [b.x - .1, ay, 1.15]], "#5a3a22") + poly([[b.x + 1.1, b.y, .7], [b.x + 1.1, b.y + .9, .7], [b.x + 1.1, ay, 1.15]], "#9a3a30") + poly([[b.x - .1, b.y + 1.0, .7], [b.x + 1.2, b.y + 1.0, .7], [b.x + 1.2, ay, 1.15], [b.x - .1, ay, 1.15]], "#6b4a2a"); const F = face([b.x, b.y + .9, 0], [1, 0, 0], [0, 0, 1]); r += fpoly(F, [[.35, 0], [.75, 0], [.75, .35], [.55, .5], [.35, .35]], "#2a1a10"); r += ball(ax + .9, ay + .5, .3, .22, "#c8955a") + ball(ax + .95, ay + .55, .55, .17, "#c8955a") + ball(ax + 1.05, ay + .6, .58, .04, "#222"); return r; }
+      case "gnomes": { let r = ""; [[-.5, .1], [.1, -.2], [.6, .2]].forEach(([dx, dy], i) => { const p = P(ax + dx, ay + dy, 0); r += `<g transform="translate(${f1(p[0])} ${f1(p[1])})"><ellipse cx="0" cy="0" rx="7" ry="3" fill="#000" opacity=".18"/><rect x="-5" y="-12" width="10" height="12" rx="3" fill="${["#2f5d9a", "#3f8a45", "#6a3fa0"][i]}"/><circle cx="0" cy="-15" r="4.5" fill="#f2c9a8"/><path d="M-3 -13 q3 7 6 0z" fill="#fff"/><path d="M-6 -17 L0 -32 L6 -17z" fill="#d63a2e"/></g>`; }); return r; }
+      case "trampoline": { let r = shadow(ax, ay, 1, .5); [[-.7, 0], [.7, 0], [0, -.7], [0, .7]].forEach(([dx, dy]) => r += ln([ax + dx, ay + dy, 0], [ax + dx, ay + dy, .5], "#555", 2)); r += disc(ax, ay, .5, .95, "#2f5d9a") + disc(ax, ay, .5, .72, "#222"); return r; }
+      case "swing": { const p = P(ax, ay + .1, 1.6); let r = shadow(ax, ay, 1, .4) + ln([ax - .8, ay - .3, 0], [ax - .8, ay, 1.7], "#a8743a", 3) + ln([ax - .8, ay + .3, 0], [ax - .8, ay, 1.7], "#a8743a", 3) + ln([ax + .8, ay - .3, 0], [ax + .8, ay, 1.7], "#a8743a", 3) + ln([ax + .8, ay + .3, 0], [ax + .8, ay, 1.7], "#a8743a", 3) + ln([ax - .8, ay, 1.7], [ax + .8, ay, 1.7], "#8a5a2a", 3.5); r += `<g transform="translate(${f1(p[0])} ${f1(p[1] - 2)})"><g><line x1="-5" y1="0" x2="-5" y2="22" stroke="#666" stroke-width="1"/><line x1="5" y1="0" x2="5" y2="22" stroke="#666" stroke-width="1"/><rect x="-7" y="22" width="14" height="3" fill="#d63a2e"/><animateTransform attributeName="transform" type="rotate" values="-20;20;-20" dur="2.4s" repeatCount="indefinite"/></g></g>`; return r; }
+      case "pond": { let r = disc(ax, ay, 0.02, 1.05, "#6a8a4a") + disc(ax, ay, .03, .9, "#3f8fc4"); [[-.3, .1], [.3, -.2]].forEach(([dx, dy], i) => { const p = P(ax + dx, ay + dy, .05); r += `<g transform="translate(${f1(p[0])} ${f1(p[1])})"><g><ellipse cx="0" cy="0" rx="6" ry="3.5" fill="#fff"/><circle cx="4" cy="-4" r="3" fill="#fff"/><path d="M6.5 -4 l3 1 -3 1z" fill="#ff9a2a"/><animateTransform attributeName="transform" type="translate" values="0 0;${i ? -6 : 6} 2;0 0" dur="${5 + i}s" repeatCount="indefinite"/></g></g>`; }); return r; }
+      case "car": return car("#2f5d9a");
+      case "taxi": return car("#f2c230", (() => { const p = P(ax, ay, 1.1); return `<rect x="${f1(p[0] - 9)}" y="${f1(p[1] - 6)}" width="18" height="6" fill="#fff" stroke="#222" stroke-width=".8"/><text x="${f1(p[0])}" y="${f1(p[1] - 1.5)}" font-size="5" font-family="Arial" font-weight="800" text-anchor="middle">TAXI</text>`; })());
+      case "nascar": { let r = shadow(ax + .1, ay + .1, 1.3, .55) + blk(ax - 1, ay - .45, .15, 2, .9, .35, "#1f4fd1") + blk(ax - .3, ay - .35, .5, .8, .7, .3, "#163a9a") + blk(ax - 1, ay - .45, .55, .2, .9, .22, "#ffd23a"); r += poly([[ax - .9, ay + .45, .2], [ax + 1, ay + .45, .2], [ax + 1, ay + .45, .45], [ax - .9, ay + .45, .45]], "#ffd23a", 'opacity=".9"'); const p = P(ax + .1, ay + .45, .33); r += `<text x="${f1(p[0])}" y="${f1(p[1] + 3)}" font-size="9" font-weight="900" font-family="Arial" fill="#d63a2e" text-anchor="middle">8</text>`; r += ball(ax - .6, ay + .5, .15, .2, "#111") + ball(ax + .6, ay + .5, .15, .2, "#111"); return r; }
+      case "schoolbus": { let r = shadow(ax + .2, ay + .2, 1.8, .7) + blk(ax - 1.4, ay - .5, .2, 2.8, 1, 1.05, "#f2b705"); for (let i = 0; i < 5; i++) r += poly([[ax - 1.2 + i * .5, ay + .5, .75], [ax - .85 + i * .5, ay + .5, .75], [ax - .85 + i * .5, ay + .5, 1.1], [ax - 1.2 + i * .5, ay + .5, 1.1]], "#bfe4f7"); r += poly([[ax - 1.4, ay + .5, .55], [ax + 1.4, ay + .5, .55], [ax + 1.4, ay + .5, .62], [ax - 1.4, ay + .5, .62]], "#222") + ball(ax - .9, ay + .55, .2, .22, "#222") + ball(ax + .9, ay + .55, .2, .22, "#222"); return r; }
+      case "pool": { let r = poly([[ax - 1.2, ay - .8, .08], [ax + 1.2, ay - .8, .08], [ax + 1.2, ay + .8, .08], [ax - 1.2, ay + .8, .08]], "#f4f4f2") + poly([[ax - 1, ay - .6, .09], [ax + 1, ay - .6, .09], [ax + 1, ay + .6, .09], [ax - 1, ay + .6, .09]], "#3fb6e8"); for (let i = 0; i < 3; i++) r += ln([ax - .8, ay - .4 + i * .4, .1], [ax + .8, ay - .4 + i * .4, .1], "#a8e4ff", 1.2, `opacity=".7"`); r += ln([ax + .9, ay - .6, .1], [ax + .9, ay - .6, .6], "#bbb", 1.5) + ln([ax + .7, ay - .6, .1], [ax + .7, ay - .6, .6], "#bbb", 1.5); const p = P(ax - .3, ay, .1); r += `<g transform="translate(${f1(p[0])} ${f1(p[1])})"><circle r="6" fill="none" stroke="#ff5d5d" stroke-width="3"/><animateTransform attributeName="transform" type="translate" values="${f1(p[0])} ${f1(p[1])};${f1(p[0] + 8)} ${f1(p[1] + 2)};${f1(p[0])} ${f1(p[1])}" dur="4s" repeatCount="indefinite"/></g>`; return r; }
+      case "boat": { const p = P(ax, ay, .3); return shadow(ax, ay, 1.3, .5) + blk(ax - .6, ay - .3, 0, .2, .6, .3, "#555") + blk(ax + .4, ay - .3, 0, .2, .6, .3, "#555") + `<path d="M${f1(p[0] - 30)} ${f1(p[1] - 8)} L${f1(p[0] + 30)} ${f1(p[1] - 8)} L${f1(p[0] + 20)} ${f1(p[1] + 6)} L${f1(p[0] - 24)} ${f1(p[1] + 6)}z" fill="#f4f4f2" stroke="#2f5d9a" stroke-width="2"/><rect x="${f1(p[0] - 10)}" y="${f1(p[1] - 18)}" width="16" height="10" fill="#2f5d9a"/><line x1="${f1(p[0] + 10)}" y1="${f1(p[1] - 8)}" x2="${f1(p[0] + 10)}" y2="${f1(p[1] - 48)}" stroke="#777" stroke-width="2"/><path d="M${f1(p[0] + 11)} ${f1(p[1] - 46)} L${f1(p[0] + 28)} ${f1(p[1] - 12)} L${f1(p[0] + 11)} ${f1(p[1] - 12)}z" fill="#fff" stroke="#ccc"/>`; }
+      case "corvey": { const st = "#d8c9a8"; let r = shadow(ax, ay, 1.2, .6) + blk(ax - .8, ay - .3, 0, 1.6, .7, 1.4, st); [[-.95, -.2], [.55, -.2]].forEach(([dx]) => { r += blk(ax + dx, ay - .2, 0, .4, .4, 2.5, st); r += poly([[ax + dx, ay - .2, 2.5], [ax + dx + .4, ay - .2, 2.5], [ax + dx + .2, ay, 3.2]], "#4a5260") + poly([[ax + dx + .4, ay - .2, 2.5], [ax + dx + .4, ay + .2, 2.5], [ax + dx + .2, ay, 3.2]], "#3a414c") + poly([[ax + dx, ay + .2, 2.5], [ax + dx + .4, ay + .2, 2.5], [ax + dx + .2, ay, 3.2]], "#5a6270"); }); const F = face([ax - .8, ay + .4, 0], [1, 0, 0], [0, 0, 1]); [.4, .8, 1.2].forEach(u => r += windowAt(F, u, .9, "arch", .95)); r += poly([[ax - .8, ay - .3, 1.4], [ax + .8, ay - .3, 1.4], [ax + .8, ay + .05, 1.75], [ax - .8, ay + .05, 1.75]], "#4a5260") + poly([[ax - .8, ay + .4, 1.4], [ax + .8, ay + .4, 1.4], [ax + .8, ay + .05, 1.75], [ax - .8, ay + .05, 1.75]], "#5a6270"); return r; }
+      case "fountain": { let r = disc(ax, ay, 0, 1, "#bdb8ae") + disc(ax, ay, .35, .95, "#d6d2c8") + disc(ax, ay, .36, .8, "#3fb6e8") + blk(ax - .12, ay - .12, .35, .24, .24, .8, "#d6d2c8"); const p = P(ax, ay, 1.2); for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2, ex = Math.cos(a) * 22, ey = Math.sin(a) * 9 + 18; r += `<circle r="2" fill="#a8e4ff"><animateMotion dur="1.2s" begin="${i * .2}s" repeatCount="indefinite" path="M${f1(p[0])} ${f1(p[1])} q${f1(ex / 2)} -22 ${f1(ex)} ${f1(ey)}"/></circle>`; } return r; }
+      case "snowman": return shadow(ax, ay, .6, .3) + ball(ax, ay, .45, .45, "#f8fbff") + ball(ax, ay, 1.15, .33, "#f8fbff") + ball(ax, ay, 1.65, .24, "#f8fbff") + (p => `<rect x="${f1(p[0] - 6)}" y="${f1(p[1] - 14)}" width="12" height="9" fill="#222"/><rect x="${f1(p[0] - 9)}" y="${f1(p[1] - 5)}" width="18" height="2.5" fill="#222"/><path d="M${f1(p[0] + 1)} ${f1(p[1] + 3)} l9 2 -9 2z" fill="#ff8a2a"/><circle cx="${f1(p[0] - 3)}" cy="${f1(p[1] + 1)}" r="1.3" fill="#222"/><circle cx="${f1(p[0] + 3)}" cy="${f1(p[1] + 1)}" r="1.3" fill="#222"/>`)(P(ax, ay, 1.75));
+      case "pumpkins": { let r = ""; [[-.4, .1, .32], [.3, -.1, .4], [.5, .4, .25]].forEach(([dx, dy, rr], i) => { r += shadow(ax + dx, ay + dy, rr * 1.1, rr * .5) + ball(ax + dx, ay + dy, rr * .9, rr, "#ff8a1a") + ball(ax + dx - rr * .3, ay + dy, rr * .9, rr * .6, "#ff9a3a"); const p = P(ax + dx, ay + dy, rr * 1.8); r += `<rect x="${f1(p[0] - 1.5)}" y="${f1(p[1] - 4)}" width="3" height="5" fill="#3f6a2a"/>`; if (i === 1) { const q = P(ax + dx, ay + dy, rr * .9); r += `<path d="M${f1(q[0] - 6)} ${f1(q[1] - 3)} l2 -3 2 3z M${f1(q[0] + 2)} ${f1(q[1] - 3)} l2 -3 2 3z M${f1(q[0] - 5)} ${f1(q[1] + 3)} q5 4 10 0z" fill="#3a1a00"/>`; } }); return r; }
+      case "eggs": { let r = disc(ax, ay, 0.02, .6, "#c8a35a"); const C = ["#ff8fb8", "#8fd3ff", "#ffe08a", "#b5f0a0", "#d0b0ff"]; [[-.2, -.1], [.15, -.15], [0, .15], [.3, .1], [-.3, .2]].forEach(([dx, dy], i) => { const p = P(ax + dx, ay + dy, .15); r += `<ellipse cx="${f1(p[0])}" cy="${f1(p[1])}" rx="4" ry="5.5" fill="${C[i]}" stroke="#fff" stroke-width=".8"/>`; }); return r; }
+      case "dino": { const p = P0; return shadow(ax, ay, 1.1, .45) + `<g transform="translate(${f1(p[0])} ${f1(p[1])})"><path d="M-30 -6 q10 -4 18 -14 q6 -20 18 -30 q8 -6 18 -4 q8 2 6 8 l-10 2 q-2 6 -8 8 q2 10 -2 20 l4 16 h-6 l-4 -12 q-6 4 -12 2 l-2 10 h-6 l1 -12 q-10 0 -15 6z" fill="#4f9a3a" stroke="#2f6a2a" stroke-width="1.5"/><circle cx="14" cy="-46" r="2" fill="#222"/><path d="M8 -38 l3 3 3 -3" stroke="#fff" fill="none"/></g>`; }
+      case "ufo": { const p = P(ax, ay, 1.2); return shadow(ax, ay, 1.2, .5) + `<g><animateTransform attributeName="transform" type="translate" values="0 0;0 -6;0 0" dur="3s" repeatCount="indefinite"/><ellipse cx="${f1(p[0])}" cy="${f1(p[1] + 8)}" rx="22" ry="20" fill="#8fffb0" opacity=".18"/><ellipse cx="${f1(p[0])}" cy="${f1(p[1])}" rx="30" ry="9" fill="#9aa4b4" stroke="#5a6270"/><path d="M${f1(p[0] - 14)} ${f1(p[1] - 4)} a14 12 0 0 1 28 0z" fill="#8fe8ff" opacity=".85"/>${[-20, -7, 7, 20].map((d, i) => `<circle cx="${f1(p[0] + d)}" cy="${f1(p[1] + 2)}" r="2.3" fill="#ffd23a"><animate attributeName="fill" values="#ffd23a;#ff4d4d;#4dff88;#ffd23a" dur="1.5s" begin="${i * .3}s" repeatCount="indefinite"/></circle>`).join("")}</g>`; }
+      case "rocket": { const p = P0; return shadow(ax, ay, 1, .45) + `<g transform="translate(${f1(p[0])} ${f1(p[1])})"><path d="M-14 0 l0 -70 M14 0 l0 -70 M-14 -20 l28 0 M-14 -45 l28 0" stroke="#888" stroke-width="2"/><path d="M0 -110 q12 16 12 40 v52 h-24 v-52 q0 -24 12 -40z" fill="#f4f6f8" stroke="#aab" /><path d="M0 -110 q8 10 10 22 h-20 q2 -12 10 -22z" fill="#e63946"/><circle cx="0" cy="-62" r="5" fill="#8fd3ff" stroke="#556"/><path d="M-12 -30 l-9 14 h9z M12 -30 l9 14 h-9z" fill="#e63946"/><path d="M-7 -18 q7 22 14 0z" fill="#ffb02e"><animateTransform attributeName="transform" type="scale" values="1 1;1 1.4;1 1" dur=".4s" repeatCount="indefinite"/></path></g>`; }
+      case "liberty": { const p = P0; return shadow(ax, ay, .8, .35) + blk(ax - .4, ay - .4, 0, .8, .8, .8, "#b8b2a6") + `<g transform="translate(${f1(p[0])} ${f1(p[1] - 16)})"><path d="M-6 0 l2 -30 q4 -6 8 0 l2 30z" fill="#6fb8a2"/><circle cx="0" cy="-34" r="5" fill="#6fb8a2"/><path d="M-6 -38 l-3 -6 M-2 -40 l-1 -7 M2 -40 l1 -7 M6 -38 l3 -6" stroke="#6fb8a2" stroke-width="2"/><path d="M4 -26 l6 -18" stroke="#6fb8a2" stroke-width="3"/><path d="M9 -46 q3 -6 0 -9 q-3 3 0 9z" fill="#ffb02e"/></g>`; }
+      case "amish": { let r = shadow(ax + .2, ay, 1.4, .6); const x0 = ax - .9, y0 = ay - .7; r += blk(x0, y0, 0, 1.3, 1.1, 1, "#a8322a"); r += poly([[x0 - .1, y0 - .1, 1], [x0 + 1.4, y0 - .1, 1], [x0 + 1.4, y0 + .55, 1.6], [x0 - .1, y0 + .55, 1.6]], "#3a3a3a") + poly([[x0 + 1.3, y0, 1], [x0 + 1.3, y0 + 1.1, 1], [x0 + 1.3, y0 + .55, 1.6]], "#8a2a22") + poly([[x0 - .1, y0 + 1.2, 1], [x0 + 1.4, y0 + 1.2, 1], [x0 + 1.4, y0 + .55, 1.6], [x0 - .1, y0 + .55, 1.6]], "#4a4a4a"); const F = face([x0, y0 + 1.1, 0], [1, 0, 0], [0, 0, 1]); r += fpoly(F, [[.35, 0], [.95, 0], [.95, .75], [.35, .75]], "none", 'stroke="#fff" stroke-width="2"') + fln(F, [.35, 0], [.95, .75], "#fff", 1.6) + fln(F, [.95, 0], [.35, .75], "#fff", 1.6); r += blk(ax + .6, ay + .2, .35, .7, .5, .55, "#1a1a1a") + ball(ax + .65, ay + .75, .25, .25, "none", 'stroke="#333" stroke-width="2"') + ball(ax + 1.25, ay + .75, .25, .25, "none", 'stroke="#333" stroke-width="2"'); return r; }
+      case "ggbridge": { let r = disc(ax, ay, .01, 1.1, "#4a9ad8") ; r += blk(ax - 1.2, ay - .15, .3, 2.4, .3, .1, "#c0362c"); [-.7, .7].forEach(dx => r += blk(ax + dx - .08, ay - .2, 0, .16, .4, 1.7, "#c0362c")); const a = P(ax - 1.2, ay, .4), b = P(ax - .7, ay, 1.7), c = P(ax + .7, ay, 1.7), d = P(ax + 1.2, ay, .4), m = P(ax, ay, .6); r += `<path d="M${f1(a[0])} ${f1(a[1])} Q${f1((a[0] + b[0]) / 2)} ${f1(b[1] + 4)} ${f1(b[0])} ${f1(b[1])} Q${f1(m[0])} ${f1(m[1])} ${f1(c[0])} ${f1(c[1])} Q${f1((c[0] + d[0]) / 2)} ${f1(c[1] + 4)} ${f1(d[0])} ${f1(d[1])}" fill="none" stroke="#c0362c" stroke-width="1.8"/>`; return r; }
+      case "walkstar": { let r = poly([[ax - .7, ay - .7, .02], [ax + .7, ay - .7, .02], [ax + .7, ay + .7, .02], [ax - .7, ay + .7, .02]], "#d9a0b6"); const st = []; for (let i = 0; i < 10; i++) { const t = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? .22 : .5; st.push([ax + Math.cos(t) * rr, ay + Math.sin(t) * rr, .03]); } r += poly(st, "#e2b23a", 'stroke="#fff6c8" stroke-width="1"'); return r; }
+      case "robot": { let r = shadow(ax, ay, .6, .3) + blk(ax - .1, ay - .1, 0, .2, .2, .3, "#888") + blk(ax - .35, ay - .25, .3, .7, .5, .7, "#c9d0da") + blk(ax - .25, ay - .2, 1, .5, .4, .4, "#dde3ea"); const p = P(ax, ay + .2, 1.2); r += `<circle cx="${f1(p[0] - 4)}" cy="${f1(p[1])}" r="2.2" fill="#3ff0ff"/><circle cx="${f1(p[0] + 4)}" cy="${f1(p[1])}" r="2.2" fill="#3ff0ff"/><line x1="${f1(p[0] + 4)}" y1="${f1(p[1] - 12)}" x2="${f1(p[0] + 4)}" y2="${f1(p[1] - 22)}" stroke="#888" stroke-width="1.5"/><circle cx="${f1(p[0] + 4)}" cy="${f1(p[1] - 23)}" r="2.5" fill="#ff4d4d"><animate attributeName="opacity" values="1;.2;1" dur="1s" repeatCount="indefinite"/></circle>`; return r; }
+    }
+    return s;
+  }
+
+  /* ---------- Untergrund, Weg, Zaun ---------- */
+  function ground(kind, col) {
+    let s = "";
+    const side = kind === "snow" ? "#9a7a5a" : kind === "moon" ? "#7a7d86" : kind === "lava" ? "#2a1a1a" : kind === "candy" ? "#e07aa8" : "#8a5a32";
+    s += poly([[0, N, 0], [N, N, 0], [N, N, -.8], [0, N, -.8]], sh(side, .95)) + poly([[N, 0, 0], [N, N, 0], [N, N, -.8], [N, 0, -.8]], sh(side, .75));
+    s += poly([[0, 0, 0], [N, 0, 0], [N, N, 0], [0, N, 0]], col);
+    const R = rng(11);
+    if (kind === "grass" || kind === "meadow" || kind === "weser") for (let i = 0; i < 60; i++) { const x = R() * N, y = R() * N; s += ln([x, y, 0], [x + .05, y, .18], sh(col, .75), 1.2); }
+    if (kind === "meadow") { const C = ["#ffffff", "#ffd23a", "#ff8fb8", "#b36bff"]; for (let i = 0; i < 45; i++) s += ball(R() * N, R() * N, .05, .07, C[i % 4]); }
+    if (kind === "autumn") { const C = ["#e07a2a", "#c8452a", "#e9b23a", "#8a5a2a"]; for (let i = 0; i < 70; i++) s += ball(R() * N, R() * N, .02, .08, C[i % 4]); }
+    if (kind === "snow") for (let i = 0; i < 40; i++) s += ball(R() * N, R() * N, .02, .12, "#dfe9f3");
+    if (kind === "desert") { for (let i = 0; i < 30; i++) s += ball(R() * N, R() * N, .02, .06, "#c9a05a"); const p = P(1, 8.8, 0); s += `<g transform="translate(${f1(p[0])} ${f1(p[1])})"><path d="M-3 0 v-28 a3 3 0 0 1 6 0 v28z M3 -16 h5 v-8 a2.5 2.5 0 0 1 5 0 v10 h-10z M-3 -12 h-5 v-6 a2.5 2.5 0 0 0 -5 0 v8 h10z" fill="#3f8a45"/></g>`; }
+    if (kind === "moon") for (let i = 0; i < 14; i++) { const x = .5 + R() * (N - 1), y = .5 + R() * (N - 1), r = .15 + R() * .35; s += disc(x, y, .01, r, "#9a9da6", 'stroke="#d0d3da" stroke-width="1"', 12); }
+    if (kind === "candy") { const C = ["#ff5d8f", "#7ad7ff", "#ffe08a", "#b5f0a0"]; for (let i = 0; i < 40; i++) s += ball(R() * N, R() * N, .03, .1, C[i % 4]); }
+    if (kind === "lava") for (let i = 0; i < 12; i++) { const x = R() * N, y = R() * N; s += ln([x, y, 0], [x + R() * 1.6 - .8, y + R() * 1.6 - .8, 0], "#ff6a1a", 2.2, `opacity=".8"`).replace("/>", `><animate attributeName="opacity" values=".9;.35;.9" dur="${2 + R()}s" repeatCount="indefinite"/></line>`); }
+    if (kind === "weser" || kind === "beach") {
+      const w = kind === "beach" ? 2.2 : 1.5, c = kind === "beach" ? "#2fa6d6" : "#4a8ec4";
+      if (kind === "beach") s += poly([[N - w - .6, 0, 0], [N - w, 0, 0], [N - w, N, 0], [N - w - .6, N, 0]], "#f3e2ae");
+      s += poly([[N - w, 0, .01], [N, 0, .01], [N, N, .01], [N - w, N, .01]], c) + poly([[N, 0, 0], [N, N, 0], [N, N, -.8], [N, 0, -.8]], sh(c, .7)) + poly([[N - w, N, 0], [N, N, 0], [N, N, -.8], [N - w, N, -.8]], sh(c, .85));
+      for (let i = 0; i < 6; i++) { const y = .8 + i * 1.5; s += ln([N - w + .3, y, .02], [N - .3, y + .4, .02], "#ffffff", 1.4, 'opacity=".5"').replace("/>", `><animateTransform attributeName="transform" type="translate" values="0 0;-6 3;0 0" dur="${3 + i % 3}s" repeatCount="indefinite"/></line>`); }
+    }
+    return s;
+  }
+  function fence(it, waterW, doorX) {
+    if (!it || !it.kind) return { right: "", front: "" };
+    const k = it.kind, c = it.color, endX = N - (waterW || 0) - .2;
+    const seg = (a, b) => {
+      let s = "", L = Math.hypot(b[0] - a[0], b[1] - a[1]), n = Math.max(1, Math.round(L / .5));
+      const at = t => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+      if (k === "hedge") { for (let i = 0; i < n; i++) { const p = at((i + .5) / n); s += ball(p[0], p[1], .35, .32, sh(c, .85 + (i % 2) * .15)); } return s; }
+      if (k === "stone") { const d = [b[0] - a[0], b[1] - a[1]]; return blk(Math.min(a[0], b[0]) - (d[0] ? 0 : .15), Math.min(a[1], b[1]) - (d[1] ? 0 : .15), 0, Math.abs(d[0]) || .3, Math.abs(d[1]) || .3, .5, c); }
+      for (let i = 0; i <= n; i++) { const p = at(i / n); s += ln([p[0], p[1], 0], [p[0], p[1], .65], sh(c, .9), 2.2); }
+      s += ln([a[0], a[1], .45], [b[0], b[1], .45], sh(c, .8), 1.8) + ln([a[0], a[1], .2], [b[0], b[1], .2], sh(c, .8), 1.8);
+      if (k === "lights") { const C = ["#ff4d4d", "#ffd23a", "#4dff88", "#4dc3ff"]; for (let i = 0; i < n * 2; i++) { const p = at((i + .5) / (n * 2)); s += ball(p[0], p[1], .6, .06, C[i % 4]).replace("/>", `><animate attributeName="opacity" values="1;.3;1" dur="${1 + i % 3 * .4}s" repeatCount="indefinite"/></circle>`); } }
+      return s;
+    };
+    const right = waterW ? "" : seg([N - .15, .2], [N - .15, N - .2]);
+    const front = seg([.2, N - .15], [doorX - .6, N - .15]) + seg([doorX + .6, N - .15], [endX, N - .15]);
+    return { right: right, front: front };
+  }
+
+  /* ---------- Bauplan je Ausbaustufe ---------- */
+  function plan(stage) {
+    switch (stage) {
+      case 0: return { tent: true };
+      case 1: return { parts: [{ x: 1.6, y: 1.6, dx: 3.2, dy: 2.6, dz: 2.2, door: true }] };
+      case 2: return { parts: [{ x: 1.2, y: 1.2, dx: 4.2, dy: 3.2, dz: 2.8, door: true }] };
+      case 3: return { parts: [{ x: 1.0, y: 1.0, dx: 4.4, dy: 3.4, dz: 4.8, floors: 2, door: true }] };
+      case 4: return { parts: [{ x: 0.9, y: 0.9, dx: 4.4, dy: 3.4, dz: 4.8, floors: 2, door: true }, { x: 5.3, y: 1.5, dx: 2.4, dy: 2.2, dz: 2.8, wing: true }] };
+      case 5: return { parts: [{ x: 0.8, y: 0.8, dx: 4.8, dy: 3.6, dz: 5.2, floors: 2, door: true }, { x: 5.6, y: 1.4, dx: 2.4, dy: 2.4, dz: 3.0, wing: true }], porch: true };
+      default: return { parts: [{ x: 1.2, y: 0.8, dx: 4.6, dy: 3.6, dz: 5.6, floors: 2, door: true }, { x: 5.8, y: 1.4, dx: 2.4, dy: 2.4, dz: 3.0, wing: true }], porch: true, tower: [1.0, 4.3, .85, 7.2] };
+    }
+  }
+  const ANCHOR = { yard1: [1.6, 7.6], yard2: [4.9, 7.9], yard3: [7.2, 7.0], yard4: [7.4, 4.8] };
+
+  /* ---------- Gesamtbild ---------- */
+  function houseSVG(h0, stars, opts) {
+    opts = opts || {};
+    const h = hclean(h0), stage = opts.stage != null ? opts.stage : stageOf(stars || 0);
+    const it = k => byId[h[k]];
+    const gk = it("ground").kind, waterW = gk === "weser" ? 1.5 : gk === "beach" ? 2.2 : 0;
+    const pl = plan(stage), main = pl.parts ? pl.parts[0] : null;
+    const doorX = main ? main.x + main.dx / 2 : 3.7;
+    let s = ground(gk, it("ground").color);
+    // Weg zur Tür
+    const yStart = main ? main.y + main.dy : 4.8;
+    for (let y = yStart + .2; y < N - .1; y += .55) s += poly([[doorX - .38, y, .01], [doorX + .38, y, .01], [doorX + .38, y + .42, .01], [doorX - .38, y + .42, .01]], "#c9c2b0", 'stroke="#a8a090" stroke-width=".6"');
+    const F = fence(it("fence").price != null && it("fence").kind ? it("fence") : null, waterW, doorX);
+    s += F.right;
+    // Garten hinten (yard4) vor dem Haus zeichnen, wenn es dahinter liegt
+    const yards = ["yard1", "yard2", "yard3", "yard4"].filter(k => yardOpen(k, stage) && h[k] !== "y-none");
+    if (yards.indexOf("yard4") >= 0 && !(pl.parts && pl.parts[1])) s += yard(it("yard4").kind, ANCHOR.yard4[0], ANCHOR.yard4[1]);
+    if (pl.tent) s += tent(h);
+    if (pl.parts) {
+      const m = pl.parts[0];
+      s += building(m, h);
+      s += roofExtra(it("roofx").kind, roof(m, h, { info: true }));
+      if (pl.parts[1]) { const w = Object.assign({}, pl.parts[1]); s += building(w, h); }
+      if (pl.porch) { const x = doorX - 1.1, y = m.y + m.dy; s += blk(x, y, 0, 2.2, 1.2, .15, "#d6d2c8") + blk(x + .05, y + 1.0, .15, .14, .14, 2.3, "#f4f4f2") + blk(x + 2.0, y + 1.0, .15, .14, .14, 2.3, "#f4f4f2") + blk(x - .1, y, 2.45, 2.4, 1.3, .18, sh(it("rcolor").color, 1)); }
+      if (pl.tower) s += tower(pl.tower[0], pl.tower[1], pl.tower[2], pl.tower[3], h);
+    }
+    if (yards.indexOf("yard4") >= 0 && pl.parts && pl.parts[1]) s += yard(it("yard4").kind, ANCHOR.yard4[0], ANCHOR.yard4[1]);
+    ["yard1", "yard3", "yard2"].forEach(k => { if (yards.indexOf(k) >= 0) s += yard(it(k).kind, ANCHOR[k][0], ANCHOR[k][1]); });
+    s += F.front;
+    // Namensschild mit Avatar
+    if (opts.avatar || opts.nr) {
+      const p = P(doorX + 1.3, N - .55, 0);
+      s += `<g transform="translate(${f1(p[0])} ${f1(p[1])})"><line x1="0" y1="0" x2="0" y2="-26" stroke="#6b4226" stroke-width="3"/>` +
+        (opts.avatar ? `<circle cx="0" cy="-44" r="19" fill="#fff"/><svg x="-17" y="-61" width="34" height="34" viewBox="0 0 200 200"><clipPath id="nc${opts.uid || 0}"><circle cx="100" cy="100" r="100"/></clipPath><g clip-path="url(#nc${opts.uid || 0})">${opts.avatar.replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "")}</g></svg>` : "") +
+        (opts.nr ? `<rect x="-17" y="-28" width="34" height="13" rx="3" fill="#2a1a10"/><text x="0" y="-18" font-size="10" font-weight="800" font-family="Arial" fill="#ffd23a" text-anchor="middle">#${opts.nr}</text>` : "") + `</g>`;
+    }
+    if (opts.inner) return s;
+    return `<svg viewBox="-180 -170 360 390" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">${s}</svg>`;
+  }
+
+  /* ---------- Stadt: alle Häuser auf einer Karte ---------- */
+  function townSVG(list) {
+    const n = list.length, C = Math.max(2, Math.ceil(Math.sqrt(n))), R = Math.max(1, Math.ceil(n / C)), G = 12.5;
+    const W = C * G + 1.5, D = R * G + 1.5;
+    const T = (x, y, z) => P(x, y, z || 0);
+    let s = "";
+    // Grundfläche mit Straßen und Weser
+    const pp = a => a.map(q => { const p = T(q[0], q[1], q[2]); return f1(p[0]) + "," + f1(p[1]); }).join(" ");
+    s += `<polygon points="${pp([[-1.5, -1.5, 0], [W, -1.5, 0], [W, D, 0], [-1.5, D, 0]])}" fill="#5c6670"/>`;
+    s += `<polygon points="${pp([[-1.5, D, 0], [W, D, 0], [W, D, -1], [-1.5, D, -1]])}" fill="#4a3a2a"/><polygon points="${pp([[W, -1.5, 0], [W, D, 0], [W, D, -1], [W, -1.5, -1]])}" fill="#3a2e22"/>`;
+    s += `<polygon points="${pp([[W, -1.5, 0], [W + 5, -1.5, 0], [W + 5, D, 0], [W, D, 0]])}" fill="#4a8ec4"/><polygon points="${pp([[W + 5, -1.5, 0], [W + 5, D, 0], [W + 5, D, -1], [W + 5, -1.5, -1]])}" fill="#356a96"/><polygon points="${pp([[W, D, 0], [W + 5, D, 0], [W + 5, D, -1], [W, D, -1]])}" fill="#3f7aaa"/>`;
+    for (let i = 0; i < 8; i++) { const y = i * D / 8 + 1; s += ln([W + 1, y, .02], [W + 4, y + .8, .02], "#ffffff", 2, 'opacity=".45"'); }
+    const tw = T(W + 2.5, D / 2, 0); s += `<text x="${f1(tw[0])}" y="${f1(tw[1])}" font-size="40" font-weight="800" fill="#ffffff" opacity=".6" text-anchor="middle" font-family="Arial" transform="rotate(30 ${f1(tw[0])} ${f1(tw[1])})">WESER</text>`;
+    for (let i = 0; i <= C; i++) { const x = i * G - 1.25; s += ln([x, -1.5, .01], [x, D, .01], "#e9e2c8", 1.5, 'stroke-dasharray="12 10" opacity=".7"'); }
+    for (let j = 0; j <= R; j++) { const y = j * G - 1.25; s += ln([-1.5, y, .01], [W, y, .01], "#e9e2c8", 1.5, 'stroke-dasharray="12 10" opacity=".7"'); }
+    const cells = list.map((h, k) => ({ h: h, i: k % C, j: Math.floor(k / C), k: k })).sort((a, b) => (a.i + a.j) - (b.i + b.j) || a.i - b.i);
+    cells.forEach(c => { const o = T(c.i * G, c.j * G, 0); s += `<g class="lot" data-k="${c.k}" style="cursor:pointer" transform="translate(${f1(o[0])} ${f1(o[1])})">${houseSVG(c.h.h, c.h.st, { nr: c.h.nr, inner: true })}</g>`; });
+    const xs = [T(-1.5, D, 0)[0] - 20, T(W + 5, -1.5, 0)[0] + 20], ys = [T(-1.5, -1.5, 0)[1] - 230, T(W + 5, D, -1)[1] + 20];
+    return `<svg viewBox="${f1(xs[0])} ${f1(ys[0])} ${f1(xs[1] - xs[0])} ${f1(ys[1] - ys[0])}" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">${s}</svg>`;
+  }
+
+  window.HOUSE = { CATALOG: HCAT, SLOTS: HSLOTS, DEFAULT: HDEFAULT, STAGES: STAGES, YARD_STAGE: YARD_STAGE, STAGE_NAMES: STAGE_NAMES, TABS: HTABS, SLOTNAME: HSLOTNAME,
+    item: id => byId[id], clean: hclean, stageOf: stageOf, yardOpen: yardOpen, svg: houseSVG, town: townSVG, fam: fam };
+})();

@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Español WP 10</title>
+<title>The Hirsch Games · Español WP 10</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;background:#07080d;color:#fff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
@@ -27,6 +28,12 @@
   .pills{margin-left:auto;display:flex;gap:10px;align-items:center}
   .pill{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);padding:7px 15px;border-radius:30px;font-size:21px;backdrop-filter:blur(8px)}
   .logo{font-size:26px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+  .brand img{width:52px;height:52px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
+  .brand .bn{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:21px;color:#e9bd4a;letter-spacing:.08em;line-height:1.05;text-shadow:0 2px 0 rgba(0,0,0,.5)}
+  .brand .bn small{display:block;font-family:Inter,sans-serif;font-weight:700;font-size:11px;letter-spacing:.22em;color:#b9c3d6;margin-top:4px}
+  .brand.big img{width:72px;height:72px}.brand.big .bn{font-size:30px}
+  @media(max-width:760px){.brand:not(.big) .bn{display:none}.brand img{width:44px;height:44px}}
   .out{background:none;border:1px solid rgba(255,255,255,.25);color:#cfd6e4;border-radius:20px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer}
   /* Lobby */
   .lobby{display:grid;grid-template-columns:380px 1fr;gap:30px;margin-top:18px;align-items:start}
@@ -76,6 +83,7 @@
   /* Navigation */
   .nav{position:fixed;left:0;right:0;bottom:0;z-index:5;height:64px;background:rgba(5,6,12,.75);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:center;gap:clamp(18px,6vw,60px);align-items:center}
   .nav button{background:none;border:none;color:#cfd6e4;font-size:20px;cursor:pointer;padding:6px 4px;border-bottom:3px solid transparent}
+  @media(max-width:480px){.nav button{font-size:16px;padding:6px 2px}.nav{gap:14px!important}}
   .nav button.on{color:#ffd23a;border-bottom-color:#ffd23a}
   /* Overlays */
   .ov{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;z-index:10;overflow:auto;padding:16px 16px 90px}
@@ -136,14 +144,14 @@
   </div>
   <div id="shelves"></div>
 </div>
-<nav class="nav"><button class="D on" data-n="play">JUGAR</button><button class="D" data-n="locker">TAQUILLA</button><button class="D" data-n="shop">TIENDA</button><button class="D" data-n="trophies">TROFEOS</button></nav>
+<nav class="nav"><button class="D on" data-n="play">JUGAR</button><button class="D" data-n="locker">TAQUILLA</button><button class="D" data-n="shop">TIENDA</button><button class="D" data-n="home">MI CASA</button><button class="D" data-n="trophies">TROFEOS</button></nav>
 <div class="ov" id="ov"><div class="sheet" id="shop"></div></div>
 <div class="ov" id="pinov" style="z-index:40"><div class="sheet pinbox" id="pinbox"></div></div>
 <div class="tour" id="tour"><div class="hole" id="hole"></div><div class="tip" id="tip"></div></div>
 
-<script src="game.js?v=10"></script>
-<script src="bosses.js?v=9"></script>
-<script src="covers.js?v=9"></script>
+<script src="game.js?v=11"></script>
+<script src="bosses.js?v=10"></script>
+<script src="covers.js?v=11"></script>
 <script>
 /* ===== Seiten-Einstellungen (für jede Klasse anpassen) ===== */
 const SITE = { title: "ESPAÑOL WP 10", sub: "ESPAÑOL · WP 10 · APÚNTATE 2" };
@@ -163,6 +171,7 @@ const COVER = g => COVERS[g.id] || `<svg viewBox="0 0 220 140" xmlns="http://www
 const ALL = [], SHELVES = [];
 if (Object.values(VOCAB).some(u => u.sections && u.sections.length)) {
   ALL.push({id:"daily", href:"boss.html?id=daily", topic:"Reto del día", name:"Jefe del día", info:"10 palabras al azar de todas las unidades – cada día un jefe nuevo. ¡Hasta 15 monedas, una vez al día!", art:COVERS.daily, accent:"#e0533a", color:"linear-gradient(135deg,#7a1e3a,#e0533a)", shelf:"daily"});
+  ALL.push({id:"review", href:"boss.html?id=review", topic:"Caja de errores", name:"El Monstruo de los Errores", info:"Un jefe hecho de las palabras que tuviste mal. ¡Si las aciertas, salen de tu caja! Monedas una vez al día.", art:COVERS.review||"", accent:"#3fae5a", color:"linear-gradient(135deg,#1e4a24,#3fae5a)", shelf:"daily", only:() => { const s = state(); return !!(s && s.review && s.review.length); }});
   SHELVES.push({key:"daily", title:"Hoy"});
 }
 [...new Set(Object.keys(VOCAB).concat(GRAMMAR.map(g => g.unit)))].sort().reverse().forEach(key => {
@@ -209,9 +218,10 @@ function setBg(g){
 /* ===== Kopfzeile ===== */
 function topBar(){
   const s = state();
-  if (!s) { $("top").innerHTML = `<div class="D logo">${SITE.title}</div><div class="pills"><button class="howto" onclick="tour()">❓ ¿CÓMO FUNCIONA?</button></div>`; return; }
+  const brand = big => `<div class="brand ${big?"big":""}"><img src="logo.svg" alt=""><div class="bn">THE HIRSCH<br>GAMES<small>${SITE.sub}</small></div></div>`;
+  if (!s) { $("top").innerHTML = `${brand(true)}<div class="pills"><button class="howto" onclick="tour()">❓ ¿CÓMO FUNCIONA?</button></div>`; return; }
   const L = E8.levelInfo(s.xp||0), stars = Object.values(s.stars||{}).reduce((a,b)=>a+b,0);
-  $("top").innerHTML = `<div class="hex D">${L.level}</div><div class="tier"><div class="D">NIVEL ${L.level} · ${L.name.toUpperCase()}</div><div class="bar"><i style="width:${L.pct}%"></i></div><div class="xpt">${L.next?`${s.xp||0} / ${L.next} XP`:"nivel máximo"}</div></div>
+  $("top").innerHTML = `${brand(false)}<div class="hex D">${L.level}</div><div class="tier"><div class="D">NIVEL ${L.level} · ${L.name.toUpperCase()}</div><div class="bar"><i style="width:${L.pct}%"></i></div><div class="xpt">${L.next?`${s.xp||0} / ${L.next} XP`:"nivel máximo"}</div></div>
     <div class="pills"><span class="pill D">🪙 ${s.coins}</span><span class="pill D">⭐ ${stars}</span><button class="help" onclick="tour()" title="¿Cómo funciona?">?</button><button class="out" id="out">Salir</button></div>`;
   $("out").onclick = () => { E8.logout(); render(); };
 }
@@ -247,18 +257,18 @@ function feat(){
   const g = SEL, s = state(), n = starsOf(g.id), l = SCORES[g.id]||[];
   const done = g.id==="daily" && s && s.stats && s.stats.dailyToday;
   $("feat").innerHTML = `<div class="kicker">${g.isNew?"NUEVO · ":""}${g.topic.toUpperCase()}</div><h1 class="D">${g.name.toUpperCase()}</h1><p>${g.info}</p>
-    <div class="meta">${s && g.id!=="daily" ? `<span class="st">${stStr(n)}</span>` : ""}${done?`<span>✔ Hecho hoy – ¡puedes seguir practicando!</span>`:""}</div>
+    <div class="meta">${s && g.id!=="daily" && g.id!=="review" ? `<span class="st">${stStr(n)}</span>` : ""}${done?`<span>✔ Hecho hoy – ¡puedes seguir practicando!</span>`:""}</div>
     ${g.href?`<a class="play D" href="${g.href}"><span>JUGAR ▶</span></a>`:""}
     ${l.length?`<div class="top3">🏆 TOP 3 ${l.map((x,i)=>`<span class="p ${["g","s","b"][i]}"><div>${E8.avatarSVG(x.eq)}</div>#${x.nr}</span>`).join("")}</div>`:""}`;
 }
 /* ===== Reihen ===== */
 function shelves(){
   $("shelves").innerHTML = SHELVES.map(sh => {
-    const games = ALL.filter(g => g.shelf === sh.key);
+    const games = ALL.filter(g => g.shelf === sh.key && (!g.only || g.only()));
     return `<div class="shelf"><h3 class="D">${sh.title.toUpperCase()}${sh.sub?`<small>${sh.sub}</small>`:""}</h3><div class="strip">${games.map(g => {
       const n = starsOf(g.id);
       return `<div class="card ${SEL&&SEL.id===g.id?"sel":""}" data-id="${g.id}" style="background:${g.color}">${g.isNew?`<span class="new">NUEVO</span>`:""}<div class="art">${g.art}</div>
-        <div class="lab"><small>${g.topic.toUpperCase()}</small>${g.name}${state()&&g.id!=="daily"?` <span style="color:#ffd23a;font-size:12px">${stStr(n)}</span>`:""}</div>${n?`<div class="prog" style="width:${n*33.4}%"></div>`:""}</div>`;
+        <div class="lab"><small>${g.topic.toUpperCase()}</small>${g.name}${state()&&g.id!=="daily"&&g.id!=="review"?` <span style="color:#ffd23a;font-size:12px">${stStr(n)}</span>`:""}</div>${n?`<div class="prog" style="width:${n*33.4}%"></div>`:""}</div>`;
     }).join("")}</div></div>`;
   }).join("");
   document.querySelectorAll(".card").forEach(c => c.onclick = () => {
@@ -280,6 +290,7 @@ document.querySelectorAll(".nav button").forEach(b => b.onclick = () => {
   const n = b.dataset.n;
   if (n === "play") { closeShop(); window.scrollTo({top:0,behavior:"smooth"}); return; }
   if (!state()) { closeShop(); window.scrollTo({top:0,behavior:"smooth"}); if($("msg")) $("msg").textContent="Primero inicia sesión. – Bitte zuerst anmelden."; return; }
+  if (n === "home") { location.href = "home.html"; return; }
   if (n === "trophies") return openTrophies();
   tab = 0; openShop(n);
 });
@@ -290,7 +301,7 @@ function openTrophies(){
   const s = state(); setNav("trophies"); $("ov").classList.add("show");
   $("shop").innerHTML = `<div class="row" style="justify-content:space-between"><div class="D" style="font-size:30px">TROFEOS</div><button class="btn small" onclick="closeShop()">✕ Cerrar</button></div>
     <h3 class="sec">Insignias</h3><div class="ach">${ACH.map(a=>`<div class="${s.stats&&a[3](s)?"":"off"}"><b>${a[0]}</b><span><strong>${a[1]}</strong><br><span class="de" style="font-style:normal">${a[2]}</span></span></div>`).join("")}</div>
-    <h3 class="sec">Top 3</h3>${ALL.filter(g=>g.id!=="daily").map(g=>{const l=SCORES[g.id]||[];return `<div class="trow"><span class="nm">${g.name}</span>${l.length?l.map((x,i)=>`<span class="top3" style="margin:0"><span class="p ${["g","s","b"][i]}"><div>${E8.avatarSVG(x.eq)}</div>#${x.nr}</span></span>`).join(""):`<span class="de">Nobody yet – be the first!</span>`}</div>`}).join("")}`;
+    <h3 class="sec">Top 3</h3>${ALL.filter(g=>g.id!=="daily"&&g.id!=="review").map(g=>{const l=SCORES[g.id]||[];return `<div class="trow"><span class="nm">${g.name}</span>${l.length?l.map((x,i)=>`<span class="top3" style="margin:0"><span class="p ${["g","s","b"][i]}"><div>${E8.avatarSVG(x.eq)}</div>#${x.nr}</span></span>`).join(""):`<span class="de">Nobody yet – be the first!</span>`}</div>`}).join("")}`;
 }
 
 /* ===== Locker & Shop ===== */
@@ -391,13 +402,15 @@ function pinDialog(first){
 
 /* ===== Tutorial ===== */
 const TOUR = [
-  {sel:null, t:"¡BIENVENIDO/A!", p:"Aquí practicas español con juegos, ganas monedas, subes de nivel y vistes a tu avatar. ¡Vamos a ver cómo funciona!", de:"Hier übst du Spanisch mit Spielen, sammelst Münzen und gestaltest deinen Avatar. Kurze Tour!"},
+  {sel:null, t:"¡BIENVENIDOS A THE HIRSCH GAMES!", p:"Esta es tu zona para practicar español. Aquí juegas, ganas monedas, subes de nivel y vistes a tu avatar. ¡Vamos a ver cómo funciona!", de:"Hier übst du Spanisch mit Spielen, sammelst Münzen und gestaltest deinen Avatar. Kurze Tour!"},
   {sel:"#hero", t:"TÚ", p:"Este es tu avatar. Inicia sesión con tu <b>número</b> y el <b>PIN de 4 cifras</b> de tu profe. La primera vez eliges tu <b>propio PIN</b>. Sin login puedes jugar, pero no ganas monedas.", de:"Beim ersten Login wählst du deine eigene PIN. Ohne Login kannst du spielen, bekommst aber keine Münzen."},
   {sel:".lobby .feat", t:"TU JUEGO", p:"Aquí ves el juego elegido. Pulsa <b>JUGAR</b> para empezar. Solo sigues cuando la respuesta es correcta – los errores vuelven más tarde.", de:"Mit JUGAR startest du. Du kommst nur weiter, wenn alles richtig ist."},
   {sel:"#shelves .shelf:nth-child(2)", t:"TODOS LOS JUEGOS", p:"Los juegos están ordenados por unidad: jefes de vocabulario y misiones. Toca un juego <b>una vez</b> para verlo y <b>otra vez</b> para jugar.", de:"Einmal tippen = ansehen, nochmal tippen = spielen. Wische die Reihen zur Seite."},
   {sel:".strip .card[data-id='daily']", t:"RETO DEL DÍA", p:"Cada día hay un jefe nuevo con 10 palabras de todas las unidades. ¡Juega cada día y gana monedas extra!", de:"Jeden Tag neu – Münzen gibt es einmal am Tag."},
   {sel:"#top", t:"MONEDAS Y NIVEL", p:"La primera vez: 20–40 monedas (más estrellas = más monedas). Juega otra vez y consigue más estrellas para ganar más. Cada moneda te da también XP para tu <b>nivel</b>.", de:"Mehr Sterne = mehr Münzen. Mit Münzen steigst du auch im Level auf – Level schalten besondere Shop-Teile frei."},
   {sel:".nav", t:"TAQUILLA, TIENDA Y TROFEOS", p:"<b>Tienda</b>: compra ropa, sombreros, mascotas y efectos locos. <b>Taquilla</b>: cambia tu look. <b>Trofeos</b>: tus insignias y el top 3 de cada juego.", de:"In der Tienda kaufst du, in der Taquilla ziehst du dich um, bei Trofeos siehst du Abzeichen und Bestenlisten."},
+  {sel:".nav button[data-n='home']", t:"MI CASA", p:"¡Construye tu propia casa! Tus <b>estrellas</b> la hacen más grande: tienda → cabaña → casa → villa → mansión. Con <b>monedas</b> eliges paredes, tejado, ventanas y jardín. También puedes visitar las casas de tus compañeros en <b>LA CIUDAD</b>.", de:"Sterne lassen dein Haus wachsen, mit Münzen gestaltest du es. In LA CIUDAD siehst du die Häuser der anderen."},
+  {sel:".strip .card[data-id='review']", t:"CAJA DE ERRORES", p:"Después de un jefe de vocabulario, las palabras que tuviste mal van a tu <b>caja de errores</b>. ¡Vence al Monstruo de los Errores y las palabras desaparecen!", de:"Wörter, die du falsch hattest, landen in deiner Fehler-Kiste. Wenn du sie richtig hast, verschwinden sie wieder."},
   {sel:null, t:"¡UNA COSA MÁS!", p:"En un iPad del cole, pulsa siempre <b>Salir</b> al terminar. ¡Y ahora – a jugar! 🎮", de:"Auf Schul-iPads am Ende immer abmelden! Viel Spaß!"}
 ];
 let TI = 0;
@@ -405,6 +418,7 @@ function tour(){ TI = 0; $("tour").classList.add("show"); window.scrollTo(0,0); 
 function tourEnd(){ $("tour").classList.remove("show"); }
 function tourStep(){
   const s = TOUR[TI], el = s.sel && document.querySelector(s.sel), hole = $("hole"), tip = $("tip");
+  if (s.sel && !el && s.sel.indexOf("review") >= 0) { s.sel = null; }
   if (el) { el.scrollIntoView({block:"center", behavior:"instant"}); }
   setTimeout(() => {
     const vw = innerWidth, vh = innerHeight;

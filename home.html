@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Mi casa · The Hirsch Games</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;color:#fff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;min-height:100%}
+  body{background:linear-gradient(180deg,#0e1a33 0%,#1d3a63 55%,#2c5a7a 100%);background-attachment:fixed}
+  .D{font-family:Anton,Impact,"Arial Narrow Bold",sans-serif;letter-spacing:.04em;font-weight:400}
+  .wrap{max-width:1220px;margin:0 auto;padding:14px 20px 60px}
+  .top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .back{color:#cfd6e4;text-decoration:none;font-weight:700;border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:7px 14px;font-size:14px}
+  .title{font-size:34px}
+  .pills{margin-left:auto;display:flex;gap:10px}
+  .pill{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.18);padding:6px 14px;border-radius:30px;font-size:19px}
+  .tabsTop{display:flex;gap:8px;margin:14px 0 8px}
+  .tabsTop button{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);color:#cfd6e4;border-radius:12px;padding:9px 18px;font-size:20px;cursor:pointer}
+  .tabsTop button.on{background:#ffd23a;color:#2a1600;border-color:#ffd23a}
+  .main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;align-items:start}
+  .main>div:first-child{position:sticky;top:8px}
+  @media(max-width:900px){.main{grid-template-columns:1fr}.main>div:first-child{position:static}}
+  .scene{position:relative;border-radius:22px;background:radial-gradient(ellipse at 50% 20%,rgba(255,255,255,.18),transparent 65%);padding:6px}
+  .scene .cloud{position:absolute;width:90px;height:26px;background:rgba(255,255,255,.55);border-radius:20px;filter:blur(1px);animation:drift 40s linear infinite}
+  @keyframes drift{from{transform:translateX(-120px)}to{transform:translateX(700px)}}
+  .stage{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 14px;margin-top:10px}
+  .stage .bar{height:12px;background:rgba(255,255,255,.15);border-radius:6px;overflow:hidden;margin:6px 0}
+  .stage .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff8a2a)}
+  .steps{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .steps span{font-size:12px;padding:4px 8px;border-radius:10px;background:rgba(255,255,255,.08);color:#b9c3d6}
+  .steps span.on{background:#ffd23a;color:#2a1600;font-weight:800}
+  .panel{background:rgba(8,12,24,.55);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:14px;backdrop-filter:blur(10px)}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .tabs button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:7px 12px;font-weight:700;cursor:pointer}
+  .tabs button.on{background:#4fb3ff;border-color:#4fb3ff;color:#06223a}
+  h4{margin:10px 0 6px;font-size:13px;letter-spacing:.12em;color:#b9c3d6}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+  .it{position:relative;background:rgba(255,255,255,.07);border:2px solid transparent;border-radius:12px;padding:8px 6px;text-align:center;cursor:pointer;min-height:92px}
+  .it.on{border-color:#ffd23a;background:rgba(255,210,58,.14)}
+  .it.lock{opacity:.5}
+  .it .ic{font-size:28px;height:34px;display:grid;place-items:center}
+  .it .sw{width:30px;height:30px;border-radius:50%;margin:2px auto;border:2px solid rgba(255,255,255,.6)}
+  .it .nm{font-size:12px;font-weight:700;line-height:1.2;margin-top:3px}
+  .it .pr{font-size:12px;color:#ffd23a;margin-top:2px}
+  .it .pr.mine{color:#7ee08a}
+  .spots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+  .spots button{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;border-radius:10px;padding:6px 10px;font-weight:700;cursor:pointer}
+  .spots button.on{background:#7ee08a;color:#0a2a10;border-color:#7ee08a}
+  .spots button:disabled{opacity:.4;cursor:default}
+  .bar2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;font-size:15px;cursor:pointer;background:rgba(255,255,255,.14);color:#fff}
+  .btn.primary{background:#ffd23a;color:#2a1600}
+  .btn.buy{background:#4fe37a;color:#08300f}
+  .msg{min-height:22px;font-size:14px;color:#ffd0d0;margin-top:8px}
+  .msg.ok{color:#a8f0b0}
+  .de{color:#b9c3d6;font-size:13px;font-style:italic}
+  .hood{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+  .hcard{background:rgba(0,0,0,.25);border:2px solid rgba(255,255,255,.12);border-radius:16px;padding:6px;cursor:pointer;text-align:center}
+  .hcard.me{border-color:#ffd23a}
+  .hcard .cap{font-weight:800;margin:2px 0 4px}
+  .hcard .cap small{display:block;color:#b9c3d6;font-weight:600}
+  .ov{position:fixed;inset:0;background:rgba(5,8,16,.86);z-index:20;display:none;align-items:center;justify-content:center;padding:16px}
+  .ov.show{display:flex}
+  .ov .box{max-width:720px;width:100%;text-align:center}
+  .guest{text-align:center;padding:40px 10px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="ov" id="ov"><div class="box" id="ovbox"></div></div>
+<script src="game.js?v=11"></script>
+<script src="house.js?v=12"></script>
+<script>
+const $ = id => document.getElementById(id);
+const H = window.HOUSE;
+const ICON = { tree:"🌳", pine:"🌲", apple:"🍎", flowers:"🌷", veg:"🥕", bench:"🪑", bbq:"🍖", doghouse:"🐕", gnomes:"🧙", trampoline:"🤸", swing:"🎠", pond:"🦆", car:"🚗", pool:"🏊", boat:"⛵", corvey:"🏰", fountain:"⛲", xmas:"🎄", snowman:"⛄", pumpkins:"🎃", eggs:"🥚", dino:"🦖", ufo:"🛸", rocket:"🚀", taxi:"🚕", liberty:"🗽", schoolbus:"🚌", amish:"🐴", ggbridge:"🌉", walkstar:"⭐", robot:"🤖", nascar:"🏎️",
+  plaster:"🏠", wood:"🪵", brick:"🧱", timber:"🏡", log:"🛖", stone:"🪨", glass:"🏙️", rainbow:"🌈", gold:"👑",
+  gable:"🏠", hip:"🏘️", flat:"🏢", green:"🌱", thatch:"🌾", pagoda:"🏯",
+  classic:"🪟", shutter:"🪟", round:"⭕", arch:"⛪", wide:"🖼️", stained:"🎨", heart:"💖",
+  chimney:"💨", solar:"☀️", dish:"📡", flag:"🚩", rooster:"🐓", turbine:"🌬️", lights:"✨", telescope:"🔭", heli:"🚁",
+  picket:"🪵", hedge:"🌿", castle:"🏰", space:"🚀", door:"🚪" };
+const MON = ["","ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+let HMODE = "town", ZOOM = 100, VIEW = "build", TAB = 0, SPOT = "yard1", trying = null, busy = false, HOUSES = null;
+
+const st = () => { const s = E8.getSession(); return s && s.state; };
+const stars = () => (st() && st().starsTotal) || 0;
+const stage = () => H.stageOf(stars());
+const owns = id => { const it = H.item(id); return it.price === 0 || (st() && st().owned.indexOf(id) >= 0); };
+function lockReason(it) {
+  const s = st();
+  if (it.months && !E8.inSeason(it)) return "🗓 " + (it.months.length === 1 ? MON[it.months[0]] : MON[it.months[0]] + "–" + MON[it.months[it.months.length - 1]]);
+  if (it.lvl && s.level < it.lvl) return "🔒 Nivel " + it.lvl;
+  if (it.stars && stars() < it.stars) return "🔒 " + it.stars + " ⭐";
+  return "";
+}
+
+function page() {
+  const s = st();
+  const tabs = `<div class="tabsTop"><button class="D ${VIEW === "build" ? "on" : ""}" data-v="build">MI CASA</button><button class="D ${VIEW === "hood" ? "on" : ""}" data-v="hood">LA CIUDAD</button></div>`;
+  $("app").innerHTML = `<div class="top"><img src="logo.svg" alt="" style="width:44px;height:44px"><a class="back" href="./">← Inicio</a><div class="D title">${VIEW === "hood" ? "NUESTRA CIUDAD" : "MI CASA"}</div>
+    ${s ? `<div class="pills"><span class="pill">⭐ ${stars()}</span><span class="pill">🪙 ${s.coins}</span></div>` : ""}</div>${tabs}<div id="view"></div>`;
+  document.querySelectorAll(".tabsTop button").forEach(b => b.onclick = () => { VIEW = b.dataset.v; page(); });
+  if (VIEW === "hood") return hood();
+  if (!s) { $("view").innerHTML = `<div class="guest panel"><div style="font-size:60px">🏡</div><h2 class="D" style="font-size:30px">INICIA SESIÓN PARA CONSTRUIR TU CASA</h2><p>Inicia sesión en la página principal. Tus estrellas construyen tu casa y con tus monedas la decoras.</p><p class="de">Melde dich auf der Startseite an. Deine Sterne bauen dein Haus, mit Münzen gestaltest du es.</p><a class="btn primary" href="./" style="text-decoration:none;display:inline-block">← Ir al inicio</a></div>`; return; }
+  if (!trying) trying = H.clean(s.house);
+  build();
+}
+
+function stageBox() {
+  const sg = stage(), n = stars(), next = H.STAGES[sg + 1];
+  const pct = next ? Math.round((n - H.STAGES[sg]) / (next - H.STAGES[sg]) * 100) : 100;
+  return `<div class="stage"><div class="D" style="font-size:22px">${H.STAGE_NAMES[sg].toUpperCase()} <span style="font-size:15px;color:#b9c3d6">· etapa ${sg + 1} de ${H.STAGES.length}</span></div>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    <div style="font-size:14px">${next ? `⭐ ${n} / ${next} – ¡<b>${next - n} estrellas más</b> para: <b>${H.STAGE_NAMES[sg + 1]}</b>!` : "⭐ " + n + " – ¡tienes la casa más grande! 🏆"}</div>
+    <div class="de">${next ? "Mehr Sterne in den Spielen lassen dein Haus wachsen. Nur Verbessern zählt – Wiederholen ohne neue Sterne nicht." : "Du hast die höchste Ausbaustufe!"}</div>
+    <div class="steps">${H.STAGE_NAMES.map((t, i) => `<span class="${i === sg ? "on" : ""}">${t} ${H.STAGES[i]}⭐</span>`).join("")}</div></div>`;
+}
+
+function build(msg, ok) {
+  const s = st();
+  const tabDef = H.TABS[TAB];
+  let html = `<div class="main"><div><div class="scene" id="scene"><div class="cloud" style="top:30px"></div><div class="cloud" style="top:90px;animation-delay:-18s;opacity:.7"></div>${H.svg(trying, stars(), { avatar: E8.myAvatar(), nr: s.nr, uid: "me" })}</div>${stageBox()}</div><div class="panel">`;
+  html += `<div class="tabs">${H.TABS.map((t, i) => `<button class="${i === TAB ? "on" : ""}" data-t="${i}">${t[0]}</button>`).join("")}</div>`;
+  tabDef[1].forEach(slot => {
+    html += `<h4>${H.SLOTNAME[slot].toUpperCase()}</h4>`;
+    if (slot === "yard") {
+      html += `<div class="spots">${["yard1", "yard2", "yard3", "yard4"].map((k, i) => { const open = H.yardOpen(k, stage()); return `<button data-spot="${k}" class="${SPOT === k ? "on" : ""}" ${open ? "" : "disabled"}>${open ? "Sitio " + (i + 1) : "🔒 " + H.STAGE_NAMES[H.YARD_STAGE[k]]}</button>`; }).join("")}</div>`;
+      if (!H.yardOpen(SPOT, stage())) { html += `<p class="de">Consigue más estrellas para abrir más sitios en el jardín. – Sammle mehr Sterne für Gartenplätze.</p>`; return; }
+    }
+    const items = H.CATALOG.filter(i => i.slot === slot && E8.available(i) && (!i.months || E8.inSeason(i) || owns(i.id)));
+    const cur = slot === "yard" ? trying[SPOT] : trying[slot];
+    html += `<div class="grid">${items.map(i => {
+      const mine = owns(i.id), lr = mine ? "" : lockReason(i);
+      const ic = (slot === "wcolor" || slot === "rcolor" || slot === "ground") ? `<div class="sw" style="background:${i.color}"></div>` : `<div class="ic">${slot === "door" ? `<span style="display:inline-block;width:22px;height:30px;border-radius:4px 4px 0 0;background:${i.color}"></span>` : (ICON[i.kind] || (i.id === "y-none" || i.id === "rx-none" || i.id === "f-none" ? "✖️" : "🏠"))}</div>`;
+      return `<div class="it ${cur === i.id ? "on" : ""} ${lr ? "lock" : ""}" data-id="${i.id}" data-slot="${slot}">${ic}<div class="nm">${i.name}</div><div class="pr ${mine ? "mine" : ""}">${mine ? (i.price ? "✔ tuyo" : "gratis") : lr || i.price + " 🪙"}</div></div>`;
+    }).join("")}</div>`;
+  });
+  // Kaufen / Speichern
+  const notMine = H.SLOTS.map(k => trying[k]).filter((id, i, a) => !owns(id) && a.indexOf(id) === i);
+  html += `<div class="bar2">`;
+  if (notMine.length === 1) { const it = H.item(notMine[0]); html += `<button class="btn buy" id="buy">Comprar «${it.name}» por ${it.price} 🪙</button>`; }
+  else if (notMine.length > 1) html += `<span class="de">Estás probando ${notMine.length} cosas que no tienes. Cómpralas una por una. – Mehrere Teile sind noch nicht gekauft.</span>`;
+  else html += `<button class="btn primary" id="save">✔ Guardar mi casa</button>`;
+  html += `<button class="btn" id="undo">Deshacer</button></div><div class="msg ${ok ? "ok" : ""}" id="msg">${msg || "Toca algo para probarlo. – Tippe auf ein Teil, um es anzuprobieren."}</div></div></div>`;
+  $("view").innerHTML = html;
+  document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { TAB = +b.dataset.t; build(); });
+  document.querySelectorAll(".spots button").forEach(b => b.onclick = () => { SPOT = b.dataset.spot; build(); });
+  document.querySelectorAll(".it").forEach(c => c.onclick = () => {
+    const it = H.item(c.dataset.id), slot = c.dataset.slot;
+    if (slot === "yard") { trying[SPOT] = it.id; } else trying[slot] = it.id;
+    const lr = owns(it.id) ? "" : lockReason(it);
+    build(lr ? lr + " – puedes probarlo, pero todavía no comprarlo. – Anprobieren geht, kaufen noch nicht." : "");
+  });
+  if ($("undo")) $("undo").onclick = () => { trying = H.clean(st().house); build(); };
+  if ($("save")) $("save").onclick = save;
+  if ($("buy")) $("buy").onclick = () => buy(notMine[0]);
+}
+
+async function save(msg) {
+  if (busy) return; busy = true; $("msg").className = "msg ok"; $("msg").textContent = "Guardando …";
+  const r = await E8.call("house", { house: trying }); busy = false;
+  if (r.ok) { trying = H.clean(r.state.house); page(); build(msg || "✔ ¡Guardado! – Gespeichert!", true); }
+  else { $("msg").className = "msg"; $("msg").textContent = E8.errText(r.error); }
+}
+async function buy(id) {
+  const it = H.item(id), s = st(), lr = lockReason(it);
+  if (lr) { $("msg").className = "msg"; $("msg").textContent = lr + " – todavía no. – Noch nicht."; return; }
+  if (s.coins < it.price) { $("msg").className = "msg"; $("msg").textContent = `Te faltan ${it.price - s.coins} monedas. – Dir fehlen noch ${it.price - s.coins} Münzen.`; return; }
+  if (busy) return; busy = true; $("msg").className = "msg ok"; $("msg").textContent = "Comprando …";
+  const r = await E8.call("buy", { item: id }); busy = false;
+  if (r.ok) await save("🎉 ¡Comprado y guardado! – Gekauft und gespeichert!");
+  else { $("msg").className = "msg"; $("msg").textContent = E8.errText(r.error); }
+}
+
+async function hood() {
+  $("view").innerHTML = `<div class="bar2" style="margin:0 0 10px"><div class="tabs" style="margin:0"><button class="${HMODE === "town" ? "on" : ""}" data-m="town">🗺️ Ciudad</button><button class="${HMODE === "list" ? "on" : ""}" data-m="list">▦ Lista</button></div>${HMODE === "town" ? `<button class="btn" id="zo">－</button><button class="btn" id="zi">＋</button>` : ""}<span class="de">Toca una casa para visitarla. – Tippe auf ein Haus, um es zu besuchen.</span></div><div id="hood">Cargando … 🏘️</div>`;
+  document.querySelectorAll("[data-m]").forEach(b => b.onclick = () => { HMODE = b.dataset.m; hood(); });
+  if (!HOUSES) { const r = await E8.api("houses", {}); HOUSES = r.ok ? r.houses : []; if (!r.ok) { $("hood").textContent = E8.errText(r.error); return; } }
+  const me = E8.getSession() ? E8.getSession().nr : null;
+  const list = HOUSES.slice().sort((a, b) => (a.nr === me ? -1 : b.nr === me ? 1 : Number(a.nr) - Number(b.nr)));
+  if (!list.length) { $("hood").textContent = "Todavía no hay casas. – Noch keine Häuser."; return; }
+  const visit = x => { const sg = H.stageOf(x.st);
+    $("ovbox").innerHTML = `<div class="D" style="font-size:30px">CASA #${x.nr}</div><div style="color:#b9c3d6;margin-bottom:6px">${H.STAGE_NAMES[sg]} · ⭐ ${x.st}</div>${H.svg(x.h, x.st, { avatar: E8.avatarSVG(x.eq), nr: x.nr, uid: "big" })}<button class="btn primary" onclick="document.getElementById('ov').classList.remove('show')">✕ Cerrar</button>`;
+    $("ov").classList.add("show"); };
+  if (HMODE === "town") {
+    $("hood").innerHTML = `<div id="tw" style="overflow:auto;border-radius:18px;background:radial-gradient(ellipse at 50% 30%,rgba(255,255,255,.12),transparent 70%)"><div id="twin" style="width:${ZOOM}%">${H.town(list)}</div></div>`;
+    document.querySelectorAll(".lot").forEach(g => g.onclick = () => visit(list[+g.dataset.k]));
+    $("zi").onclick = () => { ZOOM = Math.min(400, ZOOM + 60); $("twin").style.width = ZOOM + "%"; };
+    $("zo").onclick = () => { ZOOM = Math.max(100, ZOOM - 60); $("twin").style.width = ZOOM + "%"; };
+    return;
+  }
+  $("hood").className = "hood";
+  $("hood").innerHTML = list.map((x, i) => { const sg = H.stageOf(x.st); return `<div class="hcard ${x.nr === me ? "me" : ""}" data-i="${i}">${H.svg(x.h, x.st, { nr: x.nr, uid: "t" + i })}<div class="cap">#${x.nr}${x.nr === me ? " (tú)" : ""}<small>${H.STAGE_NAMES[sg]} · ⭐ ${x.st}</small></div></div>`; }).join("");
+  document.querySelectorAll(".hcard").forEach(c => c.onclick = () => visit(list[+c.dataset.i]));
+}
+$("ov").onclick = e => { if (e.target.id === "ov") $("ov").classList.remove("show"); };
+
+if (location.hash === "#hood") VIEW = "hood";
+page();
+if (E8.getSession()) E8.call("login").then(r => { if (r.ok) { trying = null; page(); } });
+</script>
+</body>
+</html>
