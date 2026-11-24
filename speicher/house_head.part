@@ -427,7 +427,7 @@
   function lamp(x, y) { return ln([x, y, 0], [x, y, 2.1], "#3a3f48", 2.2) + ball(x, y, 2.2, .18, "#ffe9a0", 'stroke="#c9a84a" stroke-width="1"'); }
   function car(x, y, c, along) { const dx = along ? 1.6 : .8, dy = along ? .8 : 1.6; return shadow(x + dx / 2, y + dy / 2, .9, .45) + blk(x, y, .15, dx, dy, .45, c) + blk(x + (along ? .35 : .1), y + (along ? .1 : .35), .6, along ? .8 : .6, along ? .6 : .8, .3, "#dfe8f0"); }
   /* Kursplatz = Meta común: der Leuchtturm (gleiche Stufen wie im Lobby-Banner) */
-  const METAS = [1000, 2500, 5000, 10000, 17000, 25000];
+  const METAS = [500, 1500, 3000, 6000, 10000, 15000];
   function plaza(ox, oy, meta) {
     const m = meta || 0, on = k => m >= METAS[k];
     let s = poly([[ox, oy, .02], [ox + 10, oy, .02], [ox + 10, oy + 10, .02], [ox, oy + 10, .02]], "#e3d3ad");
