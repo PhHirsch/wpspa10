@@ -73,7 +73,7 @@
 <div class="wrap" id="app"></div>
 <div class="ov" id="ov"><div class="box" id="ovbox"></div></div>
 <script src="game.js?v=15"></script>
-<script src="house.js?v=14"></script>
+<script src="house.js?v=15"></script>
 <script>
 const $ = id => document.getElementById(id);
 const H = window.HOUSE;
@@ -188,7 +188,7 @@ async function hood() {
     $("ovbox").innerHTML = `<div class="D" style="font-size:30px">CASA #${x.nr}</div><div style="color:#b9c3d6;margin-bottom:6px">${H.STAGE_NAMES[sg]} · ⭐ ${x.st}</div>${H.svg(x.h, x.st, { avatar: E8.avatarSVG(x.eq), nr: x.nr, uid: "big" })}<button class="btn primary" onclick="document.getElementById('ov').classList.remove('show')">✕ Cerrar</button>`;
     $("ov").classList.add("show"); };
   if (HMODE === "town") {
-    $("hood").innerHTML = `<div id="tw" style="overflow:auto;border-radius:18px;background:radial-gradient(ellipse at 50% 30%,rgba(255,255,255,.12),transparent 70%)"><div id="twin" style="width:${ZOOM}%">${H.town(list)}</div></div>`;
+    $("hood").innerHTML = `<div id="tw" style="overflow:auto;border-radius:18px;background:radial-gradient(ellipse at 50% 30%,rgba(255,255,255,.12),transparent 70%)"><div id="twin" style="width:${ZOOM}%">${H.town2(list, (E8.getSession() && E8.getSession().state && "meta" in E8.getSession().state) ? E8.getSession().state.meta : null)}</div></div>`;
     document.querySelectorAll(".lot").forEach(g => g.onclick = () => visit(list[+g.dataset.k]));
     $("zi").onclick = () => { ZOOM = Math.min(400, ZOOM + 60); $("twin").style.width = ZOOM + "%"; };
     $("zo").onclick = () => { ZOOM = Math.max(100, ZOOM - 60); $("twin").style.width = ZOOM + "%"; };

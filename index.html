@@ -373,7 +373,7 @@ function metaBox(){
     <div class="de" style="font-size:13px;opacity:.85">Todas las monedas que gana el curso construyen nuestro faro – como la Torre de Hércules en A Coruña. – Alle Münzen des Kurses bauen gemeinsam an eurem Leuchtturm.</div>
     <div class="mb"><i style="width:${pct}%"></i></div>
     <div style="font-size:15px"><b>${m.toLocaleString("es-ES")} 🪙</b> ${nxt?`· próximo: ${nxt[1]} ${nxt[2]} a ${nxt[0].toLocaleString("es-ES")} 🪙`:"· ¡Faro terminado! 🎉"}</div>
-    <div class="ms" style="margin-top:8px">${METAS.map(x=>`<span class="${m>=x[0]?"ok":""}">${x[1]} ${(x[0]/1000)}k</span>`).join("")}</div></div></div>`;
+    <div class="ms" style="margin-top:8px">${METAS.map(x=>`<span class="${m>=x[0]?"ok":""}">${x[1]} ${(x[0]/1000)}k</span>`).join("")}</div><a href="home.html#hood" style="display:inline-block;margin-top:10px;color:#ffd23a;font-weight:800;text-decoration:none">🏙️ Ver el faro en la ciudad →</a></div></div>`;
 }
 /* ===== Weltkarte (zweite Ansicht der Spiele) ===== */
 let VIEW = (()=>{ try { return localStorage.getItem("wpspa10-view") || "shelf"; } catch(e) { return "shelf"; } })();
