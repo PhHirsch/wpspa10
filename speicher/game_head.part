@@ -83,7 +83,7 @@
       samepin: "Elige un PIN nuevo, no el antiguo. – Wähle eine neue PIN, nicht die alte.",
       pinmatch: "Los dos PIN no son iguales. – Die beiden PINs sind nicht gleich.",
       level: "Necesitas un nivel más alto. – Dafür brauchst du ein höheres Level.",
-      stars: "Necesitas más estrellas. – Dafür brauchst du mehr Sterne."
+      stars: "Necesitas más estrellas. – Dafür brauchst du mehr Sterne.", adv: "Primero abre más puertas del calendario de Adviento. – Erst mehr Türchen im Adventskalender öffnen."
     })[e] || ("Error: " + e);
   }
 
@@ -94,6 +94,7 @@
     if (!API_URL || API_URL.indexOf("/*") === 0) { box.style.display = "none"; return; }
     const se = getSession();
     const prevLevel = se && se.state ? se.state.level : 0;
+    const prevStreakToday = se && se.state ? !!se.state.streakToday : true;
     const show = r => {
       if (r.queued) { box.innerHTML = "📡 Ahora no hay internet. Tu resultado está guardado en este aparato y se envía automáticamente la próxima vez que estés en línea y con sesión iniciada.<div style='font-size:14px;opacity:.75'>Kein Internet: Dein Ergebnis ist gespeichert und wird später automatisch gesendet.</div>"; return; }
       let t = `<div style="font-size:24px;font-weight:700">+${r.earned} 🪙</div>`;
@@ -102,6 +103,8 @@
       if (r.improved) t += `<div style="font-size:14px;opacity:.75">¡Nuevo récord! – Neuer Rekord!</div>`;
       if (r.review && !r.earned) t += `<div style="font-size:14px;opacity:.75">Monedas de la caja de errores solo 1 vez al día. – Münzen für die Fehler-Kiste gibt es nur 1x pro Tag.</div>`;
       if (r.daily && !r.earned) t += `<div style="font-size:14px;opacity:.75">Monedas diarias solo 1 vez al día. – Tagesmünzen gibt es nur 1x pro Tag.</div>`;
+      if (r.perfectNew) t += `<div style="font-size:22px;font-weight:800;margin-top:6px">👑 ¡MAESTRO/A! Sin ningún error. – Ohne einen einzigen Fehler!</div>`;
+      if ("streak" in r.state && !prevStreakToday && r.state.streak > 0) t += `<div style="font-size:20px;font-weight:800;margin-top:6px;color:#ff9a2a">🔥 ¡Racha de ${r.state.streak} día${r.state.streak > 1 ? "s" : ""}!</div><div style="font-size:14px;opacity:.75">Juega mañana otra vez para no perderla. – Spiel morgen wieder, sonst ist die Serie weg.</div>`;
       if (prevLevel && r.state.level > prevLevel) t += `<div style="font-size:22px;font-weight:800;margin-top:6px">🎉 ¡SUBES DE NIVEL! Nivel ${r.state.level}</div>`;
       box.innerHTML = t;
     };

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Mi álbum · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#3a2a10 0%,#100a04 70%);color:#fff8ec;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  .w{max-width:960px;margin:0 auto;padding:14px}
+  a{color:#ffd8a0}
+  h1{font-family:Georgia,serif;font-style:italic;font-size:40px;text-align:center;margin:8px 0 0}
+  .de{color:#d8c0a0;font-size:14px}
+  .book{background:#f3e6c8;border-radius:16px;padding:18px;margin-top:14px;box-shadow:inset 0 0 0 6px #c9a46a,0 18px 40px #0009;color:#3a2a10}
+  .grid{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+  .bar{height:14px;border-radius:8px;background:#0006;overflow:hidden;margin:8px auto;max-width:420px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff8a2a)}
+  .leg{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-size:14px;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="w" id="app"></div>
+<script src="game.js?v=15"></script>
+<script src="cromos.js?v=2"></script>
+<script>
+document.head.insertAdjacentHTML("beforeend", `<style>${CROMO_CSS}</style>`);
+const se = E8.getSession(), s = se && se.state;
+const got = CROMOS.filter(c => cromoState(s, c.id).got).length, gold = CROMOS.filter(c => cromoState(s, c.id).gold).length;
+document.getElementById("app").innerHTML = `<a href="index.html">← Lobby</a><h1>📒 Mi álbum de cromos</h1>
+  <p style="text-align:center">Cada juego tiene su cromo. ¡Colecciónalos todos! <span class="de">– Jedes Spiel hat seine Sammelkarte. Kein Zufall: Spiel es, und die Karte gehört dir.</span></p>
+  <div class="bar"><i style="width:${Math.round(got / CROMOS.length * 100)}%"></i></div>
+  <p style="text-align:center"><b>${got} / ${CROMOS.length}</b> cromos · <b>${gold}</b> dorados ✨</p>
+  <div class="leg"><span>⭐ 1 estrella = cromo</span><span>⭐⭐⭐ = cromo dorado ✨</span><span>👑 sin errores</span><span>🔥 modo difícil</span></div>
+  ${s ? "" : `<p style="text-align:center">Inicia sesión en la página principal. – Melde dich auf der Startseite an.</p>`}
+  <div class="book"><div class="grid">${CROMOS.map(c => cromoCard(c, s, true)).join("")}</div></div>`;
+</script>
+</body>
+</html>

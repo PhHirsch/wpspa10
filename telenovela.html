@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Los secretos de la pandilla · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#4a0f24 0%,#14040a 70%);--panel:#200a12;--txt:#fff0f3;--muted:#e0a8b8;--line:#4e1a2a;--btn:#2e0e1a;--accent:#ff5a7a;--accentTxt:#fff;--accent2:#ffb3c2;--bubble:#2e1019;--input:#14060a;--ok:#6fe59a;--bad:#ffb03a}
+  .tv{position:relative;border-radius:14px 14px 0 0;overflow:hidden;background:linear-gradient(135deg,#6a1030,#2a0614);padding:14px 16px;display:flex;align-items:center;gap:14px}
+  .tv .logo{font-family:Georgia,serif;font-style:italic;font-size:26px;line-height:1;color:#ffe0e8;text-shadow:0 2px 0 #8a1030,0 0 18px #ff5a7a}
+  .tv .logo small{display:block;font-size:13px;font-style:normal;letter-spacing:.2em;color:#ffb3c2;margin-top:4px}
+  .tv .cast{margin-left:auto;display:flex;gap:6px;font-size:28px}
+  .tv .cast span{width:44px;height:44px;border-radius:50%;background:#fff1;display:grid;place-items:center;border:2px solid #ff5a7a}
+  .tv .cast span.me{overflow:hidden;background:#fff}
+  .tv .cast span.me svg{width:44px;height:44px}
+  .prog{height:6px;background:#2a0614}.prog i{display:block;height:100%;background:linear-gradient(90deg,#ff5a7a,#ffd23a)}
+  .story p{margin:.45em 0;line-height:1.55}
+  .story .d{display:flex;gap:8px;align-items:flex-start;margin:.4em 0}
+  .story .d b{flex:none;min-width:62px;color:#ffb3c2}
+  .story .gl{border-bottom:1px dotted #ffb3c2;cursor:help}
+  .story .note{background:#fff8e6;color:#3a2a10;border-radius:4px;padding:8px 12px;font-family:"Comic Sans MS","Bradley Hand",cursive;transform:rotate(-1deg);box-shadow:0 2px 6px #0006;margin:.6em 0;display:inline-block}
+  .eps{display:grid;gap:12px;margin:14px 0}
+  .ep{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#3a0a1a,#6a1a34);border:1px solid #8a2a4a;border-radius:14px;padding:14px;color:#fff;text-decoration:none}
+  .ep .n{font-family:Georgia,serif;font-size:34px;font-style:italic;color:#ffb3c2;width:44px;text-align:center}
+  .ep b{font-size:19px}
+  .ep.lock{filter:grayscale(.8);opacity:.55;pointer-events:none}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:17px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px}
+  .de{color:var(--muted);font-size:14px}
+  .btn{display:inline-block;padding:10px 18px;border-radius:12px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700}
+  .ep .st{margin-left:auto;font-size:18px;color:#ffd23a;white-space:nowrap}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=15"></script>
+<script src="juego.js?v=8"></script>
+<script>
+/* ======== Freischalten: Zahl erhöhen, wenn die nächste Folge erscheinen soll ======== */
+const LIBERADOS = 1;
+
+const g = (w, de) => `<span class="gl" title="${de}">${w}</span> <span class="de">(${de})</span>`;
+const d = (who, t) => `<div class="d"><b>${who}:</b><span>${t}</span></div>`;
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", taskDe: "Richtig oder falsch?", keep: true, noType: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+
+const EPS = [
+ { n: 1, unit: "Unidad 1", title: "El último día de vacaciones", teaser: "Un día en el parque acuático, un perro perdido … y una toalla con un mensaje.",
+   parts: [
+   { title: "En el parque acuático",
+     text: `<p>Es el último sábado de las vacaciones. Lili, Pau, Nora e Ismael están en el parque acuático. Chispa, el perro de Lili, también está ahí. Hace sol y hace calor. ☀️</p>
+       ${d("Lili", "¡Me encanta este parque! Mirad: Pau está bajando por el tobogán grande.")}
+       ${d("Nora", "Y Ismael está comiendo golosinas … ¡otra vez! 🍬")}
+       ${d("Ismael", "¿Qué pasa? ¡Me gustan las golosinas! Y a vosotras os gustan las olas, ¿no?")}
+       ${d("Pau", "¡Chicos! ¿Jugamos a las cartas? Lili, tú siempre pierdes … 😄")}
+       ${d("Lili", "¡No es verdad! Hoy voy a ganar.")}`,
+     tasks: [
+       { t: "choice", q: "¿Dónde están los amigos?", opts: ["en el parque acuático", "en el instituto", "en la playa"], a: "en el parque acuático", hint: "„… están en el parque acuático.“" },
+       { t: "choice", q: "¿Qué está haciendo Pau?", opts: ["Está bajando por el tobogán.", "Está comiendo golosinas.", "Está jugando a las cartas."], a: "Está bajando por el tobogán.", hint: "„Pau está bajando por el tobogán grande.“" },
+       { t: "choice", q: "¿Qué le gusta a Ismael?", opts: ["las golosinas", "las olas", "el tobogán"], a: "las golosinas", hint: "„¡Me gustan las golosinas!“" },
+       VF("Chispa es el gato de Nora.", false, "„Chispa, el perro de Lili“."),
+       VF("Hace mal tiempo.", false, "„Hace sol y hace calor.“")
+     ] },
+   { title: "¿Dónde está Chispa?",
+     text: `<p>Después de jugar a las cartas (¡Lili gana! 🎉), Lili busca a Chispa. Pero Chispa no está. 😱</p>
+       ${d("Lili", "¡Chispa! ¡Chispa! ¿Dónde estás?")}
+       <p>Los amigos buscan por todo el parque: al lado de la piscina, debajo de los árboles, cerca de la salida … Por fin, Nora ve a Chispa. Está durmiendo encima de una ${g("toalla", "Handtuch")} azul. La toalla no es de Lili.</p>
+       ${d("Nora", "Mirad, en la toalla hay una nota …")}
+       <div class="note">¡Hola, pandilla! Chispa está bien. 😉 Nos vemos el lunes en el instituto. – X</div>
+       ${d("Pau", "¿„X“? ¿Quién es „X“? 😳")}
+       ${d("Ismael", "Y … ¿cómo sabe nuestro nombre de pandilla?")}`,
+     tasks: [
+       { t: "choice", q: "¿Quién gana a las cartas?", opts: ["Lili", "Pau", "Ismael"], a: "Lili", hint: "„¡Lili gana!“" },
+       { t: "choice", q: "¿Dónde está Chispa?", opts: ["encima de una toalla azul", "en la piscina", "en el tobogán"], a: "encima de una toalla azul", hint: "„Está durmiendo encima de una toalla azul.“" },
+       { t: "choice", q: "¿Qué está haciendo Chispa?", opts: ["Está durmiendo.", "Está nadando.", "Está comiendo."], a: "Está durmiendo.", hint: "„Está durmiendo …“" },
+       VF("La toalla es de Lili.", false, "„La toalla no es de Lili.“"),
+       { t: "choice", q: "¿Cuándo „ve“ X a la pandilla?", opts: ["el lunes, en el instituto", "el sábado, en la piscina", "nunca"], a: "el lunes, en el instituto", hint: "„Nos vemos el lunes en el instituto.“" }
+     ] }],
+   end: "¿Quién es „X“? ¿Y por qué conoce a la pandilla? 🤔 – Continuará …" },
+ { n: 2, unit: "Unidad 2", title: "El club de los jueves", teaser: "Empieza el curso. Hay un club nuevo – pero nadie sabe quién lo organiza.",
+   parts: [
+   { title: "Un curso nuevo",
+     text: `<p>Es lunes, el primer día del curso. Nora está cansada: se despierta a las seis y media, se ducha, se viste rápido y no desayuna. 😴</p>
+       <p>En el instituto hay una feria de ${g("actividades extraescolares", "AGs")}: baloncesto, coro, robótica, club de lectura … Ismael lee un ${g("cartel", "Plakat")} raro:</p>
+       <div class="note">¡NUEVO! El club de los jueves 🔍 · Para jóvenes curiosos · Jueves, 17 h, aula 13. ¿Te interesan los misterios? – X</div>
+       ${d("Ismael", "¡Es X! ¡Otra vez!")}
+       ${d("Nora", "El club me parece muy interesante … y un poco raro.")}
+       ${d("Pau", "Yo tengo baloncesto los martes y los jueves. ¡Qué pena!")}`,
+     tasks: [
+       { t: "choice", q: "¿A qué hora se despierta Nora?", opts: ["a las seis y media", "a las siete", "a las ocho"], a: "a las seis y media", hint: "„… se despierta a las seis y media …“" },
+       VF("Nora desayuna mucho.", false, "„… y no desayuna.“"),
+       { t: "choice", q: "¿Cuándo es el club de X?", opts: ["los jueves a las 17 h", "los lunes a las 13 h", "los martes a las 17 h"], a: "los jueves a las 17 h", hint: "„Jueves, 17 h, aula 13.“" },
+       { t: "choice", q: "¿Qué le parece el club a Nora?", opts: ["interesante y un poco raro", "aburrido", "muy fácil"], a: "interesante y un poco raro", hint: "„El club me parece muy interesante … y un poco raro.“" },
+       { t: "choice", q: "¿Por qué no puede ir Pau?", opts: ["Tiene baloncesto los jueves.", "Está enfermo.", "No le gustan los misterios."], a: "Tiene baloncesto los jueves.", hint: "„Yo tengo baloncesto los martes y los jueves.“" }
+     ] },
+   { title: "El aula 13",
+     text: `<p>Jueves, 17 h. Lili, Nora e Ismael están delante del aula 13. Antes de entrar, Lili manda un mensaje a Pau: „¡Estamos aquí! 😬“</p>
+       <p>En el aula no hay nadie. Solo hay una mesa y encima de la mesa, un ${g("sobre", "Umschlag")}. Dentro hay tres ${g("billetes de tren", "Zugtickets")} y una foto: un faro al lado del mar.</p>
+       ${d("Ismael", "¿Un faro? ¿Dónde está este faro?")}
+       ${d("Lili", "Mirad, detrás de la foto pone algo …")}
+       <div class="note">¿Os gusta viajar? Nos vemos en Galicia. 🌊 – X</div>
+       ${d("Nora", "¿Galicia? ¡Pero el viaje de clase es a Galicia!")}`,
+     tasks: [
+       { t: "choice", q: "¿Quién no está en el aula 13?", opts: ["Pau", "Lili", "Nora"], a: "Pau", hint: "Pau tiene baloncesto – Lili le manda un mensaje." },
+       { t: "choice", q: "¿Qué hay en el sobre?", opts: ["tres billetes de tren y una foto", "un móvil y una carta", "golosinas"], a: "tres billetes de tren y una foto", hint: "„Dentro hay tres billetes de tren y una foto …“" },
+       { t: "choice", q: "¿Qué hay en la foto?", opts: ["un faro al lado del mar", "el instituto", "Chispa"], a: "un faro al lado del mar", hint: "„… una foto: un faro al lado del mar.“" },
+       VF("En el aula 13 hay muchos alumnos.", false, "„En el aula no hay nadie.“"),
+       { t: "order", task: "Nora dice:", taskDe: "Die Klassenfahrt geht nach Galicien!", words: ["¡El", "viaje", "de", "clase", "es", "a", "Galicia!"], a: "¡El viaje de clase es a Galicia!" }
+     ] }],
+   end: "¿Por qué sabe X adónde va la clase? ¿Y qué faro es? 🌊 – Continuará …" },
+ { n: 3, unit: "Unidad 3", title: "Niebla en Galicia", teaser: "Viaje de clase a A Coruña: un faro, mucha niebla y una chica que habla gallego.",
+   parts: [
+   { title: "La Torre de Hércules",
+     text: `<p>La clase está en A Coruña. Llueve – ¡en Galicia llueve muchísimo! ☔ La pandilla visita la <b>Torre de Hércules</b>, un faro muy antiguo al lado del mar.</p>
+       ${d("Pau", "¡Es el faro de la foto! Es más alto que el faro de mi pueblo.")}
+       ${d("Nora", "Y este paisaje es bonitísimo: a la izquierda el mar, a la derecha las rocas …")}
+       <p>De repente, hay mucha ${g("niebla", "Nebel")}. No ven nada. 🌫️ Una chica con un paraguas rojo está delante de la torre.</p>
+       ${d("La chica", "Ola! Eu son Uxía. … Perdón, eso es gallego. ¡Hola! Me llamo Uxía. ¿Sois de Madrid?")}`,
+     tasks: [
+       { t: "choice", q: "¿Dónde está la clase?", opts: ["en A Coruña", "en Madrid", "en Sevilla"], a: "en A Coruña", hint: "„La clase está en A Coruña.“" },
+       { t: "choice", q: "¿Qué es la Torre de Hércules?", opts: ["un faro muy antiguo", "un museo moderno", "una iglesia"], a: "un faro muy antiguo", hint: "„… un faro muy antiguo al lado del mar.“" },
+       { t: "choice", q: "Para Pau, la torre es …", opts: ["más alta que el faro de su pueblo", "menos alta que el faro de su pueblo", "tan alta como el instituto"], a: "más alta que el faro de su pueblo", hint: "„Es más alto que el faro de mi pueblo.“" },
+       VF("Uxía habla primero en gallego.", true, "„Ola! Eu son Uxía. … Perdón, eso es gallego.“"),
+       { t: "choice", q: "¿Qué tiene Uxía?", opts: ["un paraguas rojo", "un perro", "una gaita"], a: "un paraguas rojo", hint: "„Una chica con un paraguas rojo …“" }
+     ] },
+   { title: "El mensaje",
+     text: `<p>Uxía es muy simpática. Les enseña la ciudad y les invita a comer empanada en un bar. 🥟</p>
+       ${d("Uxía", "¿Qué vais a pedir? La empanada de atún es riquísima.")}
+       ${d("Ismael", "Yo pido dos empanadas. ¡Tengo muchísima hambre!")}
+       <p>Uxía deja su móvil encima de la mesa. Lili ve un mensaje en la pantalla (${g("Bildschirm", "Bildschirm")}):</p>
+       <div class="note">📱 X: ¿Están contigo? ¿Tienes el sobre? No lo pierdas. 😉</div>
+       ${d("Lili", "(en voz baja) Chicos … ¡Uxía conoce a X!")}
+       <p>En ese momento, Uxía coge el móvil, sonríe y dice: „Mañana vamos a ir a Santiago, ¿verdad? Allí os espera una sorpresa.“</p>`,
+     tasks: [
+       { t: "choice", q: "¿Qué comen en el bar?", opts: ["empanada", "pizza", "tortilla"], a: "empanada", hint: "„… comer empanada en un bar.“" },
+       { t: "choice", q: "¿Cuántas empanadas pide Ismael?", opts: ["dos", "una", "tres"], a: "dos", hint: "„Yo pido dos empanadas.“" },
+       { t: "choice", q: "¿Qué ve Lili en el móvil de Uxía?", opts: ["un mensaje de X", "una foto de Chispa", "un mapa de Galicia"], a: "un mensaje de X", hint: "„📱 X: ¿Están contigo? …“" },
+       { t: "choice", q: "¿Adónde van a ir mañana?", opts: ["a Santiago", "a Madrid", "a la playa"], a: "a Santiago", hint: "„Mañana vamos a ir a Santiago …“" },
+       { t: "order", task: "Lili dice en voz baja:", taskDe: "Uxía kennt X!", words: ["¡Uxía", "conoce", "a", "X!"], a: "¡Uxía conoce a X!" }
+     ] }],
+   end: "¿Quién es Uxía de verdad? ¿Y qué sorpresa espera en Santiago? 🌫️ – Continuará …" },
+ { n: 4, unit: "En la cocina", title: "La gran tortilla", teaser: "De vuelta en Madrid: un concurso de cocina … y X está en el jurado.",
+   parts: [
+   { title: "El concurso",
+     text: `<p>La pandilla está otra vez en Madrid. ¿Y la sorpresa en Santiago? En Santiago no hay sorpresa y Uxía no está … ¡qué raro! Pero hoy hay un <b>concurso de cocina</b> en el instituto. Hay que cocinar una tortilla de patatas. 🥔🥚</p>
+       ${d("Pau", "Vale, ¿qué hay que comprar?")}
+       ${d("Nora", "Un kilo de patatas, medio kilo de cebollas, seis huevos y una botella de aceite.")}
+       <p>En el mercado, el vendedor pregunta: „¿Qué os pongo?“. Pau compra todo. „¿Cuánto es?“ – „Diez euros con setenta.“</p>
+       ${d("Ismael", "Chicos … ¿quién está en el jurado del concurso?")}
+       ${d("Lili", `La profe de Lengua, el director … y un ${g("invitado especial", "Ehrengast")}. ¡Nadie sabe quién es!`)}`,
+     tasks: [
+       { t: "choice", q: "¿Qué hay que cocinar en el concurso?", opts: ["una tortilla de patatas", "una empanada", "una pizza"], a: "una tortilla de patatas", hint: "„Hay que cocinar una tortilla de patatas.“" },
+       { t: "choice", q: "¿Cuántos huevos necesitan?", opts: ["seis", "dos", "doce"], a: "seis", hint: "„… seis huevos …“" },
+       { t: "choice", q: "¿Cuánto es la compra?", opts: ["10,70 €", "7,10 €", "17,00 €"], a: "10,70 €", hint: "„Diez euros con setenta.“" },
+       VF("En Santiago la pandilla ve a Uxía.", false, "„En Santiago no hay sorpresa y Uxía no está …“"),
+       { t: "choice", q: "¿Quién está en el jurado?", opts: ["la profe de Lengua, el director y un invitado especial", "solo Pau", "los padres de Lili"], a: "la profe de Lengua, el director y un invitado especial", hint: "„La profe de Lengua, el director … y un invitado especial.“" }
+     ] },
+   { title: "El invitado especial",
+     text: `<p>La pandilla cocina: hay que pelar las patatas, cortar la cebolla, batir los huevos … y dar la vuelta a la tortilla. ¡Uf! 😅</p>
+       <p>Por fin entra el jurado. El invitado especial lleva un paraguas rojo. 🌂</p>
+       ${d("Nora", "¿Un paraguas rojo? ¿Pero si no llueve …?")}
+       <p>El invitado prueba la tortilla y dice: „¡Está riquísima! Diez puntos.“ Después se quita las gafas de sol <span class="de">(nimmt die Sonnenbrille ab)</span>.</p>
+       ${d("Todos", "¡UXÍA! 😱")}
+       ${d("Uxía", "Hola, pandilla. Sí, soy yo. Pero yo no soy X. X es … alguien de vuestra familia.")}`,
+     tasks: [
+       { t: "choice", q: "¿Qué hay que hacer con los huevos?", opts: ["batir", "pelar", "cortar"], a: "batir", hint: "„… batir los huevos …“" },
+       { t: "choice", q: "¿Qué lleva el invitado especial?", opts: ["un paraguas rojo", "un perro", "un sombrero"], a: "un paraguas rojo", hint: "„El invitado especial lleva un paraguas rojo.“" },
+       { t: "choice", q: "¿Qué dice el invitado de la tortilla?", opts: ["¡Está riquísima!", "¡Qué horror!", "Está mal."], a: "¡Está riquísima!", hint: "„¡Está riquísima! Diez puntos.“" },
+       VF("Uxía es X.", false, "„Yo no soy X.“"),
+       { t: "order", task: "Uxía dice:", taskDe: "X ist jemand aus eurer Familie.", words: ["X", "es", "alguien", "de", "vuestra", "familia."], a: "X es alguien de vuestra familia." }
+     ] }],
+   end: "¿Alguien de la familia? ¿De quién? 👀 – Continuará en la Unidad 4 …" }
+];
+
+const q = new URLSearchParams(location.search), EP = EPS.find(e => e.n === +q.get("ep"));
+const doneKey = n => "wpspa10-tele-done-" + n;
+if (!EP || EP.n > LIBERADOS) {
+  const se = E8.getSession(), st = se && se.state ? se.state.stars || {} : {};
+  document.getElementById("app").innerHTML = `<div class="panel" style="max-width:720px;margin:20px auto;padding:18px">
+    <a href="index.html" style="color:#ffb3c2">← Lobby</a>
+    <div class="tv" style="margin-top:10px;border-radius:14px"><div class="logo">Los secretos<br>de la pandilla<small>UNA TELENOVELA</small></div><div class="cast"><span>👩🏽</span><span>👦🏻</span><span>👧🏼</span><span>🧑🏾</span></div></div>
+    <p>Lili, Pau, Nora e Ismael son una pandilla de Madrid. Desde el último día de vacaciones, alguien les manda mensajes misteriosos: „X“. Lee cada capítulo y contesta las preguntas. ¡Un capítulo nuevo cuando tu profe lo libera!</p>
+    <p class="de">Lies jede Folge und beantworte die Fragen. Neue Folgen schaltet deine Lehrkraft frei – bleib dran!</p>
+    <div class="eps">${EPS.map(e => { const lock = e.n > LIBERADOS, s = st["tele-" + e.n] || 0;
+      return `<a class="ep ${lock ? "lock" : ""}" href="?ep=${e.n}"><span class="n">${e.n}</span><span><b>${lock ? "🔒 " : ""}${e.title}</b><br><span class="de">${e.unit} · ${lock ? "Pronto … – bald" : e.teaser}</span></span><span class="st">${lock ? "" : s ? "★".repeat(s) + "☆".repeat(3 - s) : "NUEVO"}</span></a>`; }).join("")}
+      <div class="ep lock"><span class="n">…</span><span><b>🔒 Capítulo 5</b><br><span class="de">Continuará …</span></span></div></div></div>`;
+} else {
+  JUEGO.start({
+    noHard: true, id: "tele-" + EP.n, key: "wpspa10-tele-" + EP.n, icon: "💌", topic: "Telenovela · Capítulo " + EP.n, title: EP.title,
+    intro: `<p><b>Capítulo ${EP.n}</b> · ${EP.teaser}</p><p class="de">Lies den Text genau – er bleibt bei den Fragen sichtbar. Unbekannte Wörter haben eine Übersetzung in Klammern.</p>`,
+    goLabel: "▶ ¡Empieza el capítulo!", time: "ca. 10 minutos",
+    stages: EP.parts.map((p, i) => ({ label: "Parte " + (i + 1), title: p.title, go: "📖 ¡A leer!",
+      intro: `<div class="story">${p.text}</div><p class="de">Lies den Text. Danach kommen Fragen – der Text bleibt oben sichtbar.</p>`,
+      memo: `<div class="story">${p.text}</div>`, pista: "Such die Antwort im Text oben – die Wörter aus der Frage stehen meistens auch im Text.", tasks: p.tasks })),
+    scene: (S) => `<div class="tv"><div class="logo">Los secretos<br>de la pandilla<small>CAPÍTULO ${EP.n}</small></div><div class="cast"><span>👩🏽</span><span>👦🏻</span>${EP.n > 2 ? "<span>☂️</span>" : "<span>🐶</span>"}<span class="me">${E8.myAvatar()}</span></div></div>
+      <div class="prog"><i style="width:${S.done ? 100 : Math.round(S.solved / S.total * 100)}%"></i></div>`,
+    outro: `<div style="font-size:56px">💌🎬</div><h1>Fin del capítulo ${EP.n}</h1><p style="font-size:20px">${EP.end}</p>
+      <p class="de">${EP.n < LIBERADOS ? "Die nächste Folge ist schon da!" : "Die nächste Folge schaltet deine Lehrkraft bald frei."}</p><p><a class="btn" href="telenovela.html">📺 Todos los capítulos</a></p>`
+  });
+}
+</script>
+</body>
+</html>

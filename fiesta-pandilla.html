@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>La fiesta de la pandilla · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#0f3a4a 0%,#04121a 70%);--panel:#0b1e26;--txt:#effbff;--muted:#a3cbd6;--line:#1d3e4a;--btn:#11303b;--accent:#ffb52a;--accentTxt:#2a1a00;--accent2:#ffd98a;--bubble:#123440;--input:#061219;--ok:#6fe59a;--bad:#ff8a7a}
+  .scn{position:relative;padding:14px 14px 10px;background:linear-gradient(135deg,#0e6a8a,#2ab0c8);border-radius:14px 14px 0 0;overflow:hidden}
+  .scn .row1{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .scn .ttl{font:800 15px system-ui;letter-spacing:.06em;color:#fff;text-transform:uppercase;opacity:.95}
+  .scn .st{display:flex;gap:6px;margin:10px 0 6px;flex-wrap:wrap}
+  .scn .st span{font-size:28px;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#ffffff1a;border:2px solid #ffffff33;filter:grayscale(.8);opacity:.6}
+  .scn .st span.d{filter:none;opacity:1;border-color:#ffd23a;background:#ffd23a33}
+  .scn .st span.n{filter:none;opacity:1;border-color:#fff;animation:bob 1.2s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-4px)}}
+  .scn .me{width:42px;height:42px;border-radius:50%;overflow:hidden;background:#fff;border:3px solid #ffd23a;flex:none}
+  .scn .bar{height:9px;border-radius:6px;background:#0005;overflow:hidden} .scn .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff8a2a)}
+  .scn .big{position:absolute;right:16px;bottom:18px;font-size:58px;opacity:.9}
+  .clue{background:#fffbe9;color:#3a2a10;border-radius:8px;padding:8px 12px;font-size:17px;box-shadow:0 2px 4px #0004;margin:6px 0}
+  table.t{border-collapse:collapse;margin:6px 0} table.t td{border:1px solid var(--line);padding:4px 10px}
+  
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=15"></script>
+<script src="juego.js?v=8"></script>
+<script>
+const SCENE = (icons, ttl, big) => (S) => {
+  const k = S.done ? icons.length : S.stage, pct = Math.round((S.done ? 1 : S.solved / S.total) * 100);
+  return `<div class="scn"><div class="row1"><span class="ttl">${ttl}</span><span class="me">${E8.myAvatar()}</span></div>
+    <div class="st">${icons.map((e, i) => `<span class="${i < k ? "d" : i === k ? "n" : ""}">${e}</span>`).join("")}</div>
+    <div class="bar"><i style="width:${pct}%"></i></div>${big ? `<div class="big">${typeof big === "function" ? big(S) : big}</div>` : ""}</div>`;
+};
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", taskDe: "Richtig oder falsch?", keep: true, noType: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+
+const LI = {face:"👩🏽", name:"Lili"}, PA = {face:"👦🏻", name:"Pau"}, NO = {face:"👧🏼", name:"Nora"}, IS = {face:"🧑🏾", name:"Ismael"}, EV = {face:"👩🏻‍🦰", name:"Eva"}, YO = {av:true, name:"Tú"};
+const PRO = "📌 (a mí) <b>me</b> · (a ti) <b>te</b> · (a él / a ella) <b>le</b> · (a nosotros/as) <b>nos</b> · (a vosotros/as) <b>os</b> · (a ellos / a ellas) <b>les</b> + gusta / gustan";
+const GG = "📌 <b>gusta</b> + 1 Sache oder Verb: me gusta <b>la pizza</b> · me gusta <b>nadar</b> · <b>gustan</b> + mehrere Sachen: me gustan <b>las golosinas</b>";
+const STAGES = [
+  { label: "Paso 1", title: "El chat de la pandilla", go: "💬 ¡Leer el chat!",
+    memo: `💬 Lili: „A mí <b>me gusta</b> nadar. ¿Y a ti, Pau? ¿<b>Te gusta</b>n las olas?“ – Pau: „¡Sí! A Ismael también <b>le gusta</b> el mar. A nosotros <b>nos gustan</b> las excursiones.“ – Nora: „Chicos, ¿<b>os gusta</b> hacer camping? A Eva y a Álex <b>les gusta</b> mucho.“`,
+    intro: `<div class="who"><div class="face">👩🏽</div><div><b class="n">Lili</b>¡Las vacaciones terminan! 😢 Queremos una <b>fiesta de fin de vacaciones</b>. ¿Organizas la fiesta? Tienes que saber qué nos gusta a todos.</div></div>
+      <p class="de">Du organisierst die Abschlussparty der Clique. Lies zuerst den Chat (oben): Welche kleinen Wörter stehen vor gusta?</p>`,
+    pista: "Schau in den Chat: a mí → me, a ti → te, a Ismael → le, a nosotros → nos …",
+    tasks: [
+      { t: "choice", q: "a mí ___ gusta", keep: true, opts: ["me", "te", "le"], a: "me", hint: "„A mí me gusta nadar.“" },
+      { t: "choice", q: "a ti ___ gusta", keep: true, opts: ["te", "me", "os"], a: "te", hint: "„¿Te gustan las olas?“ → a ti te …" },
+      { t: "choice", q: "a Ismael ___ gusta", keep: true, opts: ["le", "les", "nos"], a: "le", hint: "a él / a ella / a Ismael → le." },
+      { t: "choice", q: "a nosotros ___ gustan", keep: true, opts: ["nos", "os", "les"], a: "nos", hint: "„A nosotros nos gustan …“" },
+      { t: "choice", q: "a vosotros ___ gusta", keep: true, opts: ["os", "nos", "les"], a: "os", hint: "„¿Os gusta hacer camping?“" },
+      { t: "choice", q: "a Eva y a Álex ___ gusta", keep: true, opts: ["les", "le", "nos"], a: "les", hint: "a ellos / a ellas → les." },
+      { t: "choice", q: "Wann steht <b>gustan</b>?", keep: true, noType: true, opts: ["wenn mehrere Sachen gefallen (las olas)", "wenn mehrere Personen etwas mögen"], a: "wenn mehrere Sachen gefallen (las olas)", hint: "gustan richtet sich nach der Sache: las olas, las excursiones → gustan." }
+    ] },
+  { label: "Paso 2", title: "¿Gusta o gustan?", memo: GG,
+    intro: `<p>Haces una lista para la fiesta. 📝 ¿<b>gusta</b> o <b>gustan</b>?</p><p class="de">Sortiere: Was steht mit gusta, was mit gustan?</p>`,
+    tasks: [
+      { t: "sort", task: "Ordena:", taskDe: "Tippe ein Wort an, dann den Korb.", buckets: ["me gusta …", "me gustan …"], items: [["la pizza", 0], ["nadar", 0], ["las golosinas", 1], ["el sol", 0], ["los videojuegos", 1], ["sacar fotos", 0], ["las cartas", 1], ["los toboganes", 1]], hint: "1 Sache / Verb → gusta · mehrere Sachen → gustan." },
+      { t: "choice", who: PA, q: "A mí me ___ los perros. 🐶", opts: ["gustan", "gusta"], a: "gustan", hint: "los perros (Plural) → gustan." },
+      { t: "choice", who: NO, q: "¿Te ___ bailar?", opts: ["gusta", "gustan"], a: "gusta", hint: "Verb (bailar) → gusta." },
+      { t: "choice", who: IS, q: "Nos ___ mucho las tortillas de mi abuela. 😋", opts: ["gustan", "gusta"], a: "gustan", hint: "las tortillas → gustan." }
+    ] },
+  { label: "Paso 3", title: "Preguntas a la pandilla", memo: PRO, shuffle: true,
+    intro: `<p>Hablas con todos. 💬 Escribe el pronombre: <b>me, te, le, nos, os, les</b>.</p><p class="de">Schreib das passende Pronomen.</p>`,
+    pista: "a mí → me · a ti → te · a él/ella → le · a nosotros → nos · a vosotros → os · a ellos/ellas → les",
+    tasks: [
+      { t: "type", who: YO, q: "Lili, ¿a ti ___ gusta la música latina?", a: "te" },
+      { t: "type", who: LI, q: "¡Sí! A mí ___ gusta mucho. 😄", a: "me" },
+      { t: "type", who: PA, q: "A Ismael ___ gusta jugar al fútbol.", a: "le" },
+      { t: "type", who: NO, q: "A Eva y a mí ___ gustan las piscinas.", a: "nos", show: "Eva y yo = nosotras → nos gustan." },
+      { t: "type", who: YO, q: "Chicos, ¿a vosotros ___ gusta la idea?", a: "os" },
+      { t: "type", who: EV, q: "A mis padres ___ gusta hacer senderismo.", a: "les" }
+    ] },
+  { label: "Paso 4", title: "¿Qué hacemos en la fiesta?", memo: PRO + "<br>" + GG,
+    pick: { q: "¿Dónde es la fiesta?", qDe: "Wo findet die Party statt?", opts: [
+      { t: "🏊 En la piscina", intro: `<p>🏊 La fiesta es en la <b>piscina</b>. ¡Hace mucho sol!</p>` },
+      { t: "🏞️ En Madrid Río", intro: `<p>🏞️ La fiesta es en <b>Madrid Río</b>, el parque grande al lado del río.</p>` },
+      { t: "🏡 En el jardín de Nora", intro: `<p>🏡 La fiesta es en el <b>jardín de Nora</b>, con música y mucha comida.</p>` }] },
+    intro: `<p>Ahora planeas las actividades. ¿Qué les gusta a todos?</p><p class="de">Wähle den richtigen Satz.</p>`,
+    pista: "Pronomen passend zur Person – und gusta/gustan passend zur Sache.",
+    tasks: [
+      { t: "choice", q: "Ismael: ⚽ ✔ · 🎨 ✘", opts: ["A Ismael le gusta el fútbol.", "A Ismael les gusta el fútbol.", "A Ismael le gustan el fútbol."], a: "A Ismael le gusta el fútbol.", hint: "a Ismael → le; el fútbol → gusta." },
+      { t: "choice", q: "Lili y Nora: 📸 ✔", opts: ["A Lili y a Nora les gusta sacar fotos.", "A Lili y a Nora le gusta sacar fotos.", "A Lili y a Nora les gustan sacar fotos."], a: "A Lili y a Nora les gusta sacar fotos.", hint: "zwei Personen → les; Verb → gusta." },
+      { t: "choice", q: "Tú y yo: 🍬🍬 ✔", opts: ["Nos gustan las golosinas.", "Nos gusta las golosinas.", "Os gustan las golosinas."], a: "Nos gustan las golosinas.", hint: "tú y yo = nosotros → nos; las golosinas → gustan." },
+      { t: "choice", q: "Pau: 🏄 ✔✔✔", opts: ["A Pau le gusta mucho hacer surf.", "A Pau le gustan mucho hacer surf.", "A Pau te gusta mucho hacer surf."], a: "A Pau le gusta mucho hacer surf.", hint: "a Pau → le; hacer surf (Verb) → gusta." },
+      { t: "choice", q: "Eva: 🐱 ✘ (¡Tiene alergia!)", opts: ["A Eva no le gustan los gatos.", "A Eva le no gustan los gatos.", "A Eva no les gusta los gatos."], a: "A Eva no le gustan los gatos.", hint: "no steht vor le: no le gustan." }
+    ] },
+  { label: "Paso 5", title: "Mensajes", memo: PRO, shuffle: true,
+    intro: `<p>Escribes mensajes al grupo. 📱 Ordena las palabras.</p><p class="de">Bau die Nachrichten.</p>`,
+    tasks: [
+      { t: "order", task: "Mensaje 1:", taskDe: "Uns gefallen Ausflüge sehr.", words: ["Nos", "gustan", "mucho", "las", "excursiones."], a: "Nos gustan mucho las excursiones." },
+      { t: "order", task: "Mensaje 2:", taskDe: "Gefällt es euch zu zelten?", words: ["¿Os", "gusta", "hacer", "camping?"], a: "¿Os gusta hacer camping?" },
+      { t: "order", task: "Mensaje 3:", taskDe: "Ismael gefällt die Musik nicht.", words: ["A", "Ismael", "no", "le", "gusta", "la", "música."], a: "A Ismael no le gusta la música." },
+      { t: "order", task: "Mensaje 4:", taskDe: "Meinen Freunden gefällt es zu skaten.", words: ["A", "mis", "amigos", "les", "gusta", "patinar."], a: "A mis amigos les gusta patinar." },
+      { t: "order", task: "Mensaje 5:", taskDe: "Und dir, gefallen dir Videospiele?", words: ["¿Y", "a", "ti", "te", "gustan", "los", "videojuegos?"], a: "¿Y a ti te gustan los videojuegos?" }
+    ] },
+  { label: "Final", title: "La invitación", go: "🎉 ¡A corregir!", memo: PRO + "<br>" + GG, shuffle: true,
+    intro: `<p>La invitación para la fiesta tiene errores. 😬 ¡Corrígelos antes de mandarla!</p><p class="de">Tippe auf das falsche Wort.</p>`,
+    tasks: [
+      { t: "error", words: ["A", "Lili", "les", "gusta", "nadar."], bad: 2, fix: "le", opts: ["le", "me", "nos"], hint: "a Lili → le." },
+      { t: "error", words: ["A", "nosotros", "nos", "gusta", "las", "golosinas."], bad: 3, fix: "gustan", opts: ["gustan", "gustas", "gusto"], hint: "las golosinas → gustan." },
+      { t: "error", words: ["¿A", "vosotros", "les", "gusta", "la", "pizza?"], bad: 2, fix: "os", opts: ["os", "nos", "te"], hint: "a vosotros → os." },
+      { t: "error", words: ["A", "mí", "te", "gusta", "bailar."], bad: 2, fix: "me", opts: ["me", "le", "nos"], hint: "a mí → me." },
+      { t: "error", words: ["A", "Pau", "y", "a", "Eva", "le", "gustan", "los", "toboganes."], bad: 5, fix: "les", opts: ["les", "nos", "os"], hint: "Pau y Eva = ellos → les." },
+      VF("„Me gustan nadar.“ ist richtig.", false, "Verb → gusta: Me gusta nadar.")
+    ] }
+];
+JUEGO.start({
+  id: "gustar", key: "wpspa10-gustar", icon: "🎉", topic: "me, te, le, nos, os, les + gustar", title: "La fiesta de la pandilla",
+  intro: `<p>🎉 ¡Las vacaciones terminan! La pandilla quiere una <b>fiesta de fin de vacaciones</b> – y tú la organizas.</p>
+    <p>Pero ojo: tienes que saber qué les gusta a todos. Con <b>me / te / le / nos / os / les + gusta(n)</b>.</p>
+    <p class="de">Du planst die Abschlussparty der Clique und fragst, was alle mögen: Pronomen mit gustar (Unidad 1, A).</p>`,
+  goLabel: "🎉 ¡A organizar!", time: "ca. 20 minutos", rulesLabel: "Reglas",
+  rules: `<h2>gustar</h2>
+    <table class="t"><tr><td>(a mí)</td><td><b>me</b></td><td>(a nosotros/as)</td><td><b>nos</b></td></tr><tr><td>(a ti)</td><td><b>te</b></td><td>(a vosotros/as)</td><td><b>os</b></td></tr><tr><td>(a él / a ella)</td><td><b>le</b></td><td>(a ellos / a ellas)</td><td><b>les</b></td></tr></table>
+    <div class="rule"><b>gusta</b> + eine Sache / ein Verb: Me gusta la pizza. Me gusta nadar.</div>
+    <div class="rule"><b>gustan</b> + mehrere Sachen: Me gustan las golosinas.</div>
+    <div class="rule">Verneinung: A Eva <b>no</b> le gustan los gatos.</div>`,
+  stages: STAGES,
+  scene: SCENE(["💬", "📝", "📱", "🎈", "✉️", "🎉"], "🎉 Fiesta de fin de vacaciones", S => S.done ? "🥳" : "🎈"),
+  outro: `<div style="font-size:60px">🎉🍕🎶</div><h1>¡Qué fiesta!</h1><div class="who" style="text-align:left"><div class="face">👩🏽</div><div><b class="n">Lili</b>¡A todos nos gusta tu fiesta! Eres el/la mejor organizador/a. 🥳</div></div>`
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>¡En directo! La casa del finde · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#3a1240 0%,#0e0612 70%);--panel:#1a0f1e;--txt:#fbf1ff;--muted:#c8a8d4;--line:#3d2646;--btn:#251530;--accent:#ff4fa3;--accentTxt:#fff;--accent2:#ffb3dc;--bubble:#2a1834;--input:#12081a;--ok:#6fe59a;--bad:#ffb03a}
+  .scn{position:relative;padding:14px 14px 10px;background:linear-gradient(135deg,#5a1a6a,#c83a8a);border-radius:14px 14px 0 0;overflow:hidden}
+  .scn .row1{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .scn .ttl{font:800 15px system-ui;letter-spacing:.06em;color:#fff;text-transform:uppercase;opacity:.95}
+  .scn .st{display:flex;gap:6px;margin:10px 0 6px;flex-wrap:wrap}
+  .scn .st span{font-size:28px;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#ffffff1a;border:2px solid #ffffff33;filter:grayscale(.8);opacity:.6}
+  .scn .st span.d{filter:none;opacity:1;border-color:#ffd23a;background:#ffd23a33}
+  .scn .st span.n{filter:none;opacity:1;border-color:#fff;animation:bob 1.2s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-4px)}}
+  .scn .me{width:42px;height:42px;border-radius:50%;overflow:hidden;background:#fff;border:3px solid #ffd23a;flex:none}
+  .scn .bar{height:9px;border-radius:6px;background:#0005;overflow:hidden} .scn .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff8a2a)}
+  .scn .big{position:absolute;right:16px;bottom:18px;font-size:58px;opacity:.9}
+  .clue{background:#fffbe9;color:#3a2a10;border-radius:8px;padding:8px 12px;font-size:17px;box-shadow:0 2px 4px #0004;margin:6px 0}
+  table.t{border-collapse:collapse;margin:6px 0} table.t td{border:1px solid var(--line);padding:4px 10px}
+  
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=15"></script>
+<script src="juego.js?v=8"></script>
+<script>
+const SCENE = (icons, ttl, big) => (S) => {
+  const k = S.done ? icons.length : S.stage, pct = Math.round((S.done ? 1 : S.solved / S.total) * 100);
+  return `<div class="scn"><div class="row1"><span class="ttl">${ttl}</span><span class="me">${E8.myAvatar()}</span></div>
+    <div class="st">${icons.map((e, i) => `<span class="${i < k ? "d" : i === k ? "n" : ""}">${e}</span>`).join("")}</div>
+    <div class="bar"><i style="width:${pct}%"></i></div>${big ? `<div class="big">${typeof big === "function" ? big(S) : big}</div>` : ""}</div>`;
+};
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", taskDe: "Richtig oder falsch?", keep: true, noType: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+
+const LI = {face:"👩🏽", name:"Lili"}, PA = {face:"👦🏻", name:"Pau"}, NO = {face:"👧🏼", name:"Nora"}, IS = {face:"🧑🏾", name:"Ismael"}, DI = {face:"🎬", name:"La directora Marta"}, YO = {av:true, name:"Tú (en el micro)"};
+const EST = "📌 <b>estar</b> + Gerundio = was gerade passiert: yo <b>estoy</b> · tú <b>estás</b> · él/ella <b>está</b> · nosotros <b>estamos</b> · vosotros <b>estáis</b> · ellos/ellas <b>están</b> + nad<b>ando</b> / com<b>iendo</b> / escrib<b>iendo</b>";
+const GER = "📌 Gerundio: -ar → <b>-ando</b> (nadar → nad<b>ando</b>) · -er / -ir → <b>-iendo</b> (comer → com<b>iendo</b>, escribir → escrib<b>iendo</b>) · ⚠️ leer → le<b>yendo</b> · dormir → d<b>u</b>rmiendo";
+const STAGES = [
+  { label: "Plató", title: "¡Bienvenido/a a la casa!", go: "🎬 ¡Acción!",
+    memo: `🎙️ Marta: „¡Hola, España! Es sábado y <b>estamos</b> en directo. Mira: Lili <b>está nadando</b> en la piscina. Pau y Nora <b>están comiendo</b> pizza. ¿Y tú? ¿Qué <b>estás haciendo</b>? Yo <b>estoy hablando</b> contigo.“`,
+    intro: `<div class="who"><div class="face">🎬</div><div><b class="n">La directora Marta</b>¡Hola! Eres el/la nuevo/a comentarista de nuestro programa <b>„La casa del finde“</b>. Cuatro jóvenes pasan el fin de semana en una casa con piscina. Tú cuentas en directo <b>qué están haciendo ahora</b>.</div></div>
+      <p class="de">Du kommentierst eine Live-Show. Lies zuerst, was Marta sagt (oben): Wie sagt man auf Spanisch, was jemand <b>gerade</b> macht?</p>`,
+    pista: "Schau in Martas Text: Welche zwei Wörter beschreiben, was gerade passiert?",
+    tasks: [
+      { t: "choice", q: "„Lili <b>está nadando</b>.“ heißt …", keep: true, noType: true, opts: ["Lili schwimmt gerade.", "Lili schwimmt immer.", "Lili ist geschwommen."], a: "Lili schwimmt gerade.", hint: "estar + Gerundio = etwas passiert genau jetzt." },
+      { t: "choice", q: "Das Verb <b>estar</b> zeigt …", keep: true, noType: true, opts: ["wer es macht (yo, tú, Lili …)", "die Tätigkeit (nadar, comer …)"], a: "wer es macht (yo, tú, Lili …)", hint: "estoy = ich, estás = du, está = er/sie … – die Tätigkeit steckt im Gerundio." },
+      { t: "choice", q: "nad<b>ar</b> → nad___", keep: true, opts: ["ando", "iendo", "ado"], a: "ando", hint: "-ar → -ando: nadando." },
+      { t: "choice", q: "com<b>er</b> → com___", keep: true, opts: ["iendo", "ando", "endo"], a: "iendo", hint: "-er → -iendo: comiendo." },
+      { t: "choice", q: "Pau y Nora ___ comiendo pizza.", keep: true, opts: ["están", "está", "estamos"], a: "están", hint: "Pau y Nora = ellos → están." },
+      { t: "choice", q: "¿Qué ___ haciendo tú?", keep: true, opts: ["estás", "estoy", "está"], a: "estás", hint: "tú → estás." },
+      { t: "choice", q: "Nosotros ___ en directo.", keep: true, opts: ["estamos", "estáis", "están"], a: "estamos", hint: "nosotros → estamos." }
+    ] },
+  { label: "Cámara 1", title: "El gerundio", memo: GER, shuffle: true,
+    intro: `<div class="who"><div class="face">🎬</div><div><b class="n">Marta</b>Antes del programa, practica: ¿cómo es el gerundio? Escribe la forma.</div></div><p class="de">Bilde das Gerundio. Regel in der Merk-Box.</p>`,
+    pista: "-ar → -ando · -er/-ir → -iendo",
+    tasks: [
+      { t: "type", q: "nadar → ___", a: "nadando" },
+      { t: "type", q: "sacar (fotos) → ___", a: "sacando" },
+      { t: "type", q: "correr → ___", a: "corriendo" },
+      { t: "type", q: "escribir → ___", a: "escribiendo" },
+      { t: "type", q: "dibujar → ___", a: "dibujando" },
+      { t: "type", q: "hacer → ___", a: "haciendo" },
+      { t: "type", q: "leer → ___", a: "leyendo", show: "leer → leyendo (mit y!)", tips: { leiendo: "Fast! leer → le<b>y</b>endo (mit y)." } },
+      { t: "type", q: "dormir → ___", a: "durmiendo", show: "dormir → durmiendo (o → u!)", tips: { dormiendo: "Fast! dormir → d<b>u</b>rmiendo." } }
+    ] },
+  { label: "Cámara 2", title: "¿Qué están haciendo?", memo: EST, shuffle: true,
+    intro: `<p>📺 ¡En directo! Mira las cámaras y completa con la forma de <b>estar</b>.</p><p class="de">Setze die passende Form von estar ein.</p>`,
+    pista: "Wer macht es? yo → estoy, tú → estás, Lili → está, nosotros → estamos, vosotros → estáis, Pau y Nora → están.",
+    tasks: [
+      { t: "type", who: YO, q: "Cámara 1: Lili ___ tomando el sol. ☀️", a: "está", tips: { esta: "Mit Akzent: está." } },
+      { t: "type", who: YO, q: "Cámara 2: Pau e Ismael ___ jugando a las cartas. 🃏", a: "están", tips: { estan: "Mit Akzent: están." } },
+      { t: "type", who: NO, q: "¡Hola, España! Yo ___ dibujando. 🎨", a: "estoy" },
+      { t: "type", who: PA, q: "Ismael y yo ___ escuchando música. 🎧", a: "estamos" },
+      { t: "type", who: LI, q: "Nora, ¿qué ___ haciendo?", a: "estás", tips: { estas: "Mit Akzent: estás." } },
+      { t: "type", who: DI, q: "Chicos, ¿vosotros ___ comiendo otra vez? 🍕", a: "estáis", tips: { estais: "Mit Akzent: estáis." } },
+      { t: "choice", who: YO, q: "Cámara 3: Chispa, el perro de Lili, ___ durmiendo. 🐶", opts: ["está", "están", "estoy"], a: "está", hint: "Chispa = él → está." }
+    ] },
+  { label: "Cámara 3", title: "¡Todo en directo!", memo: EST + "<br>" + GER, shuffle: true,
+    pick: { q: "¿Qué cámara miras primero?", qDe: "Welche Kamera schaust du zuerst an?", opts: [
+      { t: "🏊 Cámara de la piscina", intro: `<p>📺 Empiezas en la <b>piscina</b>: ¡hay mucha acción!</p>`, first: [0, 1] },
+      { t: "🍳 Cámara de la cocina", intro: `<p>📺 Empiezas en la <b>cocina</b>: ¡alguien está cocinando!</p>`, first: [2, 3] },
+      { t: "🌳 Cámara del jardín", intro: `<p>📺 Empiezas en el <b>jardín</b>: Chispa está muy nerviosa…</p>`, first: [4, 5] }] },
+    intro: `<p>Ahora escribes las dos palabras: <b>estar + gerundio</b>.</p><p class="de">Schreib die Form von estar und das Gerundio, z. B. „está nadando“.</p>`,
+    pista: "Zwei Wörter: Form von estar + Gerundio (-ando / -iendo).",
+    tasks: [
+      { t: "type", q: "Lili (nadar) ___ en la piscina.", a: "está nadando", show: "Lili está nadando en la piscina." },
+      { t: "type", q: "Pau (sacar) ___ fotos de las olas.", a: "está sacando", show: "Pau está sacando fotos." },
+      { t: "type", q: "Nora e Ismael (hacer) ___ una tortilla.", a: "están haciendo", show: "Nora e Ismael están haciendo una tortilla." },
+      { t: "type", q: "Yo (comer) ___ fruta.", a: "estoy comiendo", show: "Yo estoy comiendo fruta." },
+      { t: "type", q: "Chispa (correr) ___ por el jardín.", a: "está corriendo", show: "Chispa está corriendo por el jardín." },
+      { t: "type", q: "Nosotros (jugar) ___ al fútbol.", a: "estamos jugando", show: "Nosotros estamos jugando al fútbol." }
+    ] },
+  { label: "Cámara 4", title: "¿-ando o -iendo?", memo: GER,
+    intro: `<p>La directora quiere una lista de todas las actividades. ¡Ordénalas!</p><p class="de">Sortiere: Gerundio auf -ando oder auf -iendo?</p>`,
+    tasks: [
+      { t: "sort", task: "Ordena los verbos:", taskDe: "Tippe ein Wort an, dann den richtigen Korb.", buckets: ["-ando", "-iendo"], items: [["patinar", 0], ["escalar", 0], ["ganar", 0], ["perder", 1], ["salir", 1], ["recoger", 1], ["pasear", 0], ["traer", 1]], hint: "-ar → -ando · -er/-ir → -iendo" },
+      { t: "choice", q: "traer → ___", opts: ["trayendo", "traiendo", "traendo"], a: "trayendo", hint: "Wie leer → leyendo: traer → trayendo." },
+      { t: "choice", q: "¿Qué <b>están haciendo</b> Pau y Lili? 🏄", qDe: "Sie surfen gerade.", opts: ["Están haciendo surf.", "Están hacen surf.", "Son haciendo surf."], a: "Están haciendo surf.", hint: "estar (están) + Gerundio (haciendo)." }
+    ] },
+  { label: "Cámara 5", title: "Frases para la tele", memo: EST, shuffle: true,
+    intro: `<p>Ahora tú hablas en la tele. 🎙️ Ordena las palabras.</p><p class="de">Bau die Sätze für deine Moderation.</p>`,
+    tasks: [
+      { t: "order", who: YO, task: "Dices:", taskDe: "Lili spielt gerade mit Chispa.", words: ["Lili", "está", "jugando", "con", "Chispa."], a: "Lili está jugando con Chispa." },
+      { t: "order", who: YO, task: "Dices:", taskDe: "Die Jungs essen gerade Süßigkeiten.", words: ["Los", "chicos", "están", "comiendo", "golosinas."], a: "Los chicos están comiendo golosinas." },
+      { t: "order", who: NO, task: "Nora:", taskDe: "Ich lese gerade ein Manga.", words: ["Estoy", "leyendo", "un", "manga."], a: "Estoy leyendo un manga." },
+      { t: "order", who: DI, task: "Marta:", taskDe: "Was macht ihr gerade?", words: ["¿Qué", "estáis", "haciendo?"], a: "¿Qué estáis haciendo?" },
+      { t: "order", who: IS, task: "Ismael:", taskDe: "Wir räumen gerade die Küche auf.", words: ["Estamos", "recogiendo", "la", "cocina."], a: "Estamos recogiendo la cocina." }
+    ] },
+  { label: "Final", title: "¡Error en directo!", go: "🔴 ¡Último directo!", memo: EST + "<br>" + GER, shuffle: true,
+    intro: `<div class="who"><div class="face">🎬</div><div><b class="n">Marta</b>¡Ay! El texto para la tele tiene errores. ¡Corrígelos antes del final del programa!</div></div><p class="de">Tippe auf das falsche Wort und wähle die richtige Form.</p>`,
+    tasks: [
+      { t: "error", words: ["Lili", "están", "nadando."], bad: 1, fix: "está", opts: ["está", "estoy", "estamos"], hint: "Lili = ella → está." },
+      { t: "error", words: ["Pau", "está", "comendo", "pizza."], bad: 2, fix: "comiendo", opts: ["comiendo", "comando", "comido"], hint: "comer → comiendo." },
+      { t: "error", words: ["Nosotros", "estamos", "jugiendo", "a", "las", "cartas."], bad: 2, fix: "jugando", opts: ["jugando", "juegando", "jugado"], hint: "jugar (-ar) → jugando." },
+      { t: "error", words: ["¿Qué", "estoy", "haciendo", "tú?"], bad: 1, fix: "estás", opts: ["estás", "está", "estáis"], hint: "tú → estás." },
+      { t: "error", words: ["Ismael", "está", "leiendo", "un", "cómic."], bad: 2, fix: "leyendo", opts: ["leyendo", "leando", "leído"], hint: "leer → leyendo." },
+      { t: "choice", who: DI, q: "Y ahora, ¿qué está haciendo el público en casa? 😄", opts: ["Está aplaudiendo.", "Está aplaudando.", "Están aplaude."], a: "Está aplaudiendo.", qDe: "aplaudir = applaudieren", hint: "aplaudir (-ir) → aplaudiendo; el público = él → está." }
+    ] }
+];
+JUEGO.start({
+  id: "gerundio", key: "wpspa10-gerundio", icon: "🎬", topic: "estar + gerundio", title: "¡En directo! La casa del finde",
+  intro: `<p>📺 Un programa de tele en directo: cuatro amigos – <b>Lili, Pau, Nora e Ismael</b> – pasan el fin de semana en una casa con piscina. ¡Y tú eres el/la comentarista!</p>
+    <p>Cuentas qué están haciendo <b>ahora mismo</b>: con <b>estar + gerundio</b>.</p>
+    <p class="de">Live-Show: Du kommentierst, was die vier Freunde gerade machen. Dafür brauchst du estar + Gerundio (Unidad 1, A: ¿Qué estás haciendo?).</p>`,
+  goLabel: "🎬 ¡Al plató!", time: "ca. 20 minutos", rulesLabel: "Reglas",
+  rules: `<h2>estar + gerundio</h2><p>Was jemand <b>gerade</b> macht:</p>
+    <table class="t"><tr><td>yo</td><td><b>estoy</b></td><td>nosotros/as</td><td><b>estamos</b></td></tr><tr><td>tú</td><td><b>estás</b></td><td>vosotros/as</td><td><b>estáis</b></td></tr><tr><td>él / ella</td><td><b>está</b></td><td>ellos / ellas</td><td><b>están</b></td></tr></table>
+    <div class="rule">-ar → <b>-ando</b>: nadar → nadando · -er / -ir → <b>-iendo</b>: comer → comiendo, escribir → escribiendo</div>
+    <div class="rule">⚠️ leer → leyendo · traer → trayendo · dormir → durmiendo</div>`,
+  stages: STAGES,
+  scene: SCENE(["🎬", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "🔴"], "📺 La casa del finde · EN DIRECTO", S => S.done ? "🏆" : "🎥"),
+  outro: `<div style="font-size:60px">🎬📺🏆</div><h1>¡Gran programa!</h1><div class="who" style="text-align:left"><div class="face">🎬</div><div><b class="n">Marta</b>¡Eres un/a comentarista fantástico/a! El público está aplaudiendo. 👏 ¡Hasta el próximo finde!</div></div>`
+});
+
+</script>
+</body>
+</html>

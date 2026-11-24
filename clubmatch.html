@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>ClubMatch · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#4a1430 0%,#14050d 70%);--panel:#220c18;--txt:#fff1f6;--muted:#d4a8bc;--line:#45203a;--btn:#2e1226;--accent:#ff5a8a;--accentTxt:#fff;--accent2:#ffb8cc;--bubble:#381630;--input:#160610;--ok:#6fe59a;--bad:#ffb03a}
+  .scn{position:relative;padding:14px 14px 10px;background:linear-gradient(135deg,#8a1a4a,#ff5a8a);border-radius:14px 14px 0 0;overflow:hidden}
+  .scn .row1{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .scn .ttl{font:800 15px system-ui;letter-spacing:.06em;color:#fff;text-transform:uppercase;opacity:.95}
+  .scn .st{display:flex;gap:6px;margin:10px 0 6px;flex-wrap:wrap}
+  .scn .st span{font-size:28px;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#ffffff1a;border:2px solid #ffffff33;filter:grayscale(.8);opacity:.6}
+  .scn .st span.d{filter:none;opacity:1;border-color:#ffd23a;background:#ffd23a33}
+  .scn .st span.n{filter:none;opacity:1;border-color:#fff;animation:bob 1.2s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-4px)}}
+  .scn .me{width:42px;height:42px;border-radius:50%;overflow:hidden;background:#fff;border:3px solid #ffd23a;flex:none}
+  .scn .bar{height:9px;border-radius:6px;background:#0005;overflow:hidden} .scn .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff8a2a)}
+  .scn .big{position:absolute;right:16px;bottom:18px;font-size:58px;opacity:.9}
+  .clue{background:#fffbe9;color:#3a2a10;border-radius:8px;padding:8px 12px;font-size:17px;box-shadow:0 2px 4px #0004;margin:6px 0}
+  table.t{border-collapse:collapse;margin:6px 0} table.t td{border:1px solid var(--line);padding:4px 10px}
+  
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=15"></script>
+<script src="juego.js?v=8"></script>
+<script>
+const SCENE = (icons, ttl, big) => (S) => {
+  const k = S.done ? icons.length : S.stage, pct = Math.round((S.done ? 1 : S.solved / S.total) * 100);
+  return `<div class="scn"><div class="row1"><span class="ttl">${ttl}</span><span class="me">${E8.myAvatar()}</span></div>
+    <div class="st">${icons.map((e, i) => `<span class="${i < k ? "d" : i === k ? "n" : ""}">${e}</span>`).join("")}</div>
+    <div class="bar"><i style="width:${pct}%"></i></div>${big ? `<div class="big">${typeof big === "function" ? big(S) : big}</div>` : ""}</div>`;
+};
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", taskDe: "Richtig oder falsch?", keep: true, noType: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+
+const EV = {face:"👩🏻‍🦰", name:"Eva"}, IS = {face:"🧑🏾", name:"Ismael"}, PA = {face:"👦🏻", name:"Pau"}, TA = {face:"🧑🏽", name:"Tarek"}, PR = {face:"👨🏻‍🏫", name:"El profe Ruiz"}, YO = {av:true, name:"Tú"};
+const ENC = "📌 Wie gustar: me / te / le / nos / os / les + <b>encanta</b> (1 Sache, Verb) · <b>encantan</b> (mehrere Sachen). Genauso: <b>interesa / interesan</b> · <b>parece / parecen</b> + Adjektiv: El judo me <b>parece</b> divertid<b>o</b>. Las clases me <b>parecen</b> aburrid<b>as</b>.";
+const TMP = "📌 <b>todo</b> el día · <b>toda</b> la semana · <b>todos</b> los días · <b>todas</b> las tardes – <b>mucho</b> estrés · <b>mucha</b> música · <b>muchos</b> clubs · <b>muchas</b> actividades – genauso <b>poco/poca/pocos/pocas</b>";
+const STAGES = [
+  { label: "Stand 1", title: "La feria de extraescolares", go: "📋 ¡Abrir el stand!",
+    memo: `🎤 El profe Ruiz: „A Pau le <b>encanta</b> el baloncesto. A Eva le <b>encantan</b> los libros. A mí me <b>interesa</b> la robótica. ¿Y a ti? ¿Qué te <b>interesa</b>? El coro me <b>parece</b> divertido, pero las clases particulares me <b>parecen</b> aburridas.“`,
+    intro: `<div class="who"><div class="face">👨🏻‍🏫</div><div><b class="n">El profe Ruiz</b>¡Bienvenido/a a la <b>feria de extraescolares</b> del instituto! Tú ayudas en el stand „<b>ClubMatch</b>“: preguntas a los alumnos qué les gusta y buscas el club perfecto para cada uno.</div></div>
+      <p class="de">Du hilfst am AG-Stand und findest für jede/n die passende AG. Lies zuerst, was der Lehrer sagt (oben): Wann heißt es encanta, wann encantan?</p>`,
+    pista: "Schau, was nach encanta / encantan steht: eine Sache oder mehrere?",
+    tasks: [
+      { t: "choice", q: "A Pau le ___ el baloncesto. 🏀", keep: true, opts: ["encanta", "encantan"], a: "encanta", hint: "el baloncesto (1 Sache) → encanta." },
+      { t: "choice", q: "A Eva le ___ los libros. 📚", keep: true, opts: ["encantan", "encanta"], a: "encantan", hint: "los libros (mehrere) → encantan." },
+      { t: "choice", q: "<b>encantar</b> funktioniert wie …", keep: true, noType: true, opts: ["gustar (me/te/le …)", "levantarse (me/te/se …)", "ser (soy, eres …)"], a: "gustar (me/te/le …)", hint: "Me encanta = Mir gefällt sehr – wie me gusta." },
+      { t: "choice", q: "¿Qué te ___? – La robótica.", keep: true, opts: ["interesa", "interesan", "interesas"], a: "interesa", hint: "la robótica (1 Sache) → interesa." },
+      { t: "choice", q: "El coro me parece ___.", keep: true, opts: ["divertido", "divertida", "divertidos"], a: "divertido", hint: "el coro (m., Sg.) → divertido." },
+      { t: "choice", q: "Las clases particulares me ___ aburridas.", keep: true, opts: ["parecen", "parece"], a: "parecen", hint: "las clases (Plural) → parecen." }
+    ] },
+  { label: "Stand 2", title: "Entrevistas", memo: ENC, shuffle: true,
+    pick: { q: "¿A quién entrevistas primero?", qDe: "Wen interviewst du zuerst?", opts: [
+      { t: "👩🏻‍🦰 Eva – lleva un libro en la mano", intro: `<p>Empiezas con <b>Eva</b>. Está leyendo una novela gráfica.</p>`, first: [0] },
+      { t: "🧑🏾 Ismael – lleva una pelota", intro: `<p>Empiezas con <b>Ismael</b>. Tiene una pelota de balonmano.</p>`, first: [1] },
+      { t: "🧑🏽 Tarek – lleva un robot pequeño", intro: `<p>Empiezas con <b>Tarek</b>. ¡Su robot dice „Hola“! 🤖</p>`, first: [2] }] },
+    intro: `<p>Escribe la forma correcta: <b>encanta/encantan · interesa/interesan</b>.</p><p class="de">1 Sache oder ein Verb → -a · mehrere Sachen → -an.</p>`,
+    pista: "Was steht danach? Eine Sache / ein Verb → encanta, interesa · mehrere Sachen → encantan, interesan.",
+    tasks: [
+      { t: "type", who: EV, q: "Me ___ leer. 📖 (encantar)", a: "encanta" },
+      { t: "type", who: IS, q: "Me ___ los deportes de equipo. 🤾 (encantar)", a: "encantan" },
+      { t: "type", who: TA, q: "Me ___ mucho los robots. 🤖 (interesar)", a: "interesan" },
+      { t: "type", who: PA, q: "¿Te ___ el teatro? 🎭 (interesar)", a: "interesa" },
+      { t: "type", who: YO, q: "A Eva y a Tarek les ___ las artes plásticas. 🎨 (encantar)", a: "encantan" },
+      { t: "type", who: EV, q: "No me ___ nada el fútbol. ⚽ (interesar)", a: "interesa" }
+    ] },
+  { label: "Stand 3", title: "¿Qué te parece?", memo: ENC,
+    intro: `<p>Ahora los alumnos dan su opinión con <b>parecer</b>. Ojo con el adjetivo: ¡concuerda con la cosa!</p><p class="de">parece / parecen + Adjektiv. Das Adjektiv passt zur Sache (m./f., Sg./Pl.).</p>`,
+    pista: "Erst: Eine Sache oder mehrere? → parece / parecen. Dann: Adjektiv passend zur Sache (o/a/os/as).",
+    tasks: [
+      { t: "choice", who: IS, q: "El atletismo me ___ muy duro.", opts: ["parece", "parecen"], a: "parece", hint: "el atletismo → parece." },
+      { t: "choice", who: EV, q: "Las clases de robótica me parecen ___.", opts: ["interesantes", "interesante"], a: "interesantes", hint: "las clases (Pl.) → interesantes." },
+      { t: "choice", who: TA, q: "La natación me parece ___.", opts: ["aburrida", "aburrido", "aburridas"], a: "aburrida", hint: "la natación (f., Sg.) → aburrida." },
+      { t: "choice", who: PA, q: "Los clubs de lectura me parecen ___.", opts: ["tranquilos", "tranquilo", "tranquilas"], a: "tranquilos", hint: "los clubs (m., Pl.) → tranquilos." },
+      { t: "type", who: YO, q: "¿Qué te ___ el huerto escolar? (parecer)", a: "parece" },
+      { t: "type", who: EV, q: "Las manualidades me ___ divertidas. (parecer)", a: "parecen" }
+    ] },
+  { label: "Stand 4", title: "Mucho estrés, poco tiempo", memo: TMP, shuffle: true,
+    intro: `<div class="who"><div class="face">🧑🏽</div><div><b class="n">Tarek</b>¡Uf! Tengo <b>mucho</b> estrés y <b>poco</b> tiempo. ¿Cuántos clubs puedo hacer?</div></div><p class="de">todo, mucho, poco richten sich nach dem Nomen: -o / -a / -os / -as.</p>`,
+    pista: "Welches Geschlecht und welche Zahl hat das Nomen danach? el → -o, la → -a, los → -os, las → -as.",
+    tasks: [
+      { t: "choice", who: TA, q: "Estudio ___ los días. 📅", opts: ["todos", "todo", "todas"], a: "todos", hint: "los días → todos." },
+      { t: "choice", who: TA, q: "Estoy en el instituto ___ la mañana.", opts: ["toda", "todo", "todas"], a: "toda", hint: "la mañana → toda." },
+      { t: "choice", who: EV, q: "Tengo ___ deberes. 😩", opts: ["muchos", "mucho", "muchas"], a: "muchos", hint: "los deberes → muchos." },
+      { t: "choice", who: IS, q: "En mi club hay ___ chicas. 🙁", opts: ["pocas", "poco", "pocos"], a: "pocas", hint: "las chicas → pocas." },
+      { t: "choice", who: PA, q: "Tengo ___ energía después del baloncesto.", opts: ["poca", "poco", "pocas"], a: "poca", hint: "la energía → poca." },
+      { t: "choice", who: PR, q: "En el instituto hay ___ actividades.", opts: ["muchas", "muchos", "mucha"], a: "muchas", hint: "las actividades → muchas." },
+      { t: "choice", who: TA, q: "Escucho música ___ las tardes. 🎧", opts: ["todas", "todos", "toda"], a: "todas", hint: "las tardes → todas." }
+    ] },
+  { label: "Stand 5", title: "Fichas de ClubMatch", memo: ENC + "<br>" + TMP, shuffle: true,
+    intro: `<p>Escribes las fichas para la app. 📱 Ordena las palabras.</p><p class="de">Bau die Steckbrief-Sätze.</p>`,
+    tasks: [
+      { t: "order", task: "Ficha de Eva:", taskDe: "Eva liebt Graphic Novels.", words: ["A", "Eva", "le", "encantan", "las", "novelas", "gráficas."], a: "A Eva le encantan las novelas gráficas." },
+      { t: "order", task: "Ficha de Ismael:", taskDe: "Ismael findet Handball sehr gut.", words: ["El", "balonmano", "le", "parece", "muy", "bueno."], a: "El balonmano le parece muy bueno." },
+      { t: "order", task: "Ficha de Tarek:", taskDe: "Tarek interessiert sich für Robotik.", words: ["A", "Tarek", "le", "interesa", "la", "robótica."], a: "A Tarek le interesa la robótica." },
+      { t: "order", task: "Ficha de Pau:", taskDe: "Pau spielt jeden Tag Basketball.", words: ["Pau", "juega", "al", "baloncesto", "todos", "los", "días."], a: "Pau juega al baloncesto todos los días." },
+      { t: "order", task: "Ficha del club:", taskDe: "Im Chor gibt es viele Jungen.", words: ["En", "el", "coro", "hay", "muchos", "chicos."], a: "En el coro hay muchos chicos." }
+    ] },
+  { label: "Final", title: "¡Match!", go: "💘 ¡Buscar el club!", memo: ENC + "<br>" + TMP,
+    intro: `<p>Antes de publicar, corrige los errores. Después: ¡el club perfecto para cada uno! 🎯</p><p class="de">Erst Fehler finden, dann die passende AG zuordnen.</p>`,
+    tasks: [
+      { t: "error", words: ["Me", "encanta", "los", "videojuegos."], bad: 1, fix: "encantan", opts: ["encantan", "encantas", "encanto"], hint: "los videojuegos → encantan." },
+      { t: "error", words: ["La", "gimnasia", "me", "parece", "aburrido."], bad: 4, fix: "aburrida.", opts: ["aburrida.", "aburridos.", "aburridas."], hint: "la gimnasia → aburrida." },
+      { t: "error", words: ["Hay", "mucho", "clubs", "en", "el", "instituto."], bad: 1, fix: "muchos", opts: ["muchos", "muchas", "mucha"], hint: "los clubs → muchos." },
+      { t: "error", words: ["Estudio", "todo", "las", "tardes."], bad: 1, fix: "todas", opts: ["todas", "todos", "toda"], hint: "las tardes → todas." },
+      { t: "choice", q: "💘 Eva: 📚 ✔✔ · 🏀 ✘ → ¿Qué club?", opts: ["el club de lectura", "el baloncesto", "el atletismo"], a: "el club de lectura", hint: "Eva liebt Bücher → club de lectura." },
+      { t: "choice", q: "💘 Tarek: 🤖 ✔✔ · poco tiempo → ¿Qué club?", opts: ["la robótica", "el coro", "la natación"], a: "la robótica", hint: "Tarek interessiert sich für Roboter → robótica." },
+      { t: "choice", q: "💘 Ismael: 🤾 deportes de equipo ✔✔ → ¿Qué club?", opts: ["el balonmano", "las artes plásticas", "el club de escritura"], a: "el balonmano", hint: "Mannschaftssport → balonmano." }
+    ] }
+];
+JUEGO.start({
+  id: "encantar", key: "wpspa10-encantar", icon: "💘", topic: "encantar · interesar · parecer · todo / mucho / poco", title: "ClubMatch",
+  intro: `<p>🏫 Hoy es la <b>feria de extraescolares</b> en el instituto. Tú trabajas en el stand <b>ClubMatch</b>: entrevistas a los alumnos y encuentras el club perfecto para cada uno. 💘</p>
+    <p class="de">AG-Messe in der Schule: Du interviewst Schüler/innen und findest die passende AG – mit encantar, interesar, parecer und todo / mucho / poco (Unidad 2, A).</p>`,
+  goLabel: "💘 ¡Al stand!", time: "ca. 20 minutos", rulesLabel: "Reglas",
+  rules: `<h2>encantar · interesar · parecer</h2>
+    <div class="rule">wie gustar: me / te / le / nos / os / les <b>encanta</b> (1 Sache, Verb) – <b>encantan</b> (mehrere Sachen)</div>
+    <div class="rule">parecer + Adjektiv: El club me <b>parece</b> divertid<b>o</b>. Las clases me <b>parecen</b> aburrid<b>as</b>.</div>
+    <h2>todo · mucho · poco</h2>
+    <div class="rule">todo el día · toda la semana · todos los días · todas las tardes</div>
+    <div class="rule">mucho estrés · mucha música · muchos clubs · muchas actividades (genauso poco/-a/-os/-as)</div>`,
+  stages: STAGES,
+  scene: SCENE(["🎤", "🎙️", "💭", "⏱️", "📱", "💘"], "🏫 Feria de extraescolares · ClubMatch", S => S.done ? "💘" : "📋"),
+  outro: `<div style="font-size:60px">💘🏀📚🤖</div><h1>¡Match perfecto!</h1><div class="who" style="text-align:left"><div class="face">👨🏻‍🏫</div><div><b class="n">El profe Ruiz</b>¡Todos tienen un club nuevo! Tu stand me parece el mejor de la feria. 🏆</div></div>`
+});
+
+</script>
+</body>
+</html>

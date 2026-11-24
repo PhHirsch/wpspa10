@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>¡Galicia contra el mundo! · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#0f2a5a 0%,#040a1a 70%);--panel:#0c1830;--txt:#eef4ff;--muted:#a3b8d8;--line:#1d335a;--btn:#122444;--accent:#ffd23a;--accentTxt:#241c00;--accent2:#ffe58a;--bubble:#142a50;--input:#060d1c;--ok:#6fe59a;--bad:#ff8a7a}
+  .scn{position:relative;padding:14px 14px 10px;background:linear-gradient(135deg,#0e3a8a,#2a8ad0);border-radius:14px 14px 0 0;overflow:hidden}
+  .scn .row1{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .scn .ttl{font:800 15px system-ui;letter-spacing:.06em;color:#fff;text-transform:uppercase;opacity:.95}
+  .scn .st{display:flex;gap:6px;margin:10px 0 6px;flex-wrap:wrap}
+  .scn .st span{font-size:28px;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#ffffff1a;border:2px solid #ffffff33;filter:grayscale(.8);opacity:.6}
+  .scn .st span.d{filter:none;opacity:1;border-color:#ffd23a;background:#ffd23a33}
+  .scn .st span.n{filter:none;opacity:1;border-color:#fff;animation:bob 1.2s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-4px)}}
+  .scn .me{width:42px;height:42px;border-radius:50%;overflow:hidden;background:#fff;border:3px solid #ffd23a;flex:none}
+  .scn .bar{height:9px;border-radius:6px;background:#0005;overflow:hidden} .scn .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff8a2a)}
+  .scn .big{position:absolute;right:16px;bottom:18px;font-size:58px;opacity:.9}
+  .clue{background:#fffbe9;color:#3a2a10;border-radius:8px;padding:8px 12px;font-size:17px;box-shadow:0 2px 4px #0004;margin:6px 0}
+  table.t{border-collapse:collapse;margin:6px 0} table.t td{border:1px solid var(--line);padding:4px 10px}
+  
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=15"></script>
+<script src="juego.js?v=8"></script>
+<script>
+const SCENE = (icons, ttl, big) => (S) => {
+  const k = S.done ? icons.length : S.stage, pct = Math.round((S.done ? 1 : S.solved / S.total) * 100);
+  return `<div class="scn"><div class="row1"><span class="ttl">${ttl}</span><span class="me">${E8.myAvatar()}</span></div>
+    <div class="st">${icons.map((e, i) => `<span class="${i < k ? "d" : i === k ? "n" : ""}">${e}</span>`).join("")}</div>
+    <div class="bar"><i style="width:${pct}%"></i></div>${big ? `<div class="big">${typeof big === "function" ? big(S) : big}</div>` : ""}</div>`;
+};
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", taskDe: "Richtig oder falsch?", keep: true, noType: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+
+const PC = {face:"🎤", name:"Paco Preguntas"}, QB = {face:"🤖", name:"Quizbot"}, CA = {face:"🧑🏻‍🍳", name:"El camarero"}, YO = {av:true, name:"Tú"};
+const CMP = "📌 <b>más</b> + Adj. + <b>que</b> (mehr … als) · <b>menos</b> + Adj. + <b>que</b> (weniger … als) · <b>tan</b> + Adj. + <b>como</b> (so … wie) – das Adjektiv passt sich an: Galicia es más verd<b>e</b> · las playas son más bonit<b>as</b>";
+const ISI = "📌 absoluter Superlativ: alt<b>o</b> → alt<b>ísimo</b> · bonit<b>a</b> → bonit<b>ísima</b> · ⚠️ ri<b>c</b>o → ri<b>qu</b>ísimo · lar<b>g</b>o → lar<b>gu</b>ísimo · mucho → much<b>ísimo</b> = sehr, sehr …";
+const EE = "📌 nah bei mir: <b>este</b> faro · <b>esta</b> playa · <b>estos</b> barcos · <b>estas</b> rocas – weiter weg: <b>ese</b> faro · <b>esa</b> playa · <b>esos</b> barcos · <b>esas</b> rocas";
+const PEC = "📌 pedir (e→i): <b>pido</b> · <b>pides</b> · <b>pide</b> · pedimos · pedís · <b>piden</b> – conocer: <b>conozco</b> · conoces · conoce …";
+const STAGES = [
+  { label: "Ronda 1", title: "¡Bienvenidos al concurso!", go: "🎤 ¡Empieza el show!",
+    memo: `🎤 Paco: „Galicia es <b>más</b> verde <b>que</b> Andalucía. En Galicia hace <b>menos</b> calor <b>que</b> en Sevilla. La Torre de Hércules es <b>tan</b> famosa <b>como</b> la catedral de Santiago. Y la empanada gallega es… ¡<b>riquísima</b>!“`,
+    intro: `<div class="who"><div class="face">🎤</div><div><b class="n">Paco Preguntas</b>¡Buenas noches y bienvenidos a <b>„¡Galicia contra el mundo!“</b>! Hoy juegas contra <b>Quizbot</b>, el robot que lo sabe todo. 🤖 Primero, escucha bien cómo comparamos…</div></div>
+      <p class="de">Quizshow: Du trittst gegen den Roboter Quizbot an. Lies zuerst, was Paco sagt (oben): Wie vergleicht man im Spanischen?</p>`,
+    pista: "Schau in Pacos Text: más … que, menos … que, tan … como.",
+    tasks: [
+      { t: "choice", q: "„más verde <b>que</b>“ heißt …", keep: true, noType: true, opts: ["grüner als", "so grün wie", "weniger grün als"], a: "grüner als", hint: "más … que = mehr … als → grüner als." },
+      { t: "choice", q: "„<b>menos</b> calor que“ heißt …", keep: true, noType: true, opts: ["weniger heiß als", "heißer als", "so heiß wie"], a: "weniger heiß als", hint: "menos = weniger." },
+      { t: "choice", q: "„<b>tan</b> famosa <b>como</b>“ heißt …", keep: true, noType: true, opts: ["so berühmt wie", "berühmter als", "sehr berühmt"], a: "so berühmt wie", hint: "tan … como = so … wie." },
+      { t: "choice", q: "„riquísima“ heißt …", keep: true, noType: true, opts: ["sehr, sehr lecker", "leckerer", "nicht lecker"], a: "sehr, sehr lecker", hint: "-ísimo/-ísima = sehr, sehr." },
+      { t: "choice", q: "Galicia es más verde ___ Andalucía.", keep: true, opts: ["que", "como", "de"], a: "que", hint: "más … que." },
+      { t: "choice", q: "La torre es tan alta ___ la catedral.", keep: true, opts: ["como", "que", "de"], a: "como", hint: "tan … como." }
+    ] },
+  { label: "Ronda 2", title: "¡Compara!", memo: CMP, shuffle: true,
+    intro: `<div class="who"><div class="face">🤖</div><div><b class="n">Quizbot</b>Bip-bop. Pregunta fácil. Respuesta: 0,1 segundos. 😏</div></div><p class="de">Wähle den richtigen Vergleich.</p>`,
+    pista: "Lies die Zahlen genau: mehr → más … que, weniger → menos … que, gleich → tan … como.",
+    tasks: [
+      { t: "choice", q: "☔ Santiago: 1800 mm de lluvia · Madrid: 400 mm<br>En Santiago llueve ___ en Madrid.", opts: ["más que", "menos que", "tan como"], a: "más que", hint: "1800 > 400 → más que." },
+      { t: "choice", q: "🌡️ A Coruña: 19 °C · Sevilla: 35 °C<br>A Coruña es ___ calurosa ___ Sevilla.", opts: ["menos … que", "más … que", "tan … como"], a: "menos … que", noType: true, hint: "19 < 35 → menos calurosa que." },
+      { t: "choice", q: "🏛️ Torre de Hércules: 55 m · Torre de la catedral: 75 m<br>La Torre de Hércules es ___ la torre de la catedral.", opts: ["menos alta que", "más alta que", "tan alta como"], a: "menos alta que", hint: "55 < 75 → menos alta que." },
+      { t: "choice", q: "🥟 Empanada: 3 € · Bocadillo: 3 €<br>La empanada es ___ el bocadillo.", opts: ["tan cara como", "más cara que", "menos cara que"], a: "tan cara como", hint: "gleich teuer → tan cara como." },
+      { t: "choice", q: "🌊 El río Miño: 340 km · El río Asón: 39 km<br>El Miño es ___ el Asón.", opts: ["más largo que", "menos largo que", "tan largo como"], a: "más largo que", hint: "340 > 39 → más largo que." },
+      { t: "type", q: "Madrid es ___ grande que Santiago. (+)", a: "más", tips: { mas: "Mit Akzent: más." } },
+      { t: "type", q: "El mar en Galicia está ___ frío como el mar del Norte. (=)", a: "tan" }
+    ] },
+  { label: "Ronda 3", title: "Superlativos", memo: ISI, shuffle: true,
+    intro: `<div class="who"><div class="face">🎤</div><div><b class="n">Paco</b>¡Ronda de los <b>superlativos</b>! Todo en Galicia es… ¡-ísimo! 😄</div></div><p class="de">Bilde die Form mit -ísimo / -ísima. Achtung bei c → qu und g → gu.</p>`,
+    pista: "Endung weg, -ísimo/-ísima dran. rico → riquísimo, largo → larguísimo.",
+    tasks: [
+      { t: "type", q: "El faro es alto → ¡es ___!", a: "altísimo" },
+      { t: "type", q: "La playa es bonita → ¡es ___!", a: "bonitísima" },
+      { t: "type", q: "La empanada es rica → ¡está ___!", a: "riquísima", tips: { ricisima: "c → qu: riquísima." } },
+      { t: "type", q: "El Camino es largo → ¡es ___!", a: "larguísimo", tips: { largisimo: "g → gu: larguísimo." } },
+      { t: "type", q: "Los hoteles son caros → ¡son ___!", a: "carísimos" },
+      { t: "choice", q: "En Galicia llueve ___. ☔☔☔", opts: ["muchísimo", "muchísima", "más mucho"], a: "muchísimo", hint: "mucho → muchísimo." }
+    ] },
+  { label: "Ronda 4", title: "¿Este o ese?", memo: EE,
+    pick: { q: "¿Qué foto eliges para la ronda?", qDe: "Welches Foto wählst du?", opts: [
+      { t: "🏖️ La playa de Riazor", intro: `<p>📸 Paco muestra una foto de la <b>playa de Riazor</b> en A Coruña.</p>` },
+      { t: "🗼 La Torre de Hércules", intro: `<p>📸 Paco muestra una foto de la <b>Torre de Hércules</b>, el faro romano.</p>` },
+      { t: "🌲 Un bosque gallego", intro: `<p>📸 Paco muestra una foto de un <b>bosque</b> verdísimo.</p>` }] },
+    intro: `<p>En el estudio hay cosas cerca de ti y cosas lejos. 📸 ¿<b>este</b> o <b>ese</b>?</p><p class="de">este/esta = dieser hier (nah) · ese/esa = der da (weiter weg).</p>`,
+    tasks: [
+      { t: "sort", task: "Ordena: ¿qué palabra va con …?", taskDe: "Welches Wort passt zum Nomen?", buckets: ["este", "esta", "estos", "estas"], items: [["faro", 0], ["playa", 1], ["barcos", 2], ["rocas", 3], ["paisaje", 0], ["nubes", 3]], hint: "el → este · la → esta · los → estos · las → estas" },
+      { t: "choice", who: YO, q: "(🫳 cerca) ___ foto es muy bonita.", opts: ["Esta", "Este", "Esa"], a: "Esta", hint: "la foto, nah → esta." },
+      { t: "choice", who: QB, q: "(👉 lejos) ___ edificios son muy antiguos.", opts: ["Esos", "Estos", "Esas"], a: "Esos", hint: "los edificios, weiter weg → esos." },
+      { t: "choice", who: PC, q: "(👉 lejos) ¿Conoces ___ isla?", opts: ["esa", "ese", "esta"], a: "esa", hint: "la isla, weiter weg → esa." }
+    ] },
+  { label: "Ronda 5", title: "La pausa en el bar", memo: PEC, shuffle: true,
+    intro: `<div class="who"><div class="face">🧑🏻‍🍳</div><div><b class="n">El camarero</b>¡Pausa de publicidad! ¿Qué pedís? Tenemos empanada, pulpo y tarta de Santiago.</div></div><p class="de">pedir (e→i) und conocer (yo conozco). Schreib die Form.</p>`,
+    pista: "pedir: pido, pides, pide, pedimos, pedís, piden · conocer: yo conozco",
+    tasks: [
+      { t: "type", who: YO, q: "Yo ___ una empanada, por favor. (pedir)", a: "pido" },
+      { t: "type", who: CA, q: "¿Y tú qué ___? (pedir)", a: "pides" },
+      { t: "type", who: PC, q: "Quizbot no ___ nada. ¡Es un robot! (pedir)", a: "pide" },
+      { t: "type", who: YO, q: "Nosotros ___ dos zumos. (pedir)", a: "pedimos" },
+      { t: "type", who: QB, q: "Yo ___ toda Galicia. Bip. (conocer)", a: "conozco" },
+      { t: "choice", who: CA, q: "¿___ la tarta de Santiago?", opts: ["Conoces", "Conozcas", "Conozco"], a: "Conoces", hint: "tú → conoces (nur yo hat -zco)." }
+    ] },
+  { label: "Final", title: "¡La gran final!", go: "🏆 ¡A por el premio!", memo: CMP + "<br>" + ISI, shuffle: true,
+    intro: `<div class="who"><div class="face">🤖</div><div><b class="n">Quizbot</b>Error… error… Mi texto tiene fallos. 😵 ¿Los encuentras tú?</div></div><p class="de">Finde die Fehler im Text von Quizbot – dann gewinnst du!</p>`,
+    tasks: [
+      { t: "error", words: ["Galicia", "es", "más", "verde", "como", "Andalucía."], bad: 4, fix: "que", opts: ["que", "de", "tan"], hint: "más … que." },
+      { t: "error", words: ["La", "torre", "es", "tan", "alta", "que", "el", "faro."], bad: 5, fix: "como", opts: ["como", "de", "más"], hint: "tan … como." },
+      { t: "error", words: ["Las", "playas", "son", "más", "bonitos", "que", "en", "Alemania."], bad: 4, fix: "bonitas", opts: ["bonitas", "bonita", "bonito"], hint: "las playas → bonitas." },
+      { t: "error", words: ["La", "empanada", "está", "ricísima."], bad: 3, fix: "riquísima.", opts: ["riquísima.", "ricísimo.", "más rica."], hint: "c → qu: riquísima." },
+      { t: "error", words: ["Yo", "pedo", "un", "zumo."], bad: 1, fix: "pido", opts: ["pido", "pide", "pedimos"], hint: "pedir (e→i): yo pido." },
+      { t: "choice", who: PC, q: "Última pregunta: ¿Cómo se llama el faro de A Coruña?", opts: ["la Torre de Hércules", "la Torre Eiffel", "el Faro de Madrid"], a: "la Torre de Hércules", noType: true, hint: "Der römische Leuchtturm in A Coruña: la Torre de Hércules." }
+    ] }
+];
+JUEGO.start({
+  id: "comparativo", key: "wpspa10-comparativo", icon: "🏆", topic: "comparativo · -ísimo · este/ese · pedir/conocer", title: "¡Galicia contra el mundo!",
+  intro: `<p>🎤 Estás en un concurso de la tele: <b>„¡Galicia contra el mundo!“</b>. Tu rival: <b>Quizbot</b>, un robot que lo sabe todo. 🤖</p>
+    <p>Para ganar comparas, exageras (¡-ísimo!) y pides en el bar. 😄</p>
+    <p class="de">Quizshow gegen einen Roboter: Komparativ, absoluter Superlativ, este/ese, pedir und conocer (Unidad 3, A).</p>`,
+  goLabel: "🎤 ¡Al concurso!", time: "ca. 20 minutos", rulesLabel: "Reglas",
+  rules: `<h2>Vergleichen</h2><div class="rule"><b>más</b> + Adj. + <b>que</b> · <b>menos</b> + Adj. + <b>que</b> · <b>tan</b> + Adj. + <b>como</b></div>
+    <h2>-ísimo</h2><div class="rule">alto → altísimo · bonita → bonitísima · rico → riquísimo · largo → larguísimo</div>
+    <h2>este / ese</h2><div class="rule">este, esta, estos, estas (nah) · ese, esa, esos, esas (weiter weg)</div>
+    <h2>pedir · conocer</h2><div class="rule">pido, pides, pide, pedimos, pedís, piden · conozco, conoces, conoce …</div>`,
+  stages: STAGES,
+  scene: (S) => { const me = S.done ? 6 : S.stage, qb = Math.max(0, S.stage - 1);
+    return `<div class="scn"><div class="row1"><span class="ttl">🎤 ¡Galicia contra el mundo!</span><span class="me">${E8.myAvatar()}</span></div>
+      <div style="display:flex;justify-content:space-around;align-items:center;margin:10px 0;color:#fff;font:800 18px system-ui"><div style="text-align:center">TÚ<br><span style="font-size:40px;color:#ffd23a">${me * 100}</span></div><div style="font-size:42px">${S.done ? "🏆" : "⚡"}</div><div style="text-align:center">🤖 QUIZBOT<br><span style="font-size:40px">${qb * 100}</span></div></div>
+      <div class="bar"><i style="width:${Math.round((S.done ? 1 : S.solved / S.total) * 100)}%"></i></div></div>`; },
+  outro: `<div style="font-size:60px">🏆🎤🤖</div><h1>¡Has ganado!</h1><div class="who" style="text-align:left"><div class="face">🎤</div><div><b class="n">Paco Preguntas</b>¡Increíble! Eres más rápido/a que Quizbot y tu español es… ¡buenísimo! 🏆</div></div>`
+});
+
+</script>
+</body>
+</html>

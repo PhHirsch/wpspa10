@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Calendario de Adviento · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#0f3a2a 0%,#04140e 70%);--panel:#0b2219;--txt:#f3fff8;--muted:#a8d4bf;--line:#1d4a36;--btn:#0f2e22;--accent:#e63946;--accentTxt:#fff;--accent2:#ffb3b8;--bubble:#123527;--input:#06160f;--ok:#6fe59a;--bad:#ffb03a}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:17px}
+  .snow{position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(2px 2px at 120px 80px,#fff,transparent),radial-gradient(1.5px 1.5px at 220px 140px,#fff,transparent),radial-gradient(2px 2px at 320px 40px,#fff,transparent),radial-gradient(1.5px 1.5px at 60px 180px,#fff,transparent);background-size:360px 220px;animation:sn 14s linear infinite;opacity:.55;z-index:0}
+  @keyframes sn{to{background-position:40px 220px}}
+  .wrapA{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:14px}
+  .de{color:var(--muted);font-size:14px}
+  h1{font-family:Georgia,serif;font-style:italic;font-size:40px;margin:6px 0 0;text-align:center;color:#fff;text-shadow:0 0 18px #e6394688}
+  .sub{text-align:center;margin-bottom:10px}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:14px 0}
+  @media(max-width:620px){.grid{grid-template-columns:repeat(4,1fr)}}
+  .door{position:relative;aspect-ratio:1/1.1;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-decoration:none;color:#fff;font-family:Georgia,serif;font-size:30px;font-weight:700;box-shadow:inset 0 0 0 3px #ffffff22,0 4px 10px #0007;transition:transform .15s}
+  .door:hover{transform:translateY(-3px)}
+  .door small{font-family:system-ui;font-size:11px;font-weight:600;opacity:.85;margin-top:2px}
+  .door.lock{filter:grayscale(.5) brightness(.75);pointer-events:none}
+  .door.lock:after{content:"🔒";position:absolute;bottom:6px;right:7px;font-size:14px}
+  .door.today{box-shadow:0 0 0 3px #ffd23a,0 0 22px #ffd23a;animation:gl 1.6s ease-in-out infinite}
+  @keyframes gl{50%{box-shadow:0 0 0 3px #ffd23a,0 0 6px #ffd23a}}
+  .door.done{background-image:none!important;background:#f3ead0!important;color:#2a4a2a}
+  .door.done:after{content:"⭐";position:absolute;top:4px;right:6px;font-size:14px}
+  .door .em{font-size:30px}
+  .rw{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:8px 0 4px}
+  .rw div{background:#0f2e22;border:1px solid #1d4a36;border-radius:12px;padding:8px 12px;font-size:15px;text-align:center;min-width:170px}
+  .rw div.ok{border-color:#ffd23a;background:#2a3a12}
+  .bar{height:12px;border-radius:7px;background:#06160f;overflow:hidden;margin:6px 0}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,#e63946,#ffd23a)}
+  a.back{color:#ffb3b8}
+  .xm{position:relative;height:150px;border-radius:14px 14px 0 0;overflow:hidden;background:linear-gradient(#0c2a4a,#1a4a6a 70%,#e8f2ff 71%)}
+  .xm .tree{position:absolute;left:12%;bottom:22px;font-size:76px}
+  .xm .num{position:absolute;right:18px;top:12px;font-family:Georgia,serif;font-size:58px;font-style:italic;color:#ffd23a;text-shadow:0 0 18px #ffd23a88}
+  .xm .me{position:absolute;left:42%;bottom:18px;width:66px;height:66px;border-radius:50%;overflow:hidden;background:#fff;border:3px solid #e63946}
+  .xm .me svg{width:100%;height:100%}
+  .xm .gift{position:absolute;bottom:22px;font-size:34px}
+  .story p{margin:.4em 0;line-height:1.55}
+</style>
+</head>
+<body>
+<div class="snow"></div>
+<main id="app"></main>
+<script src="game.js?v=15"></script>
+<script src="juego.js?v=8"></script>
+<script>
+const YEAR = 2026;
+const g = (w, de) => `<b>${w}</b> <span class="de">(${de})</span>`;
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", taskDe: "Richtig oder falsch?", keep: true, noType: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+const COL = ["#c8312b", "#1f7a3a", "#2a5aa0", "#b8862a", "#8a2a6a", "#2a8a8a"];
+const D = [
+ { e: "📅", t: "Las fechas de la Navidad", txt: `<p>En España la Navidad es larga: empieza el ${g("24 de diciembre", "24. Dezember")} con la <b>Nochebuena</b> y termina el <b>6 de enero</b> con el Día de Reyes. El 31 de diciembre es <b>Nochevieja</b> (Silvester).</p>`,
+   q: [{ t: "choice", q: "¿Qué es la <b>Nochebuena</b>?", opts: ["el 24 de diciembre", "el 31 de diciembre", "el 6 de enero"], a: "el 24 de diciembre", hint: "Nochebuena = 24 de diciembre (Heiligabend)." },
+       { t: "choice", q: "<b>Nochevieja</b> es …", opts: ["el 31 de diciembre", "el 25 de diciembre", "el 1 de enero"], a: "el 31 de diciembre", hint: "Nochevieja = Silvester = 31.12." },
+       VF("La Navidad en España termina el 6 de enero.", true, "„… termina el 6 de enero con el Día de Reyes.“")] },
+ { e: "🎟️", t: "El Gordo", txt: `<p>El ${g("22 de diciembre", "22.12.")} hay en España una ${g("lotería", "Lotterie")} muy famosa: <b>El Gordo</b>. Los niños de un colegio de Madrid ${g("cantan", "singen")} los números ganadores en la tele. ¡Toda España mira!</p>`,
+   q: [{ t: "choice", q: "¿Cuándo es El Gordo?", opts: ["el 22 de diciembre", "el 6 de enero", "el 24 de diciembre"], a: "el 22 de diciembre", hint: "„El 22 de diciembre hay … El Gordo.“" },
+       { t: "type", q: "Escribe el número en letras: <b>45</b>", a: "cuarenta y cinco", show: "45 = cuarenta y cinco" },
+       { t: "type", q: "Escribe el número en letras: <b>99</b>", a: "noventa y nueve", show: "99 = noventa y nueve" }] },
+ { e: "🍇", t: "Las doce uvas", txt: `<p>En Nochevieja, a las 12 de la noche, los españoles ${g("comen", "essen")} <b>doce uvas</b> (${g("uvas", "Weintrauben")}): una uva con cada ${g("campanada", "Glockenschlag")} del reloj de la <b>Puerta del Sol</b> en Madrid. ¡Es para tener suerte (Glück) todo el año!</p>`,
+   q: [{ t: "choice", q: "¿Cuántas uvas comen?", opts: ["doce", "diez", "veinte"], a: "doce", hint: "„… comen doce uvas.“" },
+       { t: "choice", q: "¿Dónde está el reloj famoso?", opts: ["en la Puerta del Sol", "en la Plaza Mayor de Santiago", "en Barcelona"], a: "en la Puerta del Sol", hint: "„… el reloj de la Puerta del Sol en Madrid.“" },
+       VF("Las uvas son para tener suerte.", true, "„¡Es para tener suerte todo el año!“")] },
+ { e: "👑", t: "Los Reyes Magos", txt: `<p>En España muchos niños reciben los ${g("regalos", "Geschenke")} el <b>6 de enero</b>. Los traen los <b>Reyes Magos</b>: Melchor, Gaspar y Baltasar. Antes, los niños escriben una ${g("carta", "Brief")} a los Reyes.</p>`,
+   q: [{ t: "choice", q: "¿Cuándo reciben muchos niños los regalos en España?", opts: ["el 6 de enero", "el 24 de diciembre", "el 31 de diciembre"], a: "el 6 de enero", hint: "„… los regalos el 6 de enero.“" },
+       { t: "choice", q: "¿Cuántos Reyes Magos hay?", opts: ["tres", "dos", "cuatro"], a: "tres", hint: "Melchor, Gaspar y Baltasar = tres." },
+       { t: "choice", q: "¿Qué escriben los niños?", opts: ["una carta", "un mensaje en Instagram", "un libro"], a: "una carta", hint: "„… escriben una carta a los Reyes.“" }] },
+ { e: "🥯", t: "El roscón de Reyes", txt: `<p>El 6 de enero las familias comen el <b>roscón de Reyes</b>: un ${g("pastel", "Kuchen")} grande y redondo con ${g("frutas", "Früchte")} de colores. Dentro hay una pequeña ${g("figura", "Figur")} – ¡y quien la encuentra es el rey o la reina del día! 👑</p>`,
+   q: [{ t: "choice", q: "¿Cómo es el roscón?", opts: ["grande y redondo", "pequeño y negro", "frío y azul"], a: "grande y redondo", hint: "„… un pastel grande y redondo.“" },
+       { t: "choice", q: "¿Qué hay dentro?", opts: ["una pequeña figura", "un móvil", "una carta"], a: "una pequeña figura", hint: "„Dentro hay una pequeña figura.“" },
+       { t: "order", task: "Ordena:", taskDe: "Der Roscón ist sehr lecker.", words: ["El", "roscón", "es", "muy", "rico."], a: "El roscón es muy rico." }] },
+ { e: "🍬", t: "Turrón y polvorones", txt: `<p>En Navidad en España hay muchos ${g("dulces", "Süßigkeiten")}. El más famoso es el <b>turrón</b>: es de ${g("almendras", "Mandeln")} y ${g("miel", "Honig")}. Hay turrón duro y turrón blando. Los <b>polvorones</b> son pequeños y ¡muy secos (trocken)! 😄</p>`,
+   q: [{ t: "choice", q: "¿De qué es el turrón?", opts: ["de almendras y miel", "de chocolate y helado", "de pan"], a: "de almendras y miel", hint: "„… es de almendras y miel.“" },
+       { t: "choice", q: "Los polvorones son pequeños y …", opts: ["secos", "grandes", "fríos"], a: "secos", hint: "„… son pequeños y muy secos.“" },
+       { t: "type", q: "turrón duro ↔ turrón ___ <span class=\"de\">(weich)</span>", a: "blando", show: "duro ↔ blando" }] },
+ { e: "🎉", t: "¡Felices fiestas!", txt: `<p>¿Cómo se dice en español?<br>🎄 <b>¡Feliz Navidad!</b> = Frohe Weihnachten!<br>🎆 <b>¡Feliz Año Nuevo!</b> = Frohes neues Jahr!<br>✨ <b>¡Felices fiestas!</b> = Schöne Feiertage!</p>`,
+   q: [{ t: "choice", q: "Frohe Weihnachten! = ", opts: ["¡Feliz Navidad!", "¡Feliz cumpleaños!", "¡Buen provecho!"], a: "¡Feliz Navidad!", hint: "¡Feliz Navidad!" },
+       { t: "type", q: "Frohes neues Jahr! = ¡Feliz Año ___!", a: "Nuevo", show: "¡Feliz Año Nuevo!" },
+       { t: "order", task: "Ordena:", taskDe: "Schöne Feiertage, Frau Profe!", words: ["¡Felices", "fiestas,", "profe!"], a: "¡Felices fiestas, profe!" }] },
+ { e: "🐫", t: "La Cabalgata", txt: `<p>El 5 de enero por la tarde hay en muchas ciudades una ${g("cabalgata", "Umzug")}: los Reyes Magos pasan por la calle con ${g("camellos", "Kamele")}, música y luces. ¡Y tiran (werfen) ${g("caramelos", "Bonbons")} a los niños!</p>`,
+   q: [{ t: "choice", q: "¿Cuándo es la Cabalgata?", opts: ["el 5 de enero", "el 25 de diciembre", "el 1 de enero"], a: "el 5 de enero", hint: "„El 5 de enero por la tarde …“" },
+       { t: "choice", q: "¿Qué animales hay en la Cabalgata?", opts: ["camellos", "perros", "gatos"], a: "camellos", hint: "„… con camellos …“" },
+       VF("Los Reyes tiran caramelos.", true, "„¡Y tiran caramelos a los niños!“")] },
+ { e: "🎶", t: "Los villancicos", txt: `<p>Los <b>villancicos</b> son las ${g("canciones", "Lieder")} de Navidad. En España muchas familias cantan villancicos con una <b>zambomba</b> o una <b>pandereta</b> (${g("pandereta", "Tamburin")}). ¿Y tú? ¿Cantas en Navidad? 🎤</p>`,
+   q: [{ t: "choice", q: "¿Qué son los villancicos?", opts: ["canciones de Navidad", "dulces de Navidad", "regalos"], a: "canciones de Navidad", hint: "„Los villancicos son las canciones de Navidad.“" },
+       { t: "choice", q: "La pandereta es …", opts: ["un instrumento", "un pastel", "un animal"], a: "un instrumento", hint: "pandereta = Tamburin → instrumento." },
+       { t: "order", task: "Ordena:", taskDe: "Meine Familie singt viel.", words: ["Mi", "familia", "canta", "mucho."], a: "Mi familia canta mucho." }] },
+ { e: "🤡", t: "El Día de los Inocentes", txt: `<p>El <b>28 de diciembre</b> es el Día de los Santos Inocentes. Es como el ${g("1 de abril", "1. April")} en Alemania: la gente hace ${g("bromas", "Streiche")}. ¡Hasta la tele cuenta noticias falsas! Y los niños pegan (kleben) un muñeco de papel en la espalda de otras personas. 😂</p>`,
+   q: [{ t: "choice", q: "¿Cuándo es el Día de los Inocentes?", opts: ["el 28 de diciembre", "el 1 de abril", "el 6 de enero"], a: "el 28 de diciembre", hint: "„El 28 de diciembre …“" },
+       { t: "choice", q: "Es como en Alemania …", opts: ["el 1 de abril", "la Navidad", "el Carnaval"], a: "el 1 de abril", hint: "„Es como el 1 de abril en Alemania.“" },
+       { t: "choice", q: "La gente hace …", opts: ["bromas", "deberes", "deporte"], a: "bromas", hint: "„… la gente hace bromas.“" }] },
+ { e: "🕯️", t: "Las posadas en México", txt: `<p>En México, del <b>16 al 24 de diciembre</b> hay fiestas en las casas: las <b>posadas</b>. Los vecinos (Nachbarn) van de casa en casa con velas (Kerzen) y cantan. Al final hay comida, ${g("ponche", "warmer Früchtepunsch")} y una piñata.</p>`,
+   q: [{ t: "choice", q: "¿Dónde hay posadas?", opts: ["en México", "en Alemania", "en Madrid"], a: "en México", hint: "„En México … las posadas.“" },
+       { t: "choice", q: "¿Cuántos días hay posadas? (16–24)", opts: ["nueve", "siete", "doce"], a: "nueve", hint: "16, 17 … 24 = nueve días." },
+       { t: "choice", q: "¿Qué beben?", opts: ["ponche", "agua fría", "café"], a: "ponche", hint: "„… comida, ponche y una piñata.“" }] },
+ { e: "⭐", t: "La piñata", txt: `<p>La piñata navideña de México es una ${g("estrella", "Stern")} con <b>siete puntas</b> (Zacken) de muchos colores. Los niños tienen los ojos ${g("tapados", "verbunden")} y ${g("golpean", "schlagen")} la piñata con un palo. Dentro hay frutas y dulces. 🍬</p>`,
+   q: [{ t: "choice", q: "¿Cómo es la piñata navideña?", opts: ["una estrella con siete puntas", "un perro azul", "una casa"], a: "una estrella con siete puntas", hint: "„… una estrella con siete puntas.“" },
+       { t: "type", q: "Escribe el número: <b>7</b> puntas = ___ puntas", a: "siete", show: "7 = siete" },
+       { t: "choice", q: "¿Qué hay dentro?", opts: ["frutas y dulces", "libros", "móviles"], a: "frutas y dulces", hint: "„Dentro hay frutas y dulces.“" }] },
+ { e: "🌺", t: "La flor de Nochebuena", txt: `<p>La planta roja de Navidad (der Weihnachtsstern) es de <b>México</b>. En español se llama <b>flor de Nochebuena</b>. Los aztecas ya la usaban (benutzten) hace muchos años. Hoy está en las casas de todo el mundo. 🌍</p>`,
+   q: [{ t: "choice", q: "¿De dónde es la flor de Nochebuena?", opts: ["de México", "de Alemania", "de España"], a: "de México", hint: "„… es de México.“" },
+       { t: "choice", q: "¿De qué color es?", opts: ["roja", "azul", "negra"], a: "roja", hint: "„La planta roja …“" },
+       { t: "order", task: "Ordena:", taskDe: "Die Pflanze ist sehr schön.", words: ["La", "planta", "es", "muy", "bonita."], a: "La planta es muy bonita." }] },
+ { e: "🏖️", t: "Navidad en verano", txt: `<p>En Argentina, Chile y Uruguay la Navidad es en ${g("verano", "Sommer")}. En diciembre hace calor: ¡30 grados! Muchas familias pasan la Nochebuena en el ${g("jardín", "Garten")} con una barbacoa (asado) – o en la playa. ☀️</p>`,
+   q: [{ t: "choice", q: "¿Qué tiempo hace en diciembre en Argentina?", opts: ["hace calor", "hace mucho frío", "nieva"], a: "hace calor", hint: "„En diciembre hace calor.“" },
+       { t: "type", q: "30 grados = ___ grados", a: "treinta", show: "30 = treinta" },
+       VF("En Chile la Navidad es en invierno (Winter).", false, "Es en verano: „… la Navidad es en verano.“")] },
+ { e: "🌰", t: "El Apalpador", txt: `<p>En Galicia hay una tradición muy antigua: el <b>Apalpador</b>. Es un ${g("gigante", "Riese")} de las montañas con barba roja y ${g("boina", "Baskenmütze")}. En Nochebuena entra en las casas y toca la barriga (Bauch) de los niños: ¿comen bien? Después deja ${g("castañas", "Kastanien")} y un regalo pequeño. 🌰</p>`,
+   q: [{ t: "choice", q: "¿De dónde es el Apalpador?", opts: ["de Galicia", "de México", "de Argentina"], a: "de Galicia", hint: "„En Galicia hay una tradición …“" },
+       { t: "choice", q: "¿Qué deja el Apalpador?", opts: ["castañas y un regalo pequeño", "turrón y uvas", "un móvil"], a: "castañas y un regalo pequeño", hint: "„… deja castañas y un regalo pequeño.“" },
+       { t: "choice", q: "¿De qué color es su barba?", opts: ["roja", "blanca", "negra"], a: "roja", hint: "„… con barba roja …“" }] },
+ { e: "💡", t: "Las luces de Vigo", txt: `<p>En Navidad muchas ciudades de España tienen ${g("luces", "Lichter")} en las calles. La ciudad de <b>Vigo</b>, en Galicia, tiene ¡más de 11 millones de luces LED! Hay también un árbol muy grande y una ${g("noria", "Riesenrad")}.</p>`,
+   q: [{ t: "choice", q: "¿Dónde está Vigo?", opts: ["en Galicia", "en Andalucía", "en Madrid"], a: "en Galicia", hint: "„Vigo, en Galicia …“" },
+       { t: "choice", q: "¿Qué hay en las calles?", opts: ["luces", "playas", "camellos"], a: "luces", hint: "„… tienen luces en las calles.“" },
+       { t: "order", task: "Ordena:", taskDe: "In Vigo gibt es viele Lichter.", words: ["En", "Vigo", "hay", "muchas", "luces."], a: "En Vigo hay muchas luces." }] },
+ { e: "🎪", t: "El mercado de la Plaza Mayor", txt: `<p>En diciembre hay un ${g("mercado de Navidad", "Weihnachtsmarkt")} en la <b>Plaza Mayor</b> de Madrid. Hay ${g("puestos", "Stände")} con decoración, figuras y… ¡pelucas (Perücken) de colores para Nochevieja! 🤪 Al lado hay una churrería.</p>`,
+   q: [{ t: "choice", q: "¿Dónde está el mercado?", opts: ["en la Plaza Mayor", "en el metro", "en la playa"], a: "en la Plaza Mayor", hint: "„… en la Plaza Mayor de Madrid.“" },
+       { t: "choice", q: "¿Qué está al lado?", opts: ["una churrería", "un hospital", "un museo"], a: "una churrería", hint: "„Al lado hay una churrería.“" },
+       { t: "choice", q: "En el mercado ___ muchos puestos.", opts: ["hay", "está", "están"], a: "hay", hint: "„hay“ + muchos puestos (unbestimmt)." }] },
+ { e: "🦐", t: "La cena de Nochebuena", txt: `<p>La cena de Nochebuena es muy importante en España. Toda la familia ${g("cena", "isst zu Abend")} junta: abuelos, padres, tíos, primos… Hay ${g("marisco", "Meeresfrüchte")}, jamón, queso y de postre (Nachtisch) turrón. ¡La cena es muy larga!</p>`,
+   q: [{ t: "choice", q: "¿Quién cena en Nochebuena?", opts: ["toda la familia", "solo los niños", "solo los abuelos"], a: "toda la familia", hint: "„Toda la familia cena junta.“" },
+       { t: "choice", q: "¿Qué hay de postre?", opts: ["turrón", "marisco", "jamón"], a: "turrón", hint: "„… de postre turrón.“" },
+       { t: "type", q: "Mis abuelos ___ <span class=\"de\">(tener)</span> muchos nietos.", a: "tienen", show: "mis abuelos = ellos → tienen" }] },
+ { e: "🎁", t: "El amigo invisible", txt: `<p>En clase o en el trabajo, muchos españoles juegan al <b>amigo invisible</b> (Wichteln). Cada persona ${g("saca", "zieht")} un papel con un nombre y compra un regalo pequeño para esa persona. ¡Pero es un secreto! 🤫</p>`,
+   q: [{ t: "choice", q: "„Amigo invisible“ en alemán es …", opts: ["Wichteln", "Bleigießen", "Adventskalender"], a: "Wichteln", hint: "amigo invisible = Wichteln." },
+       { t: "choice", q: "El regalo es …", opts: ["pequeño", "muy grande", "un animal"], a: "pequeño", hint: "„… un regalo pequeño …“" },
+       VF("Todos saben quién es su amigo invisible.", false, "„¡Pero es un secreto!“")] },
+ { e: "🇩🇪", t: "Alemania y España", txt: `<p>En Alemania los regalos llegan el <b>24 de diciembre</b>. En España muchos niños reciben un regalo el 25 (de Papá Noel) y los regalos grandes el <b>6 de enero</b> (de los Reyes). En Alemania hay calendarios de Adviento – en España ¡son menos famosos!</p>`,
+   q: [{ t: "choice", q: "¿Cuándo llegan los regalos en Alemania?", opts: ["el 24 de diciembre", "el 6 de enero", "el 31 de diciembre"], a: "el 24 de diciembre", hint: "„En Alemania los regalos llegan el 24 de diciembre.“" },
+       VF("En España el calendario de Adviento es muy famoso.", false, "„… en España ¡son menos famosos!“"),
+       { t: "choice", q: "En España, los regalos grandes son de …", opts: ["los Reyes Magos", "Papá Noel", "los abuelos"], a: "los Reyes Magos", hint: "„… los regalos grandes el 6 de enero (de los Reyes).“" }] },
+ { e: "🧥", t: "¿Qué te pones en invierno?", txt: `<p>En diciembre hace frío en Madrid: ¡a veces 0 grados! ❄️ Lili dice: „En invierno me pongo el abrigo negro, las botas marrones y un jersey de color rojo. ¡Y una bufanda (Schal) larga!“ En Argentina, en cambio, la gente lleva camiseta y pantalones cortos. ☀️</p>`,
+   q: [{ t: "choice", q: "¿Qué se pone Lili en invierno?", opts: ["el abrigo, las botas y un jersey", "una camiseta y una falda", "el uniforme"], a: "el abrigo, las botas y un jersey", hint: "„… el abrigo negro, las botas marrones y un jersey …“" },
+       { t: "choice", q: "Las botas son ___.", opts: ["marrones", "marrón", "marrona"], a: "marrones", hint: "las botas (Pl.) → marrones." },
+       { t: "choice", q: "Es ist kalt. = ", opts: ["Hace frío.", "Es frío.", "Está frío."], a: "Hace frío.", hint: "Wetter mit hacer: Hace frío." }] },
+ { e: "✉️", t: "La carta a los Reyes", txt: `<p>Una carta típica:<br><i>„Queridos Reyes Magos: Me llamo Pablo y tengo diez años. Este año soy muy bueno. 😇 Para Navidad quiero (ich möchte) un balón y un libro de dinosaurios. ¡Gracias! Un beso, Pablo.“</i></p>`,
+   q: [{ t: "choice", q: "¿Cómo empieza la carta?", opts: ["Queridos Reyes Magos:", "Hola, profe:", "Adiós:"], a: "Queridos Reyes Magos:", hint: "„Queridos Reyes Magos:“" },
+       { t: "choice", q: "¿Qué quiere Pablo?", opts: ["un balón y un libro", "un móvil y un perro", "una bici"], a: "un balón y un libro", hint: "„… un balón y un libro de dinosaurios.“" },
+       { t: "order", task: "Tu carta:", taskDe: "Ich heiße … und bin 16 Jahre alt.", words: ["Tengo", "dieciséis", "años."], a: "Tengo dieciséis años." }] },
+ { e: "🔴", t: "Ropa roja en Nochevieja", txt: `<p>¿Una tradición rara? En Nochevieja muchos españoles llevan (tragen) ${g("ropa interior", "Unterwäsche")} <b>roja</b>. ¡Es para tener suerte en el año nuevo! Y en México, algunos (einige) salen a la calle con una ${g("maleta", "Koffer")}: ¡así viajan mucho en el año nuevo! 🧳</p>`,
+   q: [{ t: "choice", q: "¿De qué color es la ropa interior?", opts: ["roja", "verde", "amarilla"], a: "roja", hint: "„… ropa interior roja.“" },
+       { t: "choice", q: "¿Para qué es la maleta en México?", opts: ["para viajar mucho", "para tener dinero", "para comer"], a: "para viajar mucho", hint: "„… así viajan mucho en el año nuevo.“" },
+       VF("Las tradiciones son para tener suerte.", true, "„¡Es para tener suerte …!“")] },
+ { e: "🎄", t: "¡Feliz Navidad!", txt: `<p>¡La última puerta! 🎉 Ahora sabes mucho sobre la Navidad en España y Latinoamérica: las uvas, los Reyes, el turrón, las posadas, la piñata… ¡<b>Feliz Navidad y próspero Año Nuevo</b>! – Te desea tu profe y los Juegos del Ciervo. 🦌</p>`,
+   q: [{ t: "choice", q: "¿Qué comen en Nochevieja en España?", opts: ["doce uvas", "turrón", "roscón"], a: "doce uvas", hint: "Puerta 3: las doce uvas." },
+       { t: "choice", q: "¿Quién trae los regalos el 6 de enero?", opts: ["los Reyes Magos", "el Apalpador", "la Piñata"], a: "los Reyes Magos", hint: "Puerta 4: los Reyes Magos." },
+       { t: "order", task: "Escribe:", taskDe: "Frohe Weihnachten an alle!", words: ["¡Feliz", "Navidad", "a", "todos!"], a: "¡Feliz Navidad a todos!" }] }
+];
+const qs = new URLSearchParams(location.search);
+const local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+const TODAY = (local && qs.get("hoy")) ? new Date(qs.get("hoy") + "T12:00:00") : new Date();
+const END = new Date(YEAR + 1, 0, 10, 23, 59);
+const isOpen = n => TODAY >= new Date(YEAR, 11, n) && TODAY <= END;
+const isToday = n => TODAY.getFullYear() === YEAR && TODAY.getMonth() === 11 && TODAY.getDate() === n;
+const N = +qs.get("d");
+const se = E8.getSession(), ST = se && se.state ? se.state : null, done = n => !!(ST && ST.stars && ST.stars["adv-" + n]);
+if (N >= 1 && N <= 24 && isOpen(N)) {
+  const dd = D[N - 1];
+  JUEGO.start({
+    noHard: true, id: "adv-" + N, key: "wpspa10-adv-" + N, icon: dd.e, topic: "Calendario de Adviento · Puerta " + N, title: dd.t,
+    intro: `<div class="story">${dd.txt}</div><p class="de">Lies den Text – er bleibt bei den Fragen sichtbar.</p>`,
+    goLabel: "🎁 ¡Abrir!", time: "3–5 minutos",
+    stages: [{ label: "Puerta " + N, title: dd.t, memo: `<div class="story">${dd.txt}</div>`, pista: "Die Antwort steht im Text oben.", tasks: dd.q }],
+    scene: (S) => `<div class="xm"><div class="tree">🎄</div><div class="gift" style="left:28%">🎁</div><div class="gift" style="left:62%">${dd.e}</div><div class="me">${E8.myAvatar()}</div><div class="num">${N}</div></div>`,
+    outro: `<div style="font-size:56px">${dd.e}🎄</div><h1>¡Puerta ${N} abierta!</h1><p>Vuelve mañana para la puerta ${Math.min(24, N + 1)}. 🎁</p><p class="de">Morgen öffnet sich das nächste Türchen.</p><p><a class="btn" href="adviento.html">🗓️ Al calendario</a></p>`
+  });
+} else {
+  const nDone = ST && "adv" in ST ? ST.adv : D.reduce((a, _, i) => a + (done(i + 1) ? 1 : 0), 0);
+  const order = [7, 14, 2, 21, 10, 18, 5, 24, 12, 1, 16, 9, 20, 3, 13, 23, 6, 11, 19, 15, 4, 22, 8, 17];
+  const before = TODAY < new Date(YEAR, 11, 1), days = Math.ceil((new Date(YEAR, 11, 1) - TODAY) / 864e5);
+  const RW = [[10, "🌺 Flor de Nochebuena para el pelo", "Tienda · Avatar"], [20, "🧣 Bufanda de estrellas", "Tienda · Avatar"], [24, "⭐ Piñata de estrella gigante", "Mi casa · jardín"]];
+  document.getElementById("app").innerHTML = `<div class="wrapA"><a class="back" href="index.html">← Lobby</a>
+    <h1>Calendario de Adviento</h1>
+    <div class="sub">Cada día una puerta: tradiciones de Navidad en España y Latinoamérica. 🎄<div class="de">Jeden Tag ein Türchen (3–5 Minuten). Verpasste Türchen kannst du nachholen – bis zum 10. Januar.</div></div>
+    ${before ? `<div class="sub" style="font-size:22px">⏳ ¡Faltan ${days} día${days > 1 ? "s" : ""}! La primera puerta abre el <b>1 de diciembre</b>.</div>` : ""}
+    <div class="bar"><i style="width:${Math.round(nDone / 24 * 100)}%"></i></div><div class="de" style="text-align:center">${nDone} / 24 puertas abiertas</div>
+    <div class="rw">${RW.map(([n, t, w]) => `<div class="${nDone >= n ? "ok" : ""}"><b>${n} puertas</b><br>${t}<br><span class="de">${nDone >= n ? "✔ ¡Ya puedes comprarlo! – " + w : w}</span></div>`).join("")}</div>
+    <div class="grid">${order.map((n, i) => { const o = isOpen(n), dn = done(n);
+      return `<a class="door ${o ? "" : "lock"} ${isToday(n) && !dn ? "today" : ""} ${dn ? "done" : ""}" href="?d=${n}${local && qs.get("hoy") ? "&hoy=" + qs.get("hoy") : ""}" style="background:linear-gradient(135deg,${COL[i % 6]},${COL[(i + 2) % 6]})">${dn ? `<span class="em">${D[n - 1].e}</span><small>${n}</small>` : n}</a>`; }).join("")}</div></div>`;
+}
+</script>
+</body>
+</html>

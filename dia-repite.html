@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>El día que se repite · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#2a2450 0%,#0a0818 70%);--panel:#16122a;--txt:#f3f0ff;--muted:#b4aad8;--line:#2e2852;--btn:#1f1a3a;--accent:#7a8cff;--accentTxt:#fff;--accent2:#c5ccff;--bubble:#241e44;--input:#0c0a1c;--ok:#6fe59a;--bad:#ffb03a}
+  .scn{position:relative;padding:14px 14px 10px;background:linear-gradient(135deg,#2a3a8a,#6a5ad0);border-radius:14px 14px 0 0;overflow:hidden}
+  .scn .row1{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .scn .ttl{font:800 15px system-ui;letter-spacing:.06em;color:#fff;text-transform:uppercase;opacity:.95}
+  .scn .st{display:flex;gap:6px;margin:10px 0 6px;flex-wrap:wrap}
+  .scn .st span{font-size:28px;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#ffffff1a;border:2px solid #ffffff33;filter:grayscale(.8);opacity:.6}
+  .scn .st span.d{filter:none;opacity:1;border-color:#ffd23a;background:#ffd23a33}
+  .scn .st span.n{filter:none;opacity:1;border-color:#fff;animation:bob 1.2s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-4px)}}
+  .scn .me{width:42px;height:42px;border-radius:50%;overflow:hidden;background:#fff;border:3px solid #ffd23a;flex:none}
+  .scn .bar{height:9px;border-radius:6px;background:#0005;overflow:hidden} .scn .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff8a2a)}
+  .scn .big{position:absolute;right:16px;bottom:18px;font-size:58px;opacity:.9}
+  .clue{background:#fffbe9;color:#3a2a10;border-radius:8px;padding:8px 12px;font-size:17px;box-shadow:0 2px 4px #0004;margin:6px 0}
+  table.t{border-collapse:collapse;margin:6px 0} table.t td{border:1px solid var(--line);padding:4px 10px}
+  
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=15"></script>
+<script src="juego.js?v=8"></script>
+<script>
+const SCENE = (icons, ttl, big) => (S) => {
+  const k = S.done ? icons.length : S.stage, pct = Math.round((S.done ? 1 : S.solved / S.total) * 100);
+  return `<div class="scn"><div class="row1"><span class="ttl">${ttl}</span><span class="me">${E8.myAvatar()}</span></div>
+    <div class="st">${icons.map((e, i) => `<span class="${i < k ? "d" : i === k ? "n" : ""}">${e}</span>`).join("")}</div>
+    <div class="bar"><i style="width:${pct}%"></i></div>${big ? `<div class="big">${typeof big === "function" ? big(S) : big}</div>` : ""}</div>`;
+};
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", taskDe: "Richtig oder falsch?", keep: true, noType: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+
+const NO = {face:"👧🏼", name:"Nora"}, TT = {face:"⏰", name:"Tic-Tac, el reloj"}, MA = {face:"👩🏻", name:"La madre de Nora"}, PA = {face:"👦🏻", name:"Pau"};
+const REF = "📌 levantarse: <b>me</b> levanto · <b>te</b> levantas · <b>se</b> levanta · <b>nos</b> levantamos · <b>os</b> levantáis · <b>se</b> levantan – das Pronomen steht <b>vor</b> dem Verb.";
+const STEM = "📌 despertarse (e→ie): me desp<b>ie</b>rto · acostarse (o→ue): me ac<b>ue</b>sto · dormirse (o→ue): me d<b>ue</b>rmo · vestirse (e→i): me v<b>i</b>sto · sentarse (e→ie): me s<b>ie</b>nto – aber: nos despertamos, nos acostamos (ohne Wechsel!)";
+const AD = "📌 <b>antes de</b> + Infinitiv = bevor … · <b>después de</b> + Infinitiv = nachdem … · <b>cuando</b> = (immer) wenn: Antes de <b>desayunar</b>, me ducho. · Después de <b>cenar</b>, veo una serie. · Cuando estudio, escucho música.";
+const STAGES = [
+  { label: "Lunes 1", title: "¿Otra vez lunes?", go: "⏰ ¡Riiing!",
+    memo: `⏰ Nora: „Todos los días <b>me levanto</b> a las siete. Mi hermano <b>se levanta</b> tarde. Mis padres <b>se levantan</b> muy temprano. ¿Y tú? ¿A qué hora <b>te levantas</b>? Los sábados mi familia y yo <b>nos levantamos</b> a las diez.“`,
+    intro: `<div class="who"><div class="face">👧🏼</div><div><b class="n">Nora</b>Riiing… Son las siete. Es lunes. ¡Pero… ayer también era lunes! 😱 ¿Qué está pasando?</div></div>
+      <div class="who"><div class="face">⏰</div><div><b class="n">Tic-Tac, el reloj mágico</b>Ji, ji. Estás en un <b>día que se repite</b>. Solo sales si cuentas tu rutina perfecta en español.</div></div>
+      <p class="de">Nora steckt in einer Zeitschleife: Jeden Tag ist wieder Montag! Nur wenn sie ihren Tagesablauf perfekt erzählt, ist morgen Dienstag. Schau dir zuerst Noras Text oben an: Welche kleinen Wörter stehen vor „levanto, levanta …“?</p>`,
+    pista: "Schau in Noras Text: yo → me levanto, mi hermano → se levanta …",
+    tasks: [
+      { t: "choice", q: "yo ___ levanto", keep: true, opts: ["me", "te", "se"], a: "me", hint: "„Me levanto a las siete.“" },
+      { t: "choice", q: "tú ___ levantas", keep: true, opts: ["te", "me", "se"], a: "te", hint: "„¿A qué hora te levantas?“" },
+      { t: "choice", q: "él / ella ___ levanta", keep: true, opts: ["se", "le", "te"], a: "se", hint: "„Mi hermano se levanta tarde.“" },
+      { t: "choice", q: "nosotros ___ levantamos", keep: true, opts: ["nos", "os", "se"], a: "nos", hint: "„… nos levantamos a las diez.“" },
+      { t: "choice", q: "ellos / ellas ___ levantan", keep: true, opts: ["se", "les", "nos"], a: "se", hint: "„Mis padres se levantan …“" },
+      { t: "choice", q: "vosotros ___ levantáis", keep: true, opts: ["os", "nos", "se"], a: "os", hint: "vosotros → os levantáis." },
+      { t: "choice", q: "Wo steht das Pronomen (me, te, se …)?", keep: true, noType: true, opts: ["vor dem Verb", "nach dem Verb", "am Satzende"], a: "vor dem Verb", hint: "Me levanto. – Se ducha. → vor dem konjugierten Verb." }
+    ] },
+  { label: "Lunes 2", title: "La mañana de Nora", memo: REF, shuffle: true,
+    intro: `<div class="who"><div class="face">👧🏼</div><div><b class="n">Nora</b>Riiing… ¡Otra vez lunes! 😩 Vale, cuento mi mañana.</div></div><p class="de">Schreib das Pronomen: me, te, se, nos, os.</p>`,
+    pista: "yo → me · tú → te · él/ella → se · nosotros → nos · vosotros → os · ellos → se",
+    tasks: [
+      { t: "type", who: NO, q: "Primero ___ ducho. 🚿", a: "me" },
+      { t: "type", who: NO, q: "Mi hermano ___ lava los dientes. 🪥", a: "se" },
+      { t: "type", who: MA, q: "Nora, ¿por qué no ___ preparas para el instituto?", a: "te" },
+      { t: "type", who: NO, q: "Mi hermano y yo ___ ponemos la chaqueta. 🧥", a: "nos" },
+      { t: "type", who: MA, q: "Chicos, ¿___ laváis los dientes, por favor?", a: "os" },
+      { t: "type", who: NO, q: "Mis padres ___ quedan en casa. 🏠", a: "se" }
+    ] },
+  { label: "Lunes 3", title: "Verbos con sorpresa", memo: STEM, shuffle: true,
+    intro: `<div class="who"><div class="face">⏰</div><div><b class="n">Tic-Tac</b>Ji, ji… Algunos verbos cambian la vocal. ¿Lo sabes? Si no… ¡otra vez lunes!</div></div><p class="de">Manche Verben ändern den Stammvokal (e→ie, o→ue, e→i) – aber nicht bei nosotros und vosotros. Schreib die Form.</p>`,
+    pista: "Stammwechsel bei yo, tú, él, ellos – nicht bei nosotros/vosotros.",
+    tasks: [
+      { t: "type", q: "despertarse (yo): Me ___ a las siete.", a: "despierto", show: "Me despierto a las siete." },
+      { t: "type", q: "vestirse (yo): Me ___ rápido.", a: "visto", show: "Me visto rápido." },
+      { t: "type", q: "acostarse (ella): Nora se ___ a las diez.", a: "acuesta", show: "Nora se acuesta a las diez." },
+      { t: "type", q: "dormirse (tú): ¿A qué hora te ___?", a: "duermes", show: "¿A qué hora te duermes?" },
+      { t: "type", q: "sentarse (yo): En clase me ___ al lado de Pau.", a: "siento", show: "Me siento al lado de Pau." },
+      { t: "type", q: "despertarse (nosotros): Nos ___ temprano.", a: "despertamos", show: "Nos despertamos temprano. (kein ie!)", tips: { despiertamos: "Achtung: bei nosotros kein ie → despertamos." } },
+      { t: "choice", q: "acostarse (ellos): Mis padres se ___ tarde.", opts: ["acuestan", "acostan", "acuesto"], a: "acuestan", hint: "ellos → se acuestan (o→ue)." }
+    ] },
+  { label: "Lunes 4", title: "¿Antes o después?", memo: AD,
+    pick: { q: "¿Qué hace Nora hoy diferente?", qDe: "Was macht Nora heute anders, um die Schleife zu brechen?", opts: [
+      { t: "🏃‍♀️ Se levanta muy temprano y corre.", intro: `<p>Nora se levanta a las seis y sale a correr. ¡Quizás así cambia el día!</p>` },
+      { t: "😴 Se queda en la cama.", intro: `<p>Nora se queda en la cama… pero Tic-Tac suena y suena. ¡Riiing!</p>` },
+      { t: "📝 Escribe su rutina en una ficha.", intro: `<p>Nora escribe toda su rutina en una ficha. ¡Muy organizada!</p>` }] },
+    intro: `<p>Tic-Tac quiere el orden exacto del día. Usa <b>antes de</b> y <b>después de</b> + infinitivo.</p><p class="de">Nach antes de / después de steht der Infinitiv (Grundform).</p>`,
+    pista: "Nach antes de / después de kommt die Grundform: desayunar, cenar, ducharse …",
+    tasks: [
+      { t: "choice", q: "1️⃣ ducharse → 2️⃣ desayunar: ___ desayunar, me ducho.", opts: ["Antes de", "Después de"], a: "Antes de", hint: "Erst duschen, dann frühstücken → Bevor ich frühstücke = Antes de desayunar." },
+      { t: "choice", q: "1️⃣ cenar → 2️⃣ ver una serie: ___ cenar, veo una serie.", opts: ["Después de", "Antes de"], a: "Después de", hint: "Erst essen, dann die Serie → Después de cenar." },
+      { t: "choice", q: "Antes de ___, me lavo los dientes.", opts: ["acostarme", "me acuesto", "acuesto"], a: "acostarme", hint: "Nach antes de: Infinitiv → acostarme." },
+      { t: "order", task: "Ordena:", taskDe: "Nach dem Abendessen schaue ich eine Folge.", words: ["Después", "de", "cenar,", "veo", "un", "episodio."], a: "Después de cenar, veo un episodio." },
+      { t: "order", task: "Ordena:", taskDe: "Bevor ich lerne, mache ich eine Pause.", words: ["Antes", "de", "estudiar,", "hago", "una", "pausa."], a: "Antes de estudiar, hago una pausa." },
+      { t: "choice", q: "___ estudio, escucho música. 🎧", qDe: "(Immer) wenn ich lerne, höre ich Musik.", opts: ["Cuando", "Antes de", "Después de"], a: "Cuando", hint: "(immer) wenn = cuando + konjugiertes Verb." }
+    ] },
+  { label: "Lunes 5", title: "Toda la rutina", memo: REF + "<br>" + AD, shuffle: true,
+    intro: `<div class="who"><div class="face">👧🏼</div><div><b class="n">Nora</b>Vale, Tic-Tac. Ahora cuento todo el día. ¡En orden!</div></div><p class="de">Bau Noras Sätze.</p>`,
+    tasks: [
+      { t: "order", who: NO, task: "Nora:", taskDe: "Ich wache um sieben Uhr auf.", words: ["Me", "despierto", "a", "las", "siete."], a: "Me despierto a las siete." },
+      { t: "order", who: NO, task: "Nora:", taskDe: "Ich ziehe mich schnell an.", words: ["Me", "visto", "rápido."], a: "Me visto rápido." },
+      { t: "order", who: NO, task: "Nora:", taskDe: "In der Schule setze ich mich neben Pau.", words: ["En", "clase", "me", "siento", "al", "lado", "de", "Pau."], a: "En clase me siento al lado de Pau." },
+      { t: "order", who: PA, task: "Pau:", taskDe: "Um wie viel Uhr gehst du ins Bett?", words: ["¿A", "qué", "hora", "te", "acuestas?"], a: "¿A qué hora te acuestas?" },
+      { t: "order", who: NO, task: "Nora:", taskDe: "Wenn ich müde bin, schlafe ich schnell ein.", words: ["Cuando", "estoy", "cansada,", "me", "duermo", "rápido."], a: "Cuando estoy cansada, me duermo rápido." }
+    ] },
+  { label: "Lunes 6", title: "¡La última prueba!", go: "⏰ ¡Última oportunidad!", memo: REF + "<br>" + STEM, shuffle: true,
+    intro: `<div class="who"><div class="face">⏰</div><div><b class="n">Tic-Tac</b>Mi última prueba: en el diario de Nora hay errores. Si los encuentras todos, ¡mañana es martes!</div></div><p class="de">Tippe auf das falsche Wort und wähle die richtige Form.</p>`,
+    tasks: [
+      { t: "error", words: ["Yo", "se", "levanto", "a", "las", "siete."], bad: 1, fix: "me", opts: ["me", "te", "nos"], hint: "yo → me levanto." },
+      { t: "error", words: ["Mi", "hermano", "me", "ducha", "por", "la", "noche."], bad: 2, fix: "se", opts: ["se", "te", "os"], hint: "mi hermano = él → se ducha." },
+      { t: "error", words: ["Nosotros", "nos", "despiertamos", "temprano."], bad: 2, fix: "despertamos", opts: ["despertamos", "despiertan", "despierto"], hint: "nosotros: kein ie → despertamos." },
+      { t: "error", words: ["Me", "acosto", "a", "las", "diez."], bad: 1, fix: "acuesto", opts: ["acuesto", "acostamos", "acuestas"], hint: "acostarse: yo → me acuesto (o→ue)." },
+      { t: "error", words: ["Antes", "de", "me", "ducho,", "desayuno."], bad: 2, fix: "ducharme,", opts: ["ducharme,", "ducho,", "duchas,"], hint: "antes de + Infinitiv: antes de ducharme." },
+      VF("„Después de cenar“ heißt „nach dem Abendessen“.", true, "después de + cenar = nach dem Abendessen.")
+    ] }
+];
+JUEGO.start({
+  id: "reflexivos", key: "wpspa10-reflexivos", icon: "⏰", topic: "verbos reflexivos · antes de / después de · cuando", title: "El día que se repite",
+  intro: `<p>⏰ Nora se despierta. Es lunes. Al día siguiente… ¡otra vez lunes! Y otra vez. Y otra vez. 😱</p>
+    <p>Un reloj mágico, <b>Tic-Tac</b>, dice: „Solo sales si cuentas tu rutina perfecta.“ ¡Ayuda a Nora!</p>
+    <p class="de">Zeitschleife: Hilf Nora, ihren Tagesablauf perfekt zu erzählen – mit reflexiven Verben, antes de / después de + Infinitiv und cuando (Unidad 2, B).</p>`,
+  goLabel: "⏰ ¡Despierta!", time: "ca. 20 minutos", rulesLabel: "Reglas",
+  rules: `<h2>Reflexive Verben</h2>
+    <table class="t"><tr><td>yo</td><td><b>me</b> levanto</td><td>nosotros/as</td><td><b>nos</b> levantamos</td></tr><tr><td>tú</td><td><b>te</b> levantas</td><td>vosotros/as</td><td><b>os</b> levantáis</td></tr><tr><td>él / ella</td><td><b>se</b> levanta</td><td>ellos / ellas</td><td><b>se</b> levantan</td></tr></table>
+    <div class="rule">e→ie: despertarse, sentarse · o→ue: acostarse, dormirse · e→i: vestirse – nicht bei nosotros/vosotros</div>
+    <div class="rule"><b>antes de</b> / <b>después de</b> + Infinitiv · <b>cuando</b> + konjugiertes Verb</div>`,
+  stages: STAGES,
+  scene: SCENE(["1", "2", "3", "4", "5", "6"].map(n => "📅"), "⏰ El día que se repite", S => S.done ? "☀️ <span style='font-size:22px;color:#fff'>¡MARTES!</span>" : "⏰"),
+  outro: `<div style="font-size:60px">⏰💥☀️</div><h1>¡Por fin martes!</h1><div class="who" style="text-align:left"><div class="face">👧🏼</div><div><b class="n">Nora</b>¡Es martes! ¡Gracias! Nunca más digo „¡Qué pereza, otro lunes!“. 😄</div></div>`
+});
+
+</script>
+</body>
+</html>

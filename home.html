@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Mi casa · The Hirsch Games</title>
+<title>Mi casa · Los Juegos del Ciervo · Español WP 10</title>
 <link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -72,8 +72,8 @@
 <body>
 <div class="wrap" id="app"></div>
 <div class="ov" id="ov"><div class="box" id="ovbox"></div></div>
-<script src="game.js?v=11"></script>
-<script src="house.js?v=12"></script>
+<script src="game.js?v=15"></script>
+<script src="house.js?v=14"></script>
 <script>
 const $ = id => document.getElementById(id);
 const H = window.HOUSE;
@@ -95,6 +95,7 @@ function lockReason(it) {
   if (it.months && !E8.inSeason(it)) return "🗓 " + (it.months.length === 1 ? MON[it.months[0]] : MON[it.months[0]] + "–" + MON[it.months[it.months.length - 1]]);
   if (it.lvl && s.level < it.lvl) return "🔒 Nivel " + it.lvl;
   if (it.stars && stars() < it.stars) return "🔒 " + it.stars + " ⭐";
+  if (it.adv && (s.adv || 0) < it.adv) return "🎄 " + (s.adv || 0) + "/" + it.adv + " puertas";
   return "";
 }
 

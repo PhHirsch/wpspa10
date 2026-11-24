@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>El misterio del Camino · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#203a32 0%,#07120f 70%);--panel:#10201b;--txt:#f0fbf6;--muted:#a3c8b8;--line:#244038;--btn:#173029;--accent:#e8c34a;--accentTxt:#241c00;--accent2:#f5dc8a;--bubble:#1a3a30;--input:#081410;--ok:#6fe59a;--bad:#ff8a7a}
+  .scn{position:relative;padding:14px 14px 10px;background:linear-gradient(135deg,#2a5a4a,#6a8a5a);border-radius:14px 14px 0 0;overflow:hidden}
+  .scn .row1{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .scn .ttl{font:800 15px system-ui;letter-spacing:.06em;color:#fff;text-transform:uppercase;opacity:.95}
+  .scn .st{display:flex;gap:6px;margin:10px 0 6px;flex-wrap:wrap}
+  .scn .st span{font-size:28px;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#ffffff1a;border:2px solid #ffffff33;filter:grayscale(.8);opacity:.6}
+  .scn .st span.d{filter:none;opacity:1;border-color:#ffd23a;background:#ffd23a33}
+  .scn .st span.n{filter:none;opacity:1;border-color:#fff;animation:bob 1.2s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-4px)}}
+  .scn .me{width:42px;height:42px;border-radius:50%;overflow:hidden;background:#fff;border:3px solid #ffd23a;flex:none}
+  .scn .bar{height:9px;border-radius:6px;background:#0005;overflow:hidden} .scn .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff8a2a)}
+  .scn .big{position:absolute;right:16px;bottom:18px;font-size:58px;opacity:.9}
+  .clue{background:#fffbe9;color:#3a2a10;border-radius:8px;padding:8px 12px;font-size:17px;box-shadow:0 2px 4px #0004;margin:6px 0}
+  table.t{border-collapse:collapse;margin:6px 0} table.t td{border:1px solid var(--line);padding:4px 10px}
+  
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=15"></script>
+<script src="juego.js?v=8"></script>
+<script>
+const SCENE = (icons, ttl, big) => (S) => {
+  const k = S.done ? icons.length : S.stage, pct = Math.round((S.done ? 1 : S.solved / S.total) * 100);
+  return `<div class="scn"><div class="row1"><span class="ttl">${ttl}</span><span class="me">${E8.myAvatar()}</span></div>
+    <div class="st">${icons.map((e, i) => `<span class="${i < k ? "d" : i === k ? "n" : ""}">${e}</span>`).join("")}</div>
+    <div class="bar"><i style="width:${pct}%"></i></div>${big ? `<div class="big">${typeof big === "function" ? big(S) : big}</div>` : ""}</div>`;
+};
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", taskDe: "Richtig oder falsch?", keep: true, noType: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+
+const LI = {face:"👩🏽", name:"Lili"}, PA = {face:"👦🏻", name:"Pau"}, PE = {face:"🧔🏻", name:"El peregrino misterioso"}, CA = {face:"✉️", name:"La carta"}, YO = {av:true, name:"Tú"};
+const IRA = "📌 <b>ir a</b> + Infinitiv = Zukunft (gleich / bald): <b>voy</b> a · <b>vas</b> a · <b>va</b> a · <b>vamos</b> a · <b>vais</b> a · <b>van</b> a + abrir, buscar …";
+const OD = "📌 statt das Nomen zu wiederholen: el sobre → <b>lo</b> · la carta → <b>la</b> · los mapas → <b>los</b> · las fotos → <b>las</b>. Das Pronomen steht <b>vor</b> dem konjugierten Verb: ¿Tienes la carta? – Sí, <b>la</b> tengo. · <b>La</b> voy a leer.";
+const OT = "📌 <b>otro</b> acertijo · <b>otra</b> carta · <b>otros</b> peregrinos · <b>otras</b> pistas – nie mit „un/una“ davor!";
+const STAGES = [
+  { label: "Pista 1", title: "Un sobre en Santiago", go: "✉️ ¡Abrir el sobre!",
+    memo: `✉️ Lili: „Mañana <b>vamos a</b> visitar la catedral. Pau <b>va a</b> sacar muchas fotos. ¿Y tú? ¿Qué <b>vas a</b> hacer? Yo <b>voy a</b> comer empanada. Mis padres <b>van a</b> pasear por el centro histórico.“`,
+    intro: `<p>🏛️ Estás con Lili y Pau en <b>Santiago de Compostela</b>, el destino final del Camino. De repente, un peregrino misterioso os da un <b>sobre</b>… y se va.</p>
+      <div class="who"><div class="face">✉️</div><div><b class="n">La carta</b>„Si resolvéis mis acertijos, vais a encontrar un tesoro. ¡Pero solo con buen español!“</div></div>
+      <p class="de">Ein geheimnisvoller Pilger gibt euch einen Umschlag mit Rätseln. Lies zuerst Lilis Pläne (oben): Wie sagt man, was man vorhat?</p>`,
+    pista: "Schau in Lilis Text: vamos a visitar, va a sacar … → Form von ir + a + Grundform.",
+    tasks: [
+      { t: "choice", q: "„Mañana <b>vamos a visitar</b> la catedral.“ heißt …", keep: true, noType: true, opts: ["Morgen werden wir die Kathedrale besuchen.", "Gestern haben wir die Kathedrale besucht.", "Wir besuchen immer die Kathedrale."], a: "Morgen werden wir die Kathedrale besuchen.", hint: "ir a + Infinitiv = Zukunft." },
+      { t: "choice", q: "yo ___ a comer", keep: true, opts: ["voy", "vas", "va"], a: "voy", hint: "„Yo voy a comer empanada.“" },
+      { t: "choice", q: "tú ___ a hacer", keep: true, opts: ["vas", "vais", "voy"], a: "vas", hint: "„¿Qué vas a hacer?“" },
+      { t: "choice", q: "Pau ___ a sacar fotos", keep: true, opts: ["va", "van", "vamos"], a: "va", hint: "Pau = él → va." },
+      { t: "choice", q: "mis padres ___ a pasear", keep: true, opts: ["van", "va", "vais"], a: "van", hint: "ellos → van." },
+      { t: "choice", q: "Nach „ir a“ steht …", keep: true, noType: true, opts: ["der Infinitiv (visitar, comer …)", "das konjugierte Verb (visito, como …)"], a: "der Infinitiv (visitar, comer …)", hint: "vamos a visitar – voy a comer: Grundform." }
+    ] },
+  { label: "Pista 2", title: "¿Qué vais a hacer?", memo: IRA, shuffle: true,
+    intro: `<div class="who"><div class="face">✉️</div><div><b class="n">Acertijo 1</b>„Primero tenéis que decir qué vais a hacer. Completad con <b>ir</b>.“</div></div><p class="de">Schreib die Form von ir.</p>`,
+    pista: "yo voy · tú vas · él/ella va · nosotros vamos · vosotros vais · ellos van",
+    tasks: [
+      { t: "type", who: LI, q: "Yo ___ a leer la carta en voz alta.", a: "voy" },
+      { t: "type", who: PA, q: "Lili y yo ___ a resolver el acertijo.", a: "vamos" },
+      { t: "type", who: LI, q: "Pau, ¿___ a buscar la plaza?", a: "vas" },
+      { t: "type", who: PE, q: "Chicos, ¿___ a encontrar el tesoro?", a: "vais" },
+      { t: "type", who: PA, q: "Los peregrinos ___ a llegar a la catedral.", a: "van" },
+      { t: "type", who: LI, q: "¡Hoy ___ a ser un día mágico! (el día)", a: "va", show: "Hoy va a ser un día mágico." }
+    ] },
+  { label: "Pista 3", title: "¿Lo tienes?", memo: OD,
+    intro: `<div class="who"><div class="face">👦🏻</div><div><b class="n">Pau</b>¿Tienes el sobre? – Sí, <b>lo</b> tengo. ¿Y la carta? – <b>La</b> tengo también. ¿Y los mapas? – No <b>los</b> tengo. 😬</div></div><p class="de">Statt das Nomen zu wiederholen, sagt man lo / la / los / las. Was passt?</p>`,
+    pista: "el → lo · la → la · los → los · las → las",
+    tasks: [
+      { t: "choice", q: "el sobre → ___", keep: true, opts: ["lo", "la", "los"], a: "lo", hint: "el sobre (m., Sg.) → lo." },
+      { t: "choice", q: "la carta → ___", keep: true, opts: ["la", "lo", "las"], a: "la", hint: "la carta (f., Sg.) → la." },
+      { t: "choice", q: "los mapas → ___", keep: true, opts: ["los", "las", "lo"], a: "los", hint: "los mapas (m., Pl.) → los." },
+      { t: "choice", q: "las fotos → ___", keep: true, opts: ["las", "los", "la"], a: "las", hint: "las fotos (f., Pl.) → las." },
+      { t: "choice", q: "Wo steht „lo“ in „Sí, lo tengo.“?", keep: true, noType: true, opts: ["vor dem Verb", "nach dem Verb"], a: "vor dem Verb", hint: "Sí, lo tengo. – No los tengo." }
+    ] },
+  { label: "Pista 4", title: "Por las calles de Santiago", memo: OD, shuffle: true,
+    pick: { q: "¿Por dónde vais?", qDe: "Welchen Weg nehmt ihr?", opts: [
+      { t: "🌧️ Por la Rúa do Franco – hay muchos bares", intro: `<p>🌧️ Llueve. Vais por la Rúa do Franco: huele a empanada… 😋</p>` },
+      { t: "🌳 Por el parque de la Alameda", intro: `<p>🌳 Vais por el parque. Desde aquí se ve la catedral al fondo.</p>` },
+      { t: "🏛️ Por la Plaza de la Quintana", intro: `<p>🏛️ Vais por la Plaza de la Quintana. ¡Hay muchos peregrinos!</p>` }] },
+    intro: `<p>En cada calle hay una pregunta. Contesta con <b>lo, la, los, las</b>.</p><p class="de">Schreib nur das Pronomen.</p>`,
+    pista: "Welches Nomen ist gemeint? Geschlecht und Zahl → lo / la / los / las.",
+    tasks: [
+      { t: "type", who: PA, q: "¿Tienes el paraguas? – Sí, ___ tengo. ☂️", a: "lo" },
+      { t: "type", who: LI, q: "¿Ves la torre? – Sí, ___ veo al fondo.", a: "la" },
+      { t: "type", who: PA, q: "¿Conoces a los peregrinos? – No, no ___ conozco.", a: "los" },
+      { t: "type", who: LI, q: "¿Dónde están las empanadas? – ¡Pau ___ tiene! 😠", a: "las" },
+      { t: "type", who: YO, q: "¿Quién lee el acertijo? – Yo ___ leo.", a: "lo" },
+      { t: "type", who: PA, q: "¿Pedimos la tarta de Santiago? – ¡Sí, ___ pedimos!", a: "la" }
+    ] },
+  { label: "Pista 5", title: "¿Otro acertijo?", memo: OT + "<br>" + IRA + "<br>" + OD,
+    intro: `<div class="who"><div class="face">🧔🏻</div><div><b class="n">El peregrino</b>¡Muy bien! Aquí tenéis <b>otro</b> sobre con <b>otra</b> carta… 🙂</div></div><p class="de">otro/otra/otros/otras – und Sätze mit Pronomen und ir a.</p>`,
+    pista: "otro/otra passend zum Nomen, ohne un/una davor. Pronomen vor das konjugierte Verb: Lo voy a …",
+    tasks: [
+      { t: "choice", q: "¡Es ___ acertijo! 😩", opts: ["otro", "otra", "un otro"], a: "otro", hint: "el acertijo → otro (ohne un!)." },
+      { t: "choice", q: "Necesitamos ___ pistas.", opts: ["otras", "otros", "unas otras"], a: "otras", hint: "las pistas → otras." },
+      { t: "choice", q: "Hoy vienen ___ peregrinos.", opts: ["otros", "otras", "otro"], a: "otros", hint: "los peregrinos → otros." },
+      { t: "order", who: LI, task: "Lili:", taskDe: "Ich werde den Brief laut lesen. (ihn)", words: ["La", "voy", "a", "leer", "en", "voz", "alta."], a: "La voy a leer en voz alta." },
+      { t: "order", who: PA, task: "Pau:", taskDe: "Wir werden das Rätsel lösen. (es)", words: ["Lo", "vamos", "a", "resolver."], a: "Lo vamos a resolver." },
+      { t: "order", who: LI, task: "Lili:", taskDe: "Hast du die Fotos? – Nein, ich habe sie nicht.", words: ["No,", "no", "las", "tengo."], a: "No, no las tengo." }
+    ] },
+  { label: "Final", title: "El tesoro", go: "🗝️ ¡Último acertijo!", memo: IRA + "<br>" + OD + "<br>" + OT, shuffle: true,
+    intro: `<div class="who"><div class="face">✉️</div><div><b class="n">Último acertijo</b>„En esta carta hay errores. Si los corregís, vais a encontrar el tesoro en la Plaza de la Quintana.“</div></div><p class="de">Finde die Fehler.</p>`,
+    tasks: [
+      { t: "error", words: ["Mañana", "vamos", "a", "visitamos", "la", "catedral."], bad: 3, fix: "visitar", opts: ["visitar", "visita", "visito"], hint: "ir a + Infinitiv: vamos a visitar." },
+      { t: "error", words: ["¿Tienes", "la", "carta?", "–", "Sí,", "lo", "tengo."], bad: 5, fix: "la", opts: ["la", "las", "los"], hint: "la carta → la." },
+      { t: "error", words: ["Pau", "van", "a", "sacar", "fotos."], bad: 1, fix: "va", opts: ["va", "vas", "voy"], hint: "Pau = él → va." },
+      { t: "error", words: ["Necesitamos", "otro", "pista."], bad: 1, fix: "otra", opts: ["otra", "otros", "una otra"], hint: "la pista → otra (ohne una)." },
+      { t: "error", words: ["¿Los", "mapas?", "–", "No", "lo", "tengo."], bad: 4, fix: "los", opts: ["los", "las", "la"], hint: "los mapas → los: No los tengo." },
+      { t: "choice", who: PE, q: "¡Bravo! El tesoro es… 🎁", opts: ["una tarta de Santiago para todos 🍰", "un móvil nuevo 📱", "nada 😶"], a: "una tarta de Santiago para todos 🍰", noType: true, hint: "Der Pilger ist euer Lehrer – und bringt Kuchen mit! 🍰" }
+    ] }
+];
+JUEGO.start({
+  id: "ir-a-lo", key: "wpspa10-camino", icon: "✉️", topic: "ir a + infinitivo · lo, la, los, las · otro/-a", title: "El misterio del Camino",
+  intro: `<p>🏛️ Viaje de clase a <b>Santiago de Compostela</b>. Un peregrino misterioso os da un sobre con acertijos. 🗝️</p>
+    <p>Para resolverlos necesitas <b>ir a + infinitivo</b>, los pronombres <b>lo, la, los, las</b> y <b>otro/otra</b>.</p>
+    <p class="de">Ein geheimnisvoller Umschlag führt euch durch Santiago: futuro inmediato, direkte Objektpronomen und otro/-a (Unidad 3, B).</p>`,
+  goLabel: "🗝️ ¡Al Camino!", time: "ca. 20 minutos", rulesLabel: "Reglas",
+  rules: `<h2>ir a + Infinitiv</h2><div class="rule">voy · vas · va · vamos · vais · van + <b>a</b> + Infinitiv: Voy a leer.</div>
+    <h2>lo · la · los · las</h2><div class="rule">el sobre → <b>lo</b> · la carta → <b>la</b> · los mapas → <b>los</b> · las fotos → <b>las</b></div>
+    <div class="rule">vor dem konjugierten Verb: <b>La</b> tengo. · <b>La</b> voy a leer.</div>
+    <h2>otro / otra</h2><div class="rule">otro acertijo · otra carta · otros · otras – nie „un otro“!</div>`,
+  stages: STAGES,
+  scene: SCENE(["✉️", "🗺️", "🔎", "🌧️", "🧩", "🗝️"], "🏛️ Santiago de Compostela · El misterio", S => S.done ? "🎁" : "🧭"),
+  outro: `<div style="font-size:60px">🗝️🎁🍰</div><h1>¡Misterio resuelto!</h1><div class="who" style="text-align:left"><div class="face">🧔🏻</div><div><b class="n">El peregrino</b>Ja, ja… ¡Soy yo, vuestro profe con barba falsa! 😄 La tarta de Santiago es para todos. ¡Felicidades!</div></div>`
+});
+
+</script>
+</body>
+</html>

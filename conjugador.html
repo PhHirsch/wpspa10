@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>El Conjugador · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -10%,#3a0e6a 0%,#0d0420 55%,#05020c 100%);color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  body:before{content:"";position:fixed;inset:auto 0 0 0;height:45vh;background:linear-gradient(transparent,#ff3bd422),repeating-linear-gradient(90deg,transparent 0 58px,#ff3bd455 58px 60px),repeating-linear-gradient(0deg,transparent 0 38px,#3ab0ff44 38px 40px);transform:perspective(300px) rotateX(55deg);transform-origin:bottom;pointer-events:none;z-index:-1}
+  .wrap{max-width:760px;margin:0 auto;padding:14px}
+  .back{color:#cbb6ff;text-decoration:none;font-size:15px}
+  h1{font-family:"Arial Black",Impact,sans-serif;font-size:44px;margin:8px 0 2px;text-align:center;letter-spacing:.04em;color:#fff;text-shadow:0 0 8px #ff3bd4,0 0 24px #ff3bd4,0 0 40px #8a3bff}
+  .sub{text-align:center;color:#d7c6ff;margin-bottom:14px}
+  .de{color:#b9a8e0;font-size:14px}
+  .panel{background:rgba(20,8,48,.75);border:1px solid #5a2a9a;border-radius:18px;padding:18px;box-shadow:0 0 30px #8a3bff33}
+  .modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+  .mode{background:linear-gradient(135deg,#2a0f5a,#4a1a7a);border:2px solid #8a3bff;color:#fff;border-radius:14px;padding:14px;text-align:left;cursor:pointer;font-size:16px}
+  .mode b{display:block;font-size:20px;margin-bottom:3px}
+  .mode small{color:#d7c6ff}
+  .mode:hover{border-color:#ff3bd4;box-shadow:0 0 16px #ff3bd4aa}
+  .hud{display:flex;justify-content:space-between;align-items:center;font-family:Menlo,Consolas,monospace;font-size:20px;margin-bottom:10px}
+  .hud .sc{color:#3affd4;text-shadow:0 0 8px #3affd4}
+  .hud .cb{color:#ffd23a;text-shadow:0 0 8px #ffd23a}
+  .timer{height:12px;border-radius:8px;background:#1a0838;overflow:hidden;border:1px solid #5a2a9a;margin-bottom:16px}
+  .timer i{display:block;height:100%;background:linear-gradient(90deg,#ff3bd4,#ffd23a);transform-origin:left}
+  .q{text-align:center;margin:8px 0 14px}
+  .q .pr{font-size:28px;color:#3ab0ff;text-shadow:0 0 10px #3ab0ff}
+  .q .vb{font-family:"Arial Black",Impact,sans-serif;font-size:46px;color:#fff;text-shadow:0 0 12px #ff3bd4}
+  .q .mean{color:#b9a8e0;font-size:15px}
+  input{width:100%;font-size:30px;text-align:center;padding:12px;border-radius:12px;border:2px solid #8a3bff;background:#0a0418;color:#fff;outline:none;font-family:inherit}
+  input:focus{border-color:#ff3bd4;box-shadow:0 0 16px #ff3bd488}
+  .acc{display:flex;gap:6px;justify-content:center;margin:10px 0}
+  .acc button{font-size:20px;width:46px;height:42px;border-radius:10px;border:1px solid #8a3bff;background:#1a0838;color:#fff;cursor:pointer}
+  .go{display:block;width:100%;margin-top:6px;font-size:22px;font-weight:800;padding:12px;border:0;border-radius:12px;background:linear-gradient(90deg,#ff3bd4,#8a3bff);color:#fff;cursor:pointer;letter-spacing:.05em}
+  .fb{min-height:30px;text-align:center;font-size:19px;margin-top:10px;font-weight:700}
+  .fb.ok{color:#3affd4}.fb.bad{color:#ff6a8a}.fb.warn{color:#ffd23a}
+  .big{font-family:"Arial Black",Impact,sans-serif;font-size:54px;text-align:center;color:#3affd4;text-shadow:0 0 14px #3affd4}
+  .me{width:64px;height:64px;border-radius:50%;overflow:hidden;background:#fff;border:3px solid #ff3bd4;margin:0 auto 8px;box-shadow:0 0 18px #ff3bd4}
+  .me svg{width:100%;height:100%}
+  .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  .btn{font-size:17px;padding:10px 18px;border-radius:12px;border:1px solid #8a3bff;background:#2a0f5a;color:#fff;text-decoration:none;cursor:pointer}
+  #coinbox{text-align:center;margin-top:12px;background:#1a0838;border-radius:12px;padding:10px}
+  table{border-collapse:collapse;margin:8px auto;font-size:15px}
+  td{padding:3px 10px;border-bottom:1px solid #3a1a6a}
+  .shake{animation:sh .35s}
+  @keyframes sh{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+  .pop{animation:pp .3s}
+  @keyframes pp{50%{transform:scale(1.08)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Lobby</a>
+  <h1>EL CONJUGADOR</h1>
+  <div class="sub">¡Conjuga lo más rápido que puedas! <span class="de">– Konjugiere so schnell du kannst!</span></div>
+  <div id="app" class="panel"></div>
+</div>
+<script src="game.js?v=15"></script>
+<script>
+const P = ["yo", "tú", "él / ella", "nosotros", "vosotros", "ellos / ellas"];
+const reg = (v, de) => { const r = v.slice(0, -2), e = v.slice(-2), E = e === "ar" ? ["o", "as", "a", "amos", "áis", "an"] : e === "er" ? ["o", "es", "e", "emos", "éis", "en"] : ["o", "es", "e", "imos", "ís", "en"]; return E.map(x => r + x).concat([de]); };
+const REG = { hablar: reg("hablar", "sprechen"), nadar: reg("nadar", "schwimmen"), escuchar: reg("escuchar", "hören"), trabajar: reg("trabajar", "arbeiten"), estudiar: reg("estudiar", "lernen"), comer: reg("comer", "essen"), correr: reg("correr", "rennen"), leer: reg("leer", "lesen"), vivir: reg("vivir", "wohnen, leben"), escribir: reg("escribir", "schreiben"), recibir: reg("recibir", "bekommen") };
+const STEM = {
+  jugar: ["juego", "juegas", "juega", "jugamos", "jugáis", "juegan", "spielen (u→ue)"],
+  perder: ["pierdo", "pierdes", "pierde", "perdemos", "perdéis", "pierden", "verlieren (e→ie)"],
+  querer: ["quiero", "quieres", "quiere", "queremos", "queréis", "quieren", "wollen (e→ie)"],
+  dormir: ["duermo", "duermes", "duerme", "dormimos", "dormís", "duermen", "schlafen (o→ue)"],
+  poder: ["puedo", "puedes", "puede", "podemos", "podéis", "pueden", "können (o→ue)"],
+  pedir: ["pido", "pides", "pide", "pedimos", "pedís", "piden", "bestellen (e→i)"]
+};
+const REF = {
+  levantarse: ["me levanto", "te levantas", "se levanta", "nos levantamos", "os levantáis", "se levantan", "aufstehen"],
+  ducharse: ["me ducho", "te duchas", "se ducha", "nos duchamos", "os ducháis", "se duchan", "duschen"],
+  despertarse: ["me despierto", "te despiertas", "se despierta", "nos despertamos", "os despertáis", "se despiertan", "aufwachen (e→ie)"],
+  acostarse: ["me acuesto", "te acuestas", "se acuesta", "nos acostamos", "os acostáis", "se acuestan", "ins Bett gehen (o→ue)"],
+  vestirse: ["me visto", "te vistes", "se viste", "nos vestimos", "os vestís", "se visten", "sich anziehen (e→i)"]
+};
+const IRRV = {
+  ser: ["soy", "eres", "es", "somos", "sois", "son", "sein"],
+  estar: ["estoy", "estás", "está", "estamos", "estáis", "están", "sein, sich befinden"],
+  tener: ["tengo", "tienes", "tiene", "tenemos", "tenéis", "tienen", "haben"],
+  ir: ["voy", "vas", "va", "vamos", "vais", "van", "gehen, fahren"],
+  hacer: ["hago", "haces", "hace", "hacemos", "hacéis", "hacen", "machen"],
+  poner: ["pongo", "pones", "pone", "ponemos", "ponéis", "ponen", "setzen, stellen, legen"],
+  traer: ["traigo", "traes", "trae", "traemos", "traéis", "traen", "mitbringen"],
+  salir: ["salgo", "sales", "sale", "salimos", "salís", "salen", "ausgehen, abfahren"],
+  conocer: ["conozco", "conoces", "conoce", "conocemos", "conocéis", "conocen", "kennen"],
+  elegir: ["elijo", "eliges", "elige", "elegimos", "elegís", "eligen", "(aus)wählen"]
+};
+const IRR = Object.assign({}, REG, STEM, REF, IRRV);
+const form = (v, i) => IRR[v][i];
+const mean = v => IRR[v][6];
+const MODES = {
+  reg: { t: "Verbos regulares", d: "hablar, comer, vivir …", v: Object.keys(REG) },
+  stem: { t: "Cambio de vocal", d: "jugar, dormir, pedir … (ue, ie, i)", v: Object.keys(STEM) },
+  ref: { t: "Verbos reflexivos", d: "me levanto, te duchas …", v: Object.keys(REF) },
+  irr: { t: "Irregulares", d: "ser, estar, ir, hacer, traer …", v: Object.keys(IRRV) },
+  todo: { t: "¡Todo!", d: "Alles gemischt – für Profis", v: Object.keys(IRR) }
+};
+const KEY = "wpspa10-conjugador";
+const $ = id => document.getElementById(id);
+const strip = x => x.normalize("NFD").replace(/[̀-ͯ]/g, "");
+const clean = x => x.trim().toLowerCase().replace(/\s+/g, " ").replace(/^(yo|tú|tu|él|el|ella|nosotros|nosotras|vosotros|vosotras|ellos|ellas) /, "");
+let G = null, S = null, tick = null;
+function best(m) { try { return +localStorage.getItem(KEY + "-best-" + m) || 0; } catch (e) { return 0; } }
+function setBest(m, v) { try { localStorage.setItem(KEY + "-best-" + m, v); } catch (e) {} }
+const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+function menu() {
+  clearInterval(tick);
+  $("app").innerHTML = `<div class="me">${E8.myAvatar()}</div>
+    <p style="text-align:center;margin:0 0 4px">Aparece un pronombre y un verbo. Escribe la forma correcta – ¡antes de que se acabe el tiempo! ⏱️</p>
+    <p class="de" style="text-align:center;margin:0">Pronomen + Verb erscheinen. Tippe die richtige Form, bevor die Zeit abläuft. Du hast 3 Leben ❤️. Jede richtige Antwort in Folge erhöht den Combo-Bonus – und das Tempo!</p>
+    <div class="modes">${Object.entries(MODES).map(([k, m]) => `<button class="mode" data-m="${k}"><b>${m.t}</b><small>${m.d}</small><br><span class="de">Récord: ${best(k)}</span></button>`).join("")}</div>
+    <details><summary class="de" style="cursor:pointer">📜 Formen nachschauen</summary>
+    <table><tr><td></td><td>hablar</td><td>comer</td><td>vivir</td><td>jugar</td><td>levantarse</td><td>ser</td><td>estar</td><td>ir</td></tr>
+    ${P.map((p, i) => `<tr><td>${p}</td>${["hablar", "comer", "vivir", "jugar", "levantarse", "ser", "estar", "ir"].map(v => `<td>${IRR[v][i]}</td>`).join("")}</tr>`).join("")}</table></details>`;
+  document.querySelectorAll(".mode").forEach(b => b.onclick = () => start(b.dataset.m));
+}
+
+function start(m) {
+  G = { m: m, score: 0, lives: 3, combo: 0, n: 0, last: "" };
+  S = { mistakes: 0, total: 0, start: Date.now(), wrongWords: [] };
+  next();
+}
+const limit = () => Math.max(5, 15 - G.n * 0.35);
+function next() {
+  let v, i, k;
+  do { v = MODES[G.m].v[Math.floor(Math.random() * MODES[G.m].v.length)]; i = Math.floor(Math.random() * 6); k = v + i; } while (k === G.last);
+  G.last = k; G.v = v; G.i = i; G.t0 = Date.now(); G.lim = limit(); G.lock = false;
+  $("app").innerHTML = `<div class="hud"><span>${"❤️".repeat(G.lives)}${"🖤".repeat(3 - G.lives)}</span><span class="cb">${G.combo > 1 ? "COMBO ×" + Math.min(5, G.combo) : ""}</span><span class="sc">${G.score}</span></div>
+    <div class="timer"><i id="bar"></i></div>
+    <div class="q" id="q"><div class="pr">${P[i]}</div><div class="vb">${v}</div><div class="mean">${mean(v)}</div></div>
+    <input id="in" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="…">
+    <div class="acc">${["á", "é", "í", "ó", "ú"].map(a => `<button data-a="${a}">${a}</button>`).join("")}</div>
+    <button class="go" id="ok">OK ⏎</button><div class="fb" id="fb"></div>`;
+  const inp = $("in"); inp.focus();
+  document.querySelectorAll(".acc button").forEach(b => b.onclick = () => { const p = inp.selectionStart || inp.value.length; inp.value = inp.value.slice(0, p) + b.dataset.a + inp.value.slice(p); inp.focus(); inp.setSelectionRange(p + 1, p + 1); });
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+  $("ok").onclick = check;
+  clearInterval(tick);
+  tick = setInterval(() => { const f = 1 - (Date.now() - G.t0) / 1000 / G.lim; $("bar").style.transform = `scaleX(${Math.max(0, f)})`; if (f <= 0) check(true); }, 50);
+}
+function check(timeout) {
+  if (G.lock) return;
+  const val = clean($("in").value), sol = form(G.v, G.i);
+  if (!timeout && !val) return;
+  G.lock = true; clearInterval(tick); S.total++; G.n++;
+  const fb = $("fb");
+  if (val === sol || strip(val) === strip(sol)) {
+    G.combo++;
+    const mult = Math.min(5, G.combo), speed = Math.max(0, Math.round((1 - (Date.now() - G.t0) / 1000 / G.lim) * 10));
+    let pts = (10 + speed) * mult;
+    if (val !== sol) { pts = Math.round(pts / 2); fb.className = "fb warn"; fb.innerHTML = `✓ ¡Ojo con el acento! – Akzent: <b>${sol}</b> (+${pts})`; }
+    else { fb.className = "fb ok"; fb.textContent = `✓ ¡Correcto! +${pts}`; }
+    G.score += pts; $("q").classList.add("pop");
+    setTimeout(next, val === sol ? 550 : 1300);
+  } else {
+    G.combo = 0; G.lives--; S.mistakes++;
+    if (S.wrongWords.length < 20) S.wrongWords.push(`${P[G.i]} – ${G.v}`);
+    fb.className = "fb bad"; fb.innerHTML = `${timeout ? "⏱️ ¡Tiempo!" : "✗"} ${P[G.i]} <b>${sol}</b>`;
+    $("app").classList.add("shake"); setTimeout(() => $("app").classList.remove("shake"), 400);
+    setTimeout(G.lives > 0 ? next : over, 1800);
+  }
+}
+function over() {
+  clearInterval(tick); S.end = Date.now(); save();
+  const rec = G.score > best(G.m); if (rec) setBest(G.m, G.score);
+  $("app").innerHTML = `<div class="me">${E8.myAvatar()}</div><div style="text-align:center;font-size:22px">GAME OVER</div>
+    <div class="big">${G.score}</div><div style="text-align:center">${rec ? "🏆 ¡NUEVO RÉCORD! – Neuer Rekord!" : "Récord: " + best(G.m)}</div>
+    <div style="text-align:center" class="de">${S.total - S.mistakes} formas correctas · ${MODES[G.m].t}</div>
+    ${S.wrongWords.length ? `<div style="text-align:center;margin-top:8px">Repasa: ${S.wrongWords.map(w => { const [p, v] = w.split(" – "); return `<b>${p} ${form(v, P.indexOf(p))}</b>`; }).join(" · ")}</div>` : ""}
+    <div id="coinbox"></div>
+    <div class="row"><button class="btn" id="again">🔁 Otra vez</button><button class="btn" id="menu">🎮 Modos</button><a class="btn" href="index.html">🏠 Lobby</a></div>`;
+  if (S.total >= 10) E8.reportInto("coinbox", "conjugador", S, save);
+  else $("coinbox").innerHTML = `Monedas a partir de 10 respuestas. <div class="de">Münzen gibt es ab 10 Antworten.</div>`;
+  $("again").onclick = () => start(G.m); $("menu").onclick = menu;
+}
+menu();
+window.CONJ = { G: () => G, form: form };
+</script>
+</body>
+</html>

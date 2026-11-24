@@ -1058,5 +1058,107 @@
 "price": 1200,
 "kind": "aurora",
 "lvl": 7
+},
+{
+"id": "top-abs-shirt",
+"slot": "top",
+"name": "Camiseta de graduación 2027",
+"price": 120,
+"kind": "abishirt",
+"color": "#1d1d22",
+"l1": "ABSCHLUSS",
+"l2": "2027"
+},
+{
+"id": "top-abs-hoodie",
+"slot": "top",
+"name": "Sudadera de graduación 2027",
+"price": 180,
+"kind": "abihoodie",
+"color": "#1d3a6e",
+"l1": "10er",
+"l2": "2027"
+},
+{
+"id": "top-abs-gala",
+"slot": "top",
+"name": "Traje de gala",
+"price": 300,
+"kind": "gala",
+"color": "#1d1d22",
+"lvl": 3
+},
+{
+"id": "top-abs-dress",
+"slot": "top",
+"name": "Vestido de gala",
+"price": 300,
+"kind": "dress",
+"color": "#1c2a6b",
+"lvl": 3
+},
+{
+"id": "top-abs-dress-gold",
+"slot": "top",
+"name": "Vestido de gala dorado ✨",
+"price": 450,
+"kind": "dress",
+"color": "#d4a93a",
+"lvl": 5
+},
+{
+"id": "top-abs-toga",
+"slot": "top",
+"name": "Toga de graduación",
+"price": 350,
+"kind": "toga",
+"color": "#20243a",
+"lvl": 4,
+"l3": "ABSCHLUSS 27",
+"l4": "SEK HX"
+},
+{
+"id": "hat-birrete",
+"slot": "hat",
+"name": "Birrete",
+"price": 250,
+"kind": "birrete",
+"color": "#20243a",
+"lvl": 4,
+"l2": "2027"
+},
+{
+"id": "top-judogi",
+"slot": "top",
+"name": "Kimono de judo 🥋",
+"price": 120,
+"kind": "judogi",
+"color": "#fbfbf8",
+"unit": 2
+},
+{
+"id": "top-delantal",
+"slot": "top",
+"name": "Delantal de cocina 🍳",
+"price": 80,
+"kind": "delantal",
+"color": "#ff8a2a",
+"unit": 9
+},
+{
+"id": "hat-flornb",
+"slot": "hat",
+"name": "Flor de Nochebuena para el pelo 🌺",
+"price": 50,
+"kind": "flornb",
+"adv": 10
+},
+{
+"id": "ex-bufanda",
+"slot": "extra",
+"name": "Bufanda de estrellas 🧣",
+"price": 80,
+"kind": "bufanda",
+"adv": 20
 }
 ]

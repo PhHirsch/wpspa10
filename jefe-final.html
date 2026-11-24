@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Jefe final · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#3a0a0a 0%,#0c0303 70%);--panel:#1a0808;--txt:#fff2ee;--muted:#d8a8a0;--line:#4a1a14;--btn:#2a0c0a;--accent:#ff5a2a;--accentTxt:#fff;--accent2:#ffb38f;--bubble:#2a0f0c;--input:#120404;--ok:#6fe59a;--bad:#ffb03a}
+  .arena{position:relative;height:210px;overflow:hidden;border-radius:14px 14px 0 0;background:radial-gradient(ellipse at 50% 120%,#ff5a2a55,transparent 60%),linear-gradient(#1a0606,#3a0c08)}
+  .arena .boss{position:absolute;right:8%;bottom:20px;font-size:110px;line-height:1;filter:drop-shadow(0 0 20px #ff5a2a88);transition:transform .2s}
+  .arena .boss.hit{animation:hit .4s}
+  @keyframes hit{25%{transform:translateX(14px) rotate(6deg);filter:brightness(2.2)}60%{transform:translateX(-6px)}}
+  .arena .boss.rage{animation:rage 1.2s infinite}
+  @keyframes rage{50%{transform:scale(1.06);filter:drop-shadow(0 0 30px #ff2a2a)}}
+  .arena .hero{position:absolute;left:8%;bottom:20px;width:96px;height:96px;border-radius:50%;overflow:hidden;background:#fff;border:4px solid #3ab0ff;box-shadow:0 0 20px #3ab0ff88}
+  .arena .hero svg{width:100%;height:100%}
+  .hp{position:absolute;right:4%;top:12px;width:46%}
+  .hp .nm{font-weight:900;font-size:15px;letter-spacing:.05em;text-align:right}
+  .hp .b{height:16px;border-radius:9px;background:#000a;border:2px solid #ff5a2a;overflow:hidden;margin-top:3px}
+  .hp .b i{display:block;height:100%;background:linear-gradient(90deg,#ff2a2a,#ffb03a);transition:width .6s}
+  .hearts{position:absolute;left:4%;top:14px;font-size:22px}
+  .ph{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);font-weight:900;font-size:15px;color:#ffd23a;letter-spacing:.1em;text-align:center}
+  .say{position:absolute;right:30%;bottom:120px;max-width:44%;background:#fff;color:#3a0a0a;border-radius:12px;padding:6px 10px;font-size:14px;font-weight:700}
+  .say:after{content:"";position:absolute;right:-8px;bottom:10px;border:8px solid transparent;border-left-color:#fff}
+  .mini{display:grid;gap:10px;margin:14px 0}
+  .mini a{display:flex;gap:14px;align-items:center;padding:14px;border-radius:14px;background:linear-gradient(135deg,#3a0c08,#6a1a10);border:1px solid #8a2a1a;color:#fff;text-decoration:none}
+  .mini a .e{font-size:44px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=15"></script>
+<script src="juego.js?v=8"></script>
+<script>
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", keep: true, noType: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+const BOSSES = {
+ 1: { name: "EL REY DEL ABURRIMIENTO", e: "🤴🏻", unit: "Unidad 1 · ¡A disfrutar!", lines: ["Bostezo… 🥱 ¡En mi reino nadie se divierte!", "¿Bueno? ¿Buen? ¡Para mí todo es malo!", "¡Prohíbo la ropa de colores! ¡Todo gris!"],
+   intro: "El Rey del Aburrimiento quiere un mundo sin fines de semana, sin piscina y sin colores. ¡Solo con tu español de la Unidad 1 y del Módulo 1 lo puedes vencer!",
+   stages: [
+    { label: "Fase 1", title: "¡Un finde divertido!", memo: "📌 me / te / le / nos / os / les + gusta (1 Sache, Verb) / gustan (mehrere Sachen) · estar + Gerundio: estoy nadando, está comiendo", tasks: [
+      { t: "choice", q: "A mí me ___ nadar en la piscina.", opts: ["gusta", "gustan", "gusto"], a: "gusta", hint: "Verb (nadar) → gusta." },
+      { t: "choice", q: "¿A vosotros ___ gustan las excursiones?", opts: ["os", "nos", "les"], a: "os", hint: "a vosotros → os." },
+      { t: "choice", q: "A Lili y a Pau ___ gusta hacer senderismo.", opts: ["les", "le", "nos"], a: "les", hint: "zwei Personen → les." },
+      { t: "choice", q: "Ahora Nora está ___ fotos. 📸", opts: ["sacando", "sacar", "saca"], a: "sacando", hint: "estar + Gerundio: sacando." },
+      { t: "choice", q: "¿Qué ___ haciendo vosotros?", opts: ["estáis", "estamos", "están"], a: "estáis", hint: "vosotros → estáis." },
+      { t: "choice", q: "Voy al instituto ___ bici. 🚲", opts: ["en", "a", "con"], a: "en", hint: "ir en bici / en bus / en metro – aber: ir a pie." }] },
+    { label: "Fase 2", title: "¿Bueno o malo?", memo: "📌 bueno/buena/buenos/buenas · vor männlichem Nomen im Singular: <b>buen</b> día, <b>mal</b> tiempo · jugar (u→ue): juego, juegas, juega … · traer: yo <b>traigo</b> · elegir: yo <b>elijo</b>", tasks: [
+      { t: "type", q: "Hoy hace ___ tiempo. ☀️ (bueno)", a: "buen", show: "Hoy hace buen tiempo." },
+      { t: "type", q: "Es una ___ idea. (bueno)", a: "buena", show: "Es una buena idea." },
+      { t: "type", q: "¡Qué ___ día! 🌧️ (malo)", a: "mal", show: "¡Qué mal día!" },
+      { t: "type", q: "Por las tardes ___ al fútbol con Pau. (jugar, yo)", a: "juego" },
+      { t: "type", q: "Yo ___ la tortilla para el picnic. (traer)", a: "traigo" },
+      { t: "type", q: "Hoy ___ los vaqueros azules. (elegir, yo)", a: "elijo" }] },
+    { label: "Fase final", title: "¡Colores contra el rey!", memo: "📌 Adjektive passen sich an: la falda roj<b>a</b> · los zapatos negr<b>os</b> · las botas gris<b>es</b> · ⚠️ rosa / naranja bleiben gleich", tasks: [
+      { t: "order", task: "Ordena:", taskDe: "Heute ziehe ich die rote Jacke an.", words: ["Hoy", "me", "pongo", "la", "chaqueta", "roja."], a: "Hoy me pongo la chaqueta roja." },
+      { t: "order", task: "Ordena:", taskDe: "Uns gefällt es, im Meer zu schwimmen.", words: ["Nos", "gusta", "nadar", "en", "el", "mar."], a: "Nos gusta nadar en el mar." },
+      { t: "error", words: ["Me", "gustan", "los", "zapatos", "blancas."], bad: 4, fix: "blancos.", opts: ["blancos.", "blanco.", "blanca."], hint: "los zapatos → blancos." },
+      { t: "error", words: ["Hace", "bueno", "tiempo", "hoy."], bad: 1, fix: "buen", opts: ["buen", "buena", "bien"], hint: "vor männlichem Nomen: buen tiempo." },
+      { t: "error", words: ["Pau", "está", "jugiendo", "a", "las", "cartas."], bad: 2, fix: "jugando", opts: ["jugando", "juega", "jugar"], hint: "jugar → jugando." },
+      VF("„Llueve“ heißt „Es regnet“.", true, "llover → llueve = es regnet.")] }] },
+ 2: { name: "LA MÁQUINA DEL ESTRÉS", e: "🤖", unit: "Unidad 2 · Después de clase", lines: ["¡Bip! ¡Más deberes! ¡Más estrés! ¡Bip!", "¡Nunca tienes tiempo! ¡Nunca duermes!", "¡ERROR! ¡ERROR! ¡Tu rutina es perfecta! ¡Nooo!"],
+   intro: "La Máquina del Estrés llena tu horario con clubs, deberes y alarmas. ¡Para y organiza tu tiempo – con todo lo de la Unidad 2 y del Módulo 2!",
+   stages: [
+    { label: "Fase 1", title: "Extraescolares", memo: "📌 me encanta/n · me interesa/n · me parece/n + Adj. · todo/toda/todos/todas · mucho/-a/-os/-as · primero (primer), segundo, tercero (tercer), cuarto, quinto", tasks: [
+      { t: "choice", q: "Me ___ los clubs de robótica.", opts: ["encantan", "encanta"], a: "encantan", hint: "los clubs → encantan." },
+      { t: "choice", q: "El judo me parece ___.", opts: ["interesante", "interesantes"], a: "interesante", hint: "el judo (Sg.) → interesante." },
+      { t: "choice", q: "Estudio ___ los días.", opts: ["todos", "todas", "todo"], a: "todos", hint: "los días → todos." },
+      { t: "choice", q: "Tengo ___ deberes. 😩", opts: ["muchos", "muchas", "mucho"], a: "muchos", hint: "los deberes → muchos." },
+      { t: "choice", q: "El lunes es el ___ día de la semana.", opts: ["primer", "primero", "primera"], a: "primer", hint: "vor männlichem Nomen: primer día." },
+      { t: "choice", q: "Vivo en el ___ piso. (3.)", opts: ["tercer", "tercero", "tercera"], a: "tercer", hint: "vor männlichem Nomen: tercer piso." }] },
+    { label: "Fase 2", title: "Tu rutina", memo: "📌 me levanto · te levantas · se levanta · nos levantamos · os levantáis · se levantan · despertarse (ie) · acostarse (ue) · vestirse (i) · antes de / después de + Infinitiv", tasks: [
+      { t: "type", q: "Yo ___ levanto a las siete.", a: "me" },
+      { t: "type", q: "Mis padres ___ duchan por la mañana.", a: "se" },
+      { t: "type", q: "Me ___ a las seis y media. (despertarse)", a: "despierto" },
+      { t: "type", q: "Nora se ___ muy rápido. (vestirse)", a: "viste" },
+      { t: "type", q: "Antes de ___, me lavo los dientes. (acostarse – Infinitiv)", a: ["acostarme", "acostarse"], show: "Antes de acostarme, me lavo los dientes." },
+      { t: "type", q: "¿A qué hora os ___? (acostarse, vosotros)", a: "acostáis", tips: { acostais: "Mit Akzent: acostáis." } }] },
+    { label: "Fase final", title: "¡Apaga la máquina!", memo: "📌 Zahlen: cien (100) · ciento veinte (120) · doscientos (200) · quinientos (500) · mil (1000) · el río <b>más largo de</b> España (relativer Superlativ)", tasks: [
+      { t: "order", task: "Ordena:", taskDe: "Nach dem Abendessen schaue ich eine Folge.", words: ["Después", "de", "cenar,", "veo", "un", "episodio."], a: "Después de cenar, veo un episodio." },
+      { t: "order", task: "Ordena:", taskDe: "Wenn ich müde bin, gehe ich ins Bett.", words: ["Cuando", "estoy", "cansado,", "me", "acuesto."], a: "Cuando estoy cansado, me acuesto." },
+      { t: "choice", q: "España tiene casi ocho ___ kilómetros de costa. (8000)", opts: ["mil", "miles", "cientos"], a: "mil", hint: "8000 = ocho mil." },
+      { t: "choice", q: "500 = ___", opts: ["quinientos", "cincocientos", "cincuenta"], a: "quinientos", hint: "500 = quinientos." },
+      { t: "error", words: ["El", "Teide", "es", "la", "montaña", "más", "alta", "que", "España."], bad: 7, fix: "de", opts: ["de", "en", "como"], hint: "Superlativ: la montaña más alta de España." },
+      { t: "error", words: ["Me", "encanta", "las", "novelas", "gráficas."], bad: 1, fix: "encantan", opts: ["encantan", "encanto", "encantas"], hint: "las novelas → encantan." }] }] },
+ 3: { name: "LA MEIGA DE LA NIEBLA", e: "🧙🏻‍♀️", unit: "Unidad 3 · Galicia en el corazón", lines: ["Jejeje… En mi niebla no ves nada. 🌫️", "¿Esta roca o esa roca? ¡Te vas a perder!", "¡Noooo! ¡La niebla se va! ☀️"],
+   intro: "En Galicia hay una leyenda: la Meiga de la Niebla esconde los faros y los caminos. ¡Vence a la meiga con todo lo de la Unidad 3!",
+   stages: [
+    { label: "Fase 1", title: "El paisaje en la niebla", memo: "📌 en el primer plano · al fondo · a la izquierda · a la derecha · en el centro · este/esta (nah) · ese/esa (weiter weg) · ¿de qué? ¿para qué? ¿en qué? ¿a quién?", tasks: [
+      { t: "choice", q: "En el ___ plano hay un barco.", opts: ["primer", "primero", "primera"], a: "primer", hint: "en el primer plano." },
+      { t: "choice", q: "Al ___ hay un faro.", opts: ["fondo", "fin", "final"], a: "fondo", hint: "al fondo = im Hintergrund." },
+      { t: "choice", q: "(cerca) ___ playa es bonitísima.", opts: ["Esta", "Este", "Esa"], a: "Esta", hint: "la playa, nah → esta." },
+      { t: "choice", q: "(lejos) ___ edificios son muy antiguos.", opts: ["Esos", "Esas", "Estos"], a: "Esos", hint: "los edificios, weiter weg → esos." },
+      { t: "choice", q: "¿___ quién vas a llamar? – A mi abuela.", opts: ["A", "De", "Para"], a: "A", hint: "¿A quién? – A mi abuela." },
+      { t: "choice", q: "¿___ qué usas el paraguas? – Para la lluvia. ☂️", opts: ["Para", "De", "En"], a: "Para", hint: "¿Para qué? – Para …" }] },
+    { label: "Fase 2", title: "Comparar en Galicia", memo: "📌 más/menos + Adj. + que · tan + Adj. + como · -ísimo (rico → riquísimo) · pedir: pido, pides … · conocer: conozco · ir a + Infinitiv", tasks: [
+      { t: "type", q: "Galicia es más verde ___ Andalucía.", a: "que" },
+      { t: "type", q: "La torre es tan alta ___ la catedral.", a: "como" },
+      { t: "type", q: "La empanada está rica → ¡está ___!", a: "riquísima" },
+      { t: "type", q: "Yo ___ una empanada y un zumo. (pedir)", a: "pido" },
+      { t: "type", q: "Yo no ___ Santiago. (conocer)", a: "conozco" },
+      { t: "type", q: "Mañana ___ a visitar la Torre de Hércules. (ir, nosotros)", a: "vamos" }] },
+    { label: "Fase final", title: "¡Fuera la niebla!", memo: "📌 el sobre → lo · la carta → la · los mapas → los · las fotos → las (vor dem Verb) · otro/otra (ohne un)", tasks: [
+      { t: "order", task: "Ordena:", taskDe: "Hast du den Brief? – Ja, ich habe ihn.", words: ["Sí,", "la", "tengo."], a: "Sí, la tengo." },
+      { t: "order", task: "Ordena:", taskDe: "Wir werden das Rätsel lösen.", words: ["Lo", "vamos", "a", "resolver."], a: "Lo vamos a resolver." },
+      { t: "error", words: ["Hay", "otra", "faro", "al", "fondo."], bad: 1, fix: "otro", opts: ["otro", "un otro", "otros"], hint: "el faro → otro (ohne un)." },
+      { t: "error", words: ["¿Ves", "las", "rocas?", "–", "Sí,", "los", "veo."], bad: 5, fix: "las", opts: ["las", "la", "lo"], hint: "las rocas → las." },
+      { t: "error", words: ["Santiago", "es", "menos", "grande", "como", "Madrid."], bad: 4, fix: "que", opts: ["que", "de", "tan"], hint: "menos … que." },
+      VF("„la gaita“ ist ein typisches Instrument in Galicien.", true, "la gaita = der Dudelsack – typisch für Galicien.")] }] },
+ 9: { name: "EL CHEF GRUÑÓN", e: "👨🏻‍🍳", unit: "En la cocina · Módulo 3", lines: ["¡Grrr! ¡En mi cocina solo cocinan los mejores!", "¿Medio kilo o un medio kilo? ¡Grrr!", "¡Mmm… esta tortilla está… riquísima! 😳"],
+   intro: "El Chef Gruñón dice: „¡Nadie cocina mejor que yo!“ Demuéstrale lo contrario: con la lista de la compra, el mercado y hay que + infinitivo.",
+   stages: [
+    { label: "Fase 1", title: "En el mercado", memo: "📌 un kilo de · medio kilo de · 200 gramos de · un litro de · una botella de · una lata de · un paquete de · una barra de · ¿Qué os pongo? · ¿Algo más? · Eso es todo. · ¿Cuánto es?", tasks: [
+      { t: "choice", q: "Una ___ de aceite. 🫒", opts: ["botella", "lata", "barra"], a: "botella", hint: "Öl → una botella de aceite." },
+      { t: "choice", q: "Una ___ de atún. 🐟", opts: ["lata", "botella", "barra"], a: "lata", hint: "Thunfisch → una lata de atún." },
+      { t: "choice", q: "Una ___ de pan. 🥖", opts: ["barra", "lata", "botella"], a: "barra", hint: "Brot → una barra de pan." },
+      { t: "choice", q: "___ kilo de cebollas.", opts: ["Medio", "Un medio", "Media"], a: "Medio", hint: "medio kilo (ohne un)." },
+      { t: "choice", q: "El vendedor pregunta: ¿___ os pongo?", opts: ["Qué", "Cuánto", "Cómo"], a: "Qué", hint: "¿Qué os pongo? = Was darf's sein?" },
+      { t: "choice", q: "Quieres saber el precio: ¿___ es?", opts: ["Cuánto", "Qué", "Dónde"], a: "Cuánto", hint: "¿Cuánto es? = Wie viel kostet das?" }] },
+    { label: "Fase 2", title: "Los alimentos", memo: "📌 los alimentos: la leche · el queso · el huevo · el pan · el arroz · el jamón · el aceite · el atún · la verdura · la patata · la cebolla · la lechuga · el tomate · la manzana · la naranja · el plátano", tasks: [
+      { t: "type", q: "🥛 = la ___", a: "leche" },
+      { t: "type", q: "🧀 = el ___", a: "queso" },
+      { t: "type", q: "🥚 = el ___", a: "huevo" },
+      { t: "type", q: "🍎 = la ___", a: "manzana" },
+      { t: "type", q: "🍌 = el ___", a: "plátano", tips: { platano: "Mit Akzent: plátano." } },
+      { t: "type", q: "🧅 = la ___", a: "cebolla" }] },
+    { label: "Fase final", title: "¡A cocinar!", memo: "📌 <b>hay que</b> + Infinitiv = man muss … (immer gleich): Hay que pelar las patatas.", tasks: [
+      { t: "order", task: "Ordena:", taskDe: "Man muss die Kartoffeln schälen.", words: ["Hay", "que", "pelar", "las", "patatas."], a: "Hay que pelar las patatas." },
+      { t: "order", task: "Ordena:", taskDe: "Ein Kilo Tomaten, bitte.", words: ["Un", "kilo", "de", "tomates,", "por", "favor."], a: "Un kilo de tomates, por favor." },
+      { t: "error", words: ["Hay", "que", "compramos", "leche."], bad: 2, fix: "comprar", opts: ["comprar", "compra", "compro"], hint: "hay que + Infinitiv." },
+      { t: "error", words: ["Necesito", "un", "litro", "con", "leche."], bad: 3, fix: "de", opts: ["de", "en", "a"], hint: "un litro de leche." },
+      { t: "error", words: ["Eso", "es", "nada.", "¿Cuánto", "es?"], bad: 2, fix: "todo.", opts: ["todo.", "más.", "algo."], hint: "Eso es todo. = Das ist alles." },
+      VF("„la mantequilla“ ist die Butter.", true, "la mantequilla = die Butter.")] }] }
+};
+const U = +new URLSearchParams(location.search).get("u"), B = BOSSES[U];
+if (!B) {
+  const se = E8.getSession(), st = se && se.state ? se.state.stars || {} : {};
+  document.getElementById("app").innerHTML = `<div class="panel" style="max-width:720px;margin:20px auto;padding:18px"><a href="index.html" style="color:#ffb38f">← Lobby</a>
+    <h1 style="text-align:center">⚔️ Jefes finales</h1><p style="text-align:center">Al final de cada unidad te espera un jefe. ¡Vence al jefe con todo lo que sabes! <span class="de">– Am Ende jeder Unidad wartet ein Endgegner. Gut zur Vorbereitung auf die Klassenarbeit.</span></p>
+    <div class="mini">${Object.entries(BOSSES).map(([k, b]) => `<a href="?u=${k}"><span class="e">${b.e}</span><span><b>${b.name}</b><br><span class="de">${b.unit}</span></span><span style="margin-left:auto;color:#ffd23a">${st["jefe-u" + k] ? "★".repeat(st["jefe-u" + k]) + "☆".repeat(3 - st["jefe-u" + k]) : "⚔️"}</span></a>`).join("")}</div></div>`;
+} else {
+  const phaseMiss = S => (S.data.pm && S.data.pm[S.stage]) || 0;
+  JUEGO.start({
+    id: "jefe-u" + U, key: "wpspa10-jefe-u" + U, icon: B.e, topic: "Jefe final · " + B.unit, title: B.name,
+    intro: `<p>${B.intro}</p><p class="de">Endgegner: 3 Phasen, immer schwerer. Jede richtige Antwort trifft den Boss. Jede falsche kostet dich ein Herz ❤️ – du kannst aber immer weiterkämpfen.</p>`,
+    goLabel: "⚔️ ¡A luchar!", time: "ca. 15 minutos",
+    stages: B.stages.map((s, i) => Object.assign({ go: ["⚔️ ¡Ataque!", "🔥 ¡Más fuerte!", "💥 ¡Golpe final!"][i], intro: `<div class="who"><div class="face">${B.e}</div><div><b class="n">${B.name}</b>${B.lines[i]}</div></div>` }, s)),
+    onMistake: S => { S.data.pm = S.data.pm || {}; S.data.pm[S.stage] = (S.data.pm[S.stage] || 0) + 1; const b = document.querySelector(".arena .boss"); if (b) b.classList.add("rage"); },
+    onSolve: S => { const b = document.querySelector(".arena .boss"); if (b) { b.classList.remove("hit"); void b.offsetWidth; b.classList.add("hit"); } const i = document.querySelector(".hp .b i"); if (i) i.style.width = Math.max(0, Math.round((1 - S.solved / S.total) * 100)) + "%"; },
+    scene: (S) => { const hp = S.done ? 0 : Math.round((1 - S.solved / S.total) * 100), h = Math.max(0, 5 - phaseMiss(S));
+      return `<div class="arena"><div class="hearts">${"❤️".repeat(h)}${"🖤".repeat(5 - h)}</div>
+        <div class="hp"><div class="nm">${B.e} ${B.name}</div><div class="b"><i style="width:${hp}%"></i></div></div>
+        <div class="ph">${S.done ? "💥 ¡VICTORIA!" : (["FASE 1", "FASE 2", "FASE FINAL"][S.stage] || "")}${!S.done && h === 0 ? "<br>😵 ¡Sin corazones – sigue luchando!" : ""}</div>
+        <div class="hero">${E8.myAvatar()}</div><div class="boss" style="${S.done ? "transform:rotate(90deg) translateY(30px);opacity:.5" : ""}">${B.e}</div>
+        ${S.done ? "" : `<div class="say">${B.lines[Math.min(S.stage, 2)]}</div>`}</div>`; },
+    outro: `<div style="font-size:64px">💥${B.e}🏆</div><h1>¡Has vencido a ${B.name}!</h1><p>Ahora dominas la ${B.unit}. 💪</p><p><a class="btn" href="jefe-final.html">⚔️ Otros jefes</a></p>`
+  });
+}
+</script>
+</body>
+</html>

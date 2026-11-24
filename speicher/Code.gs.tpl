@@ -30,10 +30,10 @@ function loadCat() {
     } catch (e) { t = props.getProperty("cat") || '{"items":{},"slots":[],"default":{}}'; }
   }
   const c = JSON.parse(t);
-  ITEMS = {}; Object.keys(c.items).forEach(id => { const a = c.items[id]; ITEMS[id] = { slot: a[0], price: a[1], lvl: a[2] || 0, months: a[3] || null }; });
+  ITEMS = {}; Object.keys(c.items).forEach(id => { const a = c.items[id]; ITEMS[id] = { slot: a[0], price: a[1], lvl: a[2] || 0, months: a[3] || null, adv: a[4] || 0 }; });
   SLOTS = c.slots; DEFAULT = c.default;
   HITEMS = {}; const h = c.house || { items: {}, slots: [], default: {}, stages: [0], yardStage: {} };
-  Object.keys(h.items).forEach(id => { const a = h.items[id]; HITEMS[id] = { slot: a[0], price: a[1], lvl: a[2] || 0, months: a[3] || null, stars: a[4] || 0 }; });
+  Object.keys(h.items).forEach(id => { const a = h.items[id]; HITEMS[id] = { slot: a[0], price: a[1], lvl: a[2] || 0, months: a[3] || null, stars: a[4] || 0, adv: a[5] || 0 }; });
   HSLOTS = h.slots; HDEFAULT = h.default; HSTAGES = h.stages; HYARD = h.yardStage;
 }
 /** Nach dem Einfügen einmal ausführen, um den Katalog-Zugriff zu testen. */
@@ -192,7 +192,10 @@ function allResults() {
 function levelOf(xp) { let l = 0; LEVEL_XP.forEach(t => { if (xp >= t) l++; }); return l; }
 
 function state(p) {
-  const res = allResults().filter(r => String(r[1]) === String(p.v[C.NR]));
+  const all = allResults();
+  const res = all.filter(r => String(r[1]) === String(p.v[C.NR]));
+  const meta = all.reduce((a, r) => a + (Number(r[5]) || 0), 0);
+  const perfect = {}, days = {}, adv = {};
   const stars = {}, plays = {};
   let xp = 0, home = false, improved = false, daily = 0;
   res.forEach(r => {
@@ -202,7 +205,10 @@ function state(p) {
       const t = Utilities.formatDate(r[0], TZ, "u H").split(" ").map(Number);
       if (t[0] >= 6 || t[1] >= 15 || t[1] < 7) home = true;
     }
+    if (r[0] instanceof Date) days[Utilities.formatDate(r[0], TZ, "yyyy-MM-dd")] = 1;
+    if (g.indexOf("adv-") === 0) adv[g] = 1;
     if (g === "daily") { daily++; return; }
+    if (g !== "review" && String(r[3]) !== "" && Number(r[3]) === 0) perfect[g] = 1;
     if (g === "review") return;
     if (plays[g] && s > (stars[g] || 0)) improved = true;
     stars[g] = Math.max(stars[g] || 0, s);
@@ -210,12 +216,23 @@ function state(p) {
   });
   const today = Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd");
   const dailyToday = res.some(r => r[2] === "daily" && r[0] instanceof Date && Utilities.formatDate(r[0], TZ, "yyyy-MM-dd") === today);
+  const sk = streakOf(days, today);
   return {
+    adv: Object.keys(adv).length, meta: meta, perfect: Object.keys(perfect), streak: sk.now, streakToday: !!days[today], streakBest: sk.best,
     fresh: !p.v[C.AVATAR], mustSetPin: String(p.v[C.EIGEN] || "").trim() !== "ja", nr: String(p.v[C.NR]), coins: Number(p.v[C.MUENZEN]) || 0,
     owned: owned(p.v), equipped: equippedOf(p.v), stars: stars, house: houseOf(p.v), review: reviewOf(p.v),
     starsTotal: Object.keys(stars).reduce((a, k) => a + stars[k], 0),
     xp: xp, level: levelOf(xp), stats: { plays: res.length, home: home, improved: improved, daily: daily, dailyToday: dailyToday }
   };
+}
+
+/** Racha: Tage in Folge (heute oder gestern endend) und beste Serie. */
+function streakOf(days, today) {
+  const ds = Object.keys(days).sort(), DAY = 864e5, t = k => new Date(k + "T12:00:00Z").getTime();
+  let best = 0, run = 0, prev = null;
+  ds.forEach(k => { run = prev !== null && Math.round((t(k) - t(prev)) / DAY) === 1 ? run + 1 : 1; best = Math.max(best, run); prev = k; });
+  const gap = prev ? Math.round((t(today) - t(prev)) / DAY) : 99;
+  return { now: gap <= 1 ? run : 0, best: best };
 }
 
 function result(p, d) {
@@ -251,7 +268,8 @@ function result(p, d) {
     p.v[C.FEHLER] = JSON.stringify(list);
   }
   try { uebersicht(); } catch (x) {}
-  return { ok: true, earned: earned, stars: stars, first: prev.length === 0, improved: prev.length > 0 && stars > best, daily: game === "daily", review: game === "review", state: state(p) };
+  const perfectNew = mistakes === 0 && game !== "daily" && game !== "review" && !prev.some(r => String(r[3]) !== "" && Number(r[3]) === 0);
+  return { ok: true, perfectNew: perfectNew, earned: earned, stars: stars, first: prev.length === 0, improved: prev.length > 0 && stars > best, daily: game === "daily", review: game === "review", state: state(p) };
 }
 
 function buy(p, d) {
@@ -265,6 +283,7 @@ function buy(p, d) {
   }
   if (it.lvl && state(p).level < it.lvl) return { ok: false, error: "level" };
   if (it.stars && state(p).starsTotal < it.stars) return { ok: false, error: "stars" };
+  if (it.adv && (state(p).adv || 0) < it.adv) return { ok: false, error: "adv" };
   const coins = Number(p.v[C.MUENZEN]) || 0;
   if (coins < it.price) return { ok: false, error: "coins" };
   o.push(d.item);

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>MasterChef Junior · Los Juegos del Ciervo</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{--bg:radial-gradient(ellipse at 50% 0%,#4a2a10 0%,#140a04 70%);--panel:#22140a;--txt:#fff7ee;--muted:#d6b89a;--line:#4a301a;--btn:#2e1c0e;--accent:#ff8a2a;--accentTxt:#2a1400;--accent2:#ffc68a;--bubble:#3a2412;--input:#160c05;--ok:#6fe59a;--bad:#ff8a7a}
+  .scn{position:relative;padding:14px 14px 10px;background:linear-gradient(135deg,#8a3a10,#ff8a2a);border-radius:14px 14px 0 0;overflow:hidden}
+  .scn .row1{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .scn .ttl{font:800 15px system-ui;letter-spacing:.06em;color:#fff;text-transform:uppercase;opacity:.95}
+  .scn .st{display:flex;gap:6px;margin:10px 0 6px;flex-wrap:wrap}
+  .scn .st span{font-size:28px;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#ffffff1a;border:2px solid #ffffff33;filter:grayscale(.8);opacity:.6}
+  .scn .st span.d{filter:none;opacity:1;border-color:#ffd23a;background:#ffd23a33}
+  .scn .st span.n{filter:none;opacity:1;border-color:#fff;animation:bob 1.2s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-4px)}}
+  .scn .me{width:42px;height:42px;border-radius:50%;overflow:hidden;background:#fff;border:3px solid #ffd23a;flex:none}
+  .scn .bar{height:9px;border-radius:6px;background:#0005;overflow:hidden} .scn .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff8a2a)}
+  .scn .big{position:absolute;right:16px;bottom:18px;font-size:58px;opacity:.9}
+  .clue{background:#fffbe9;color:#3a2a10;border-radius:8px;padding:8px 12px;font-size:17px;box-shadow:0 2px 4px #0004;margin:6px 0}
+  table.t{border-collapse:collapse;margin:6px 0} table.t td{border:1px solid var(--line);padding:4px 10px}
+  
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="game.js?v=15"></script>
+<script src="juego.js?v=8"></script>
+<script>
+const SCENE = (icons, ttl, big) => (S) => {
+  const k = S.done ? icons.length : S.stage, pct = Math.round((S.done ? 1 : S.solved / S.total) * 100);
+  return `<div class="scn"><div class="row1"><span class="ttl">${ttl}</span><span class="me">${E8.myAvatar()}</span></div>
+    <div class="st">${icons.map((e, i) => `<span class="${i < k ? "d" : i === k ? "n" : ""}">${e}</span>`).join("")}</div>
+    <div class="bar"><i style="width:${pct}%"></i></div>${big ? `<div class="big">${typeof big === "function" ? big(S) : big}</div>` : ""}</div>`;
+};
+const VF = (q, a, why) => ({ t: "choice", q: q, task: "¿Verdadero o falso?", taskDe: "Richtig oder falsch?", keep: true, noType: true, opts: ["verdadero ✔", "falso ✘"], a: a ? "verdadero ✔" : "falso ✘", hint: why });
+
+const CH = {face:"👩🏽‍🍳", name:"La chef Carmen"}, VE = {face:"🧑🏻‍🌾", name:"El vendedor"}, PA = {face:"👦🏻", name:"Pau"}, LI = {face:"👩🏽", name:"Lili"}, YO = {av:true, name:"Tú"};
+const HQ = "📌 <b>hay que</b> + Infinitiv = man muss …: <b>Hay que</b> comprar huevos. · <b>Hay que</b> pelar las patatas. – hay que ändert sich nie!";
+const CAN = "📌 un kilo <b>de</b> patatas · medio kilo <b>de</b> cebollas · 200 gramos <b>de</b> queso · un litro <b>de</b> leche · una botella <b>de</b> aceite · una lata <b>de</b> atún · un paquete <b>de</b> arroz · una barra <b>de</b> pan – ⚠️ medio kilo (nie „un medio“)";
+const MER = "📌 Verkäufer/in: ¿Qué os pongo? (Was darf's sein?) · ¿Algo más? (Noch etwas?) – Kunde: … por favor. · Eso es todo. (Das ist alles.) · ¿Cuánto es? (Wie viel kostet das?) · Muchas gracias.";
+const COC = "🍳 pelar = schälen · cortar = schneiden · freír = braten · batir = verquirlen · mezclar = mischen · echar sal = salzen · dar la vuelta = wenden";
+const STAGES = [
+  { label: "Prueba 1", title: "¡Bienvenidos a MasterChef Junior!", go: "👩🏽‍🍳 ¡A cocinar!",
+    memo: `👩🏽‍🍳 Carmen: „Hoy vais a cocinar una <b>tortilla de patatas</b>. Primero <b>hay que comprar</b> los alimentos en el mercado. Después <b>hay que pelar</b> las patatas y <b>hay que batir</b> los huevos. ¡Y <b>hay que trabajar</b> en equipo!“`,
+    intro: `<div class="who"><div class="face">👩🏽‍🍳</div><div><b class="n">La chef Carmen</b>¡Hola, cocineros! Bienvenidos a <b>MasterChef Junior</b>. Tu equipo – tú, Lili y Pau – tiene una misión: ¡la mejor <b>tortilla de patatas</b> de España! 🥔🥚</div></div>
+      <p class="de">Kochshow: Ihr kocht eine Tortilla de patatas. Lies zuerst, was die Chefin sagt (oben): Wie sagt man „man muss …“?</p>`,
+    pista: "Schau in Carmens Text: hay que comprar, hay que pelar … – was steht nach hay que?",
+    tasks: [
+      { t: "choice", q: "„<b>Hay que</b> comprar huevos.“ heißt …", keep: true, noType: true, opts: ["Man muss Eier kaufen.", "Es gibt Eier.", "Ich kaufe Eier."], a: "Man muss Eier kaufen.", hint: "hay que + Infinitiv = man muss." },
+      { t: "choice", q: "Nach <b>hay que</b> steht …", keep: true, noType: true, opts: ["der Infinitiv (comprar, pelar …)", "das konjugierte Verb (compro, pelamos …)"], a: "der Infinitiv (comprar, pelar …)", hint: "hay que comprar – hay que pelar." },
+      { t: "choice", q: "Hay que ___ las patatas. (schälen)", keep: true, opts: ["pelar", "pelo", "pelamos"], a: "pelar", hint: "hay que + Infinitiv: pelar." },
+      { t: "choice", q: "Für alle Personen sagt man …", keep: true, noType: true, opts: ["immer hay que", "hay que, hayes que, hayen que …"], a: "immer hay que", hint: "hay que ändert sich nie." },
+      { t: "choice", q: "La tortilla de patatas lleva …", keep: true, noType: true, opts: ["patatas, huevos, cebolla, aceite y sal", "arroz, atún y chocolate", "pan, queso y mermelada"], a: "patatas, huevos, cebolla, aceite y sal", hint: "Tortilla = Kartoffeln, Eier, (Zwiebel), Öl, Salz." }
+    ] },
+  { label: "Prueba 2", title: "La lista de la compra", memo: CAN,
+    intro: `<div class="who"><div class="face">👦🏻</div><div><b class="n">Pau</b>Escribo la lista de la compra. 📝 ¿Cuánto compramos?</div></div><p class="de">Mengenangaben: Nach der Menge kommt immer „de“.</p>`,
+    pista: "Flüssigkeit → botella / litro · Fisch in Metall → lata · Reis → paquete · Brot → barra · Kartoffeln → kilo",
+    tasks: [
+      { t: "sort", task: "Ordena los alimentos:", taskDe: "Welche Verpackung passt?", buckets: ["una botella de …", "una lata de …", "un paquete de …", "un kilo de …"], items: [["aceite", 0], ["atún", 1], ["arroz", 2], ["patatas", 3], ["leche", 0], ["tomates", 3]], hint: "aceite/leche → botella · atún → lata · arroz → paquete · patatas/tomates → kilo" },
+      { t: "choice", who: PA, q: "Necesitamos un kilo ___ patatas.", opts: ["de", "con", "–"], a: "de", hint: "Menge + de: un kilo de patatas." },
+      { t: "choice", who: LI, q: "Y ___ kilo de cebollas.", opts: ["medio", "un medio", "media"], a: "medio", hint: "medio kilo – ohne un!" },
+      { t: "choice", who: PA, q: "¿Y los huevos? – Seis ___.", opts: ["huevos", "huevo", "de huevos"], a: "huevos", hint: "Zahl + Nomen: seis huevos." },
+      { t: "type", who: LI, q: "200 gramos ___ queso para el bocadillo. 🧀", a: "de" }
+    ] },
+  { label: "Prueba 3", title: "En el mercado", memo: MER + "<br>" + CAN, shuffle: true,
+    pick: { q: "¿A qué puesto vais primero?", qDe: "Zu welchem Stand geht ihr zuerst?", opts: [
+      { t: "🥔 A la frutería de Don Paco", intro: `<p>🥔 Vais a la frutería. Don Paco tiene patatas y cebollas buenísimas.</p>` },
+      { t: "🥚 Al puesto de los huevos ecológicos", intro: `<p>🥚 Vais al puesto de huevos ecológicos. ¡Las gallinas están ahí mismo! 🐔</p>` }] },
+    intro: `<p>En el mercado hablas con el vendedor. 🛒 Ordena las frases.</p><p class="de">Bau die Sätze für das Einkaufsgespräch.</p>`,
+    tasks: [
+      { t: "order", who: VE, task: "El vendedor:", taskDe: "Hallo! Was darf's sein?", words: ["¡Hola!", "¿Qué", "os", "pongo?"], a: "¡Hola! ¿Qué os pongo?" },
+      { t: "order", who: YO, task: "Tú:", taskDe: "Ein Kilo Kartoffeln, bitte.", words: ["Un", "kilo", "de", "patatas,", "por", "favor."], a: "Un kilo de patatas, por favor." },
+      { t: "order", who: VE, task: "El vendedor:", taskDe: "Hier, bitte. Noch etwas?", words: ["Aquí", "tienes.", "¿Algo", "más?"], a: "Aquí tienes. ¿Algo más?" },
+      { t: "order", who: YO, task: "Tú:", taskDe: "Ja, ein halbes Kilo Zwiebeln.", words: ["Sí,", "medio", "kilo", "de", "cebollas."], a: "Sí, medio kilo de cebollas." },
+      { t: "order", who: YO, task: "Tú:", taskDe: "Das ist alles. Wie viel kostet das?", words: ["Eso", "es", "todo.", "¿Cuánto", "es?"], a: "Eso es todo. ¿Cuánto es?" }
+    ] },
+  { label: "Prueba 4", title: "¿Cuánto es?", memo: "💶 1 € = un euro · 2,50 € = dos euros con cincuenta (céntimos) · 0,80 € = ochenta céntimos",
+    intro: `<p>Ahora hay que pagar. 💶 ¡Escucha bien los precios!</p><p class="de">Preise auf Spanisch: Euro „con“ Cent.</p>`,
+    pista: "Erst die Euros, dann „con“, dann die Cent.",
+    tasks: [
+      { t: "choice", who: VE, q: "Las patatas: <b>1,50 €</b>", opts: ["un euro con cincuenta", "quince euros", "uno con cinco"], a: "un euro con cincuenta", noType: true, hint: "1,50 € = un euro con cincuenta." },
+      { t: "choice", who: VE, q: "Los huevos: <b>2,80 €</b>", opts: ["dos euros con ochenta", "dos euros con dieciocho", "veintiocho euros"], a: "dos euros con ochenta", noType: true, hint: "2,80 € = dos euros con ochenta." },
+      { t: "choice", who: VE, q: "El aceite: <b>6,40 €</b>", opts: ["seis euros con cuarenta", "sesenta y cuatro euros", "seis euros con catorce"], a: "seis euros con cuarenta", noType: true, hint: "6,40 € = seis euros con cuarenta." },
+      { t: "choice", who: PA, q: "1,50 + 2,80 + 6,40 = ___ 🧮", opts: ["diez euros con setenta", "nueve euros con setenta", "once euros con veinte"], a: "diez euros con setenta", noType: true, hint: "1,50 + 2,80 + 6,40 = 10,70 €." },
+      { t: "type", who: YO, q: "Pagas con 20 €. El vendedor te da 9,30 €: nueve euros con ___.", a: "treinta" },
+      { t: "choice", who: YO, q: "Al final dices: ¡Muchas ___!", opts: ["gracias", "graciosas", "cosas"], a: "gracias", hint: "¡Muchas gracias!" }
+    ] },
+  { label: "Prueba 5", title: "La receta", memo: HQ + "<br>" + COC, shuffle: false,
+    intro: `<div class="who"><div class="face">👩🏽‍🍳</div><div><b class="n">La chef Carmen</b>¡En la cocina! Ahora decís qué hay que hacer. Paso a paso. ⏱️</div></div><p class="de">Die Kochwörter stehen in der Merk-Box. Erst „hay que“, dann der Infinitiv.</p>`,
+    pista: "hay que + Infinitiv. Die Kochverben stehen in der Merk-Box.",
+    tasks: [
+      { t: "type", who: CH, q: "Paso 1: Hay que ___ las patatas. (schälen) 🥔", a: "pelar" },
+      { t: "type", who: CH, q: "Paso 2: Hay que ___ las patatas y la cebolla. (schneiden) 🔪", a: "cortar" },
+      { t: "type", who: CH, q: "Paso 3: Hay que ___ las patatas en aceite. (braten) 🍳", a: "freír", tips: { freir: "Mit Akzent: freír." } },
+      { t: "type", who: CH, q: "Paso 4: Hay que ___ los huevos. (verquirlen) 🥚", a: "batir" },
+      { t: "type", who: CH, q: "Paso 5: Hay que ___ todo y echar sal. (mischen) 🧂", a: "mezclar" },
+      { t: "order", who: CH, task: "Paso 6:", taskDe: "Man muss die Tortilla wenden!", words: ["¡Hay", "que", "dar", "la", "vuelta", "a", "la", "tortilla!"], a: "¡Hay que dar la vuelta a la tortilla!" },
+      { t: "choice", who: LI, q: "¿Qué hay que hacer <b>primero</b>?", opts: ["Hay que pelar las patatas.", "Hay que dar la vuelta a la tortilla.", "Hay que comer la tortilla."], a: "Hay que pelar las patatas.", noType: true, hint: "Zuerst: Kartoffeln schälen." }
+    ] },
+  { label: "Final", title: "El jurado", go: "🍽️ ¡Al jurado!", memo: HQ + "<br>" + CAN, shuffle: true,
+    intro: `<div class="who"><div class="face">👩🏽‍🍳</div><div><b class="n">La chef Carmen</b>Antes de probar la tortilla, el jurado lee vuestra receta. Pero… ¡tiene errores! 😬 Corregidlos.</div></div><p class="de">Finde die Fehler in eurem Rezept.</p>`,
+    tasks: [
+      { t: "error", words: ["Hay", "que", "pelamos", "las", "patatas."], bad: 2, fix: "pelar", opts: ["pelar", "pelo", "pela"], hint: "hay que + Infinitiv: pelar." },
+      { t: "error", words: ["Necesitamos", "un", "kilo", "con", "patatas."], bad: 3, fix: "de", opts: ["de", "en", "por"], hint: "un kilo de patatas." },
+      { t: "error", words: ["Compramos", "media", "kilo", "de", "cebollas."], bad: 1, fix: "medio", opts: ["medio", "un medio", "medios"], hint: "el kilo → medio kilo (ohne un)." },
+      { t: "error", words: ["Hay", "de", "batir", "los", "huevos."], bad: 1, fix: "que", opts: ["que", "a", "en"], hint: "hay que + Infinitiv." },
+      { t: "error", words: ["Una", "botella", "de", "atún."], bad: 1, fix: "lata", opts: ["lata", "barra", "kilo"], hint: "Thunfisch kommt in die Dose: una lata de atún." },
+      { t: "choice", who: CH, q: "El jurado prueba la tortilla… 😋", opts: ["¡Está riquísima! 10 puntos.", "¡Qué horror! 0 puntos."], a: "¡Está riquísima! 10 puntos.", noType: true, hint: "Natürlich: ¡riquísima! 🏆" }
+    ] }
+];
+JUEGO.start({
+  id: "hay-que", key: "wpspa10-masterchef", icon: "👩🏽‍🍳", topic: "hay que + infinitivo · cantidades · en el mercado", title: "MasterChef Junior",
+  intro: `<p>👩🏽‍🍳 ¡Bienvenido/a a <b>MasterChef Junior</b>! Con Lili y Pau cocinas la mejor <b>tortilla de patatas</b>.</p>
+    <p>Primero vais al mercado, después a la cocina. Para ganar necesitas <b>hay que + infinitivo</b>, las cantidades y frases para comprar.</p>
+    <p class="de">Kochshow: Einkaufen auf dem Markt und Tortilla kochen – mit hay que + Infinitiv, Mengenangaben und Redemitteln zum Einkaufen (Módulo 3).</p>`,
+  goLabel: "🍳 ¡A la cocina!", time: "ca. 20 minutos", rulesLabel: "Reglas",
+  rules: `<h2>hay que + Infinitiv</h2><div class="rule">man muss: <b>Hay que</b> comprar huevos. <b>Hay que</b> pelar las patatas.</div>
+    <h2>Mengen</h2><div class="rule">un kilo de · medio kilo de · 200 gramos de · un litro de · una botella de · una lata de · un paquete de · una barra de</div>
+    <h2>Auf dem Markt</h2><div class="rule">¿Qué os pongo? – Un kilo de …, por favor. · ¿Algo más? – Eso es todo. ¿Cuánto es?</div>`,
+  stages: STAGES,
+  scene: SCENE(["📋", "📝", "🛒", "💶", "🍳", "🍽️"], "👩🏽‍🍳 MasterChef Junior · Tortilla de patatas", S => S.done ? "🏆" : ["🥔", "🥚", "🧅", "🫒", "🍳", "🍽️"][Math.min(S.stage, 5)]),
+  outro: `<div style="font-size:60px">🍳🥔🏆</div><h1>¡Sois los MasterChef Junior!</h1><div class="who" style="text-align:left"><div class="face">👩🏽‍🍳</div><div><b class="n">La chef Carmen</b>¡Qué tortilla! Está riquísima. ¡Y ahora… hay que lavar los platos! 😄🧽</div></div>`
+});
+
+</script>
+</body>
+</html>

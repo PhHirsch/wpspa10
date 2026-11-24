@@ -15,6 +15,9 @@ const _c={},_p={};const ctx={UrlFetchApp:{fetch:()=>({getResponseCode:()=>200,ge
 vm.createContext(ctx);vm.runInContext(fs.readFileSync('Code.gs','utf8'),ctx);
 ctx.einrichten();
 const sp=ss.getSheetByName("Spieler");sp.d[1][1]="1234";sp.d[2][1]="0456";sp.d[1][2]=500; // Nr1 PIN 123 with 500 coins
+if(process.env.SEED){const er=ss.getSheetByName("Ergebnisse");const D=k=>new Date(Date.now()-k*864e5);
+ er.appendRow([D(3),1,"numeros",0,3,40,1,600,40]);er.appendRow([D(2),1,"posesivos",2,3,40,1,600,45]);er.appendRow([D(1),1,"daily",1,3,15,1,100,10]);
+ for(let i=0;i<300;i++)er.appendRow([D(5+i%20),2+(i%20),"hay-estar",1,3,40,1,500,20]);}
 http.createServer((req,res)=>{let b="";req.on("data",c=>b+=c);req.on("end",()=>{
  res.setHeader("Access-Control-Allow-Origin","*");
  if(req.method==="POST"){const o=ctx.doPost({postData:{contents:b}});res.end(o.t)}

@@ -110,7 +110,15 @@ add("y-eggs", "yard", "Huevos de Pascua 🐣", 100, kind="eggs", months=[3, 4])
 add("y-dino", "yard", "Estatua de dinosaurio 🦖", 700, lvl=6, kind="dino")
 add("y-ufo", "yard", "OVNI aterrizado 🛸", 1000, lvl=7, kind="ufo")
 add("y-rocket", "yard", "Cohete 🚀", 1500, lvl=9, stars=50, kind="rocket")
-# Unit-Teile (erscheinen erst, wenn die Unit freigeschaltet ist) – Apúntate 2: folgen nach Absprache
+# Unit-Teile (erscheinen erst, wenn die Unit freigeschaltet ist) – Apúntate 2
+add("y-piragua", "yard", "Piragua", 150, unit=1, kind="piragua")
+add("y-bicimontana", "yard", "Bici de montaña", 200, unit=1, kind="bici")
+add("y-escenario", "yard", "Escenario de la banda", 250, unit=2, kind="escenario")
+add("y-horreo", "yard", "Hórreo gallego", 300, unit=3, kind="horreo")
+add("y-faro", "yard", "Faro", 400, unit=3, kind="faro")
+add("y-fruteria", "yard", "Puesto de mercado", 250, unit=9, kind="puesto")
+# Adventskalender (erst nach 24 Türchen kaufbar)
+add("y-pinata", "yard", "Piñata de estrella gigante", 100, kind="pinata", adv=24)
 
 HSLOTS = ["ground", "wall", "wcolor", "roof", "rcolor", "window", "door", "roofx", "fence", "yard1", "yard2", "yard3", "yard4"]
 HDEFAULT = {"ground": "g-grass", "wall": "w-plaster", "wcolor": "wc-cream", "roof": "r-gable", "rcolor": "rc-red", "window": "win-classic",
